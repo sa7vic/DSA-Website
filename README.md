@@ -5,12 +5,12 @@ Openverse brings to you, DSA Viz
 
 ---
 
-##Features:
+## Features:
 -For now, Interactive Visualization of a doubly linked list 
 -Well.. we're working on it would love some contributions adding other data structures / algorithms
 
 ---
-##Tech Stack:
+## Tech Stack:
 - HTML / CSS
 - JavaScript
 - React
