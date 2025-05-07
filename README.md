@@ -1,6 +1,5 @@
 # DSA Viz
 
-Openverse brings to you, DSA Viz 
 **DSA Viz** by Openverse simplifies your journey through Data Structures by offering interactive visualizations.
 
 ---
