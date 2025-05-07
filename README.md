@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/72d35930-e89e-4032-840f-8eceace54029)# DSA Viz
+# DSA Viz
 
 Openverse brings to you, DSA Viz 
 Simplifying your Journey through your Data Structure Courses 
