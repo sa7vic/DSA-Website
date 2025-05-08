@@ -1,8 +1,21 @@
+import { useState } from 'react'
 import './App.css'
 import CodeViewer from './components/CodeViewer'
 import LinkedListVisualizer from './components/LinkedListVisualizer'
+import DiySection from './components/DiySection'
+import DoublyLinkedListExplanation from './components/DoublyLinkedListExplanation'
+import { generateCppCode } from './utils/codeGenerator'
 
 function App() {
+  const [nodes, setNodes] = useState([]);
+  const [code, setCode] = useState(generateCppCode([]));
+
+  // Function to update both nodes and code
+  const updateNodesAndCode = (newNodes) => {
+    setNodes(newNodes);
+    setCode(generateCppCode(newNodes));
+  };
+
   return (
     <div className="app-container">
       <header className="app-header">
@@ -11,11 +24,16 @@ function App() {
       <div className="split-view">
         <div className="panel panel-left">
           <h2>C++ Implementation</h2>
-          <CodeViewer />
+          <CodeViewer code={code} />
+          <DiySection code={code} />
         </div>
         <div className="panel panel-right">
           <h2>Interactive Visualization</h2>
-          <LinkedListVisualizer />
+          <LinkedListVisualizer 
+            nodes={nodes} 
+            onNodesChange={updateNodesAndCode} 
+          />
+          <DoublyLinkedListExplanation />
         </div>
       </div>
     </div>

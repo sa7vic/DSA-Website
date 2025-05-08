@@ -2,7 +2,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { cppDoublyLinkedListCode } from '../cppCode';
 
-const CodeViewer = () => {
+const CodeViewer = ({ code = cppDoublyLinkedListCode }) => {
   return (
     <div className="code-viewer">
       <SyntaxHighlighter 
@@ -20,7 +20,7 @@ const CodeViewer = () => {
           maxHeight: 'calc(100vh - 2rem)'
         }}
       >
-        {cppDoublyLinkedListCode}
+        {code}
       </SyntaxHighlighter>
     </div>
   );

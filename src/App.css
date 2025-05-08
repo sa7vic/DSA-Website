@@ -154,3 +154,43 @@ input {
   font-size: 12px;
   margin-top: 0.25rem;
 }
+
+.diy-section, .explanation-section {
+  margin-top: 1.5rem;
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.diy-content, .explanation-content {
+  margin-top: 1rem;
+}
+
+.diy-section h3, .explanation-section h3 {
+  margin-top: 0;
+  color: #58a6ff;
+}
+
+.diy-section a {
+  color: #58a6ff;
+  text-decoration: none;
+}
+
+.diy-section a:hover {
+  text-decoration: underline;
+}
+
+.diy-section button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #238636;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.diy-section button:hover {
+  background-color: #2ea043;
+}
