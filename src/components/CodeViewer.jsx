@@ -1,8 +1,8 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { cppDoublyLinkedListCode } from '../cppCode';
 
-const CodeViewer = ({ code = cppDoublyLinkedListCode }) => {
+//Syntax Highlighter is kinda saving our ass and making it pretty, thanks prism
+const CodeViewer = ({ code}) => {
   return (
     <div className="code-viewer">
       <SyntaxHighlighter 
@@ -15,7 +15,7 @@ const CodeViewer = ({ code = cppDoublyLinkedListCode }) => {
           margin: 0,
           padding: '1rem',
           borderRadius: '6px',
-          fontSize: '14px',
+          fontSize: '18px',
           overflow: 'auto',
           maxHeight: 'calc(100vh - 2rem)'
         }}

@@ -25,7 +25,6 @@ function App() {
         <div className="panel panel-left">
           <h2>C++ Implementation</h2>
           <CodeViewer code={code} />
-          <DiySection code={code} />
         </div>
         <div className="panel panel-right">
           <h2>Interactive Visualization</h2>
@@ -34,6 +33,7 @@ function App() {
             onNodesChange={updateNodesAndCode} 
           />
           <DoublyLinkedListExplanation />
+          <DiySection code={code} />
         </div>
       </div>
     </div>

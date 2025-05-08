@@ -30,7 +30,7 @@ const DiySection = ({ code }) => {
           <ul>
             <li>Add a method to search for a specific value in the list</li>
             <li>Implement a method to reverse the list</li>
-            <li>Create a function to detect if the list has a cycle</li>
+            <li>Think of how you could use this to make a stack</li>
           </ul>
           
           <button onClick={() => navigator.clipboard.writeText(code)}>
