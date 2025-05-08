@@ -4,9 +4,7 @@ import { FaArrowRight, FaArrowLeft, FaExclamationTriangle } from 'react-icons/fa
 // Memory pool size
 const MEMORY_POOL_SIZE = 10;
 
-const LinkedListVisualizer = () => {
-  // State for the linked list nodes
-  const [nodes, setNodes] = useState([]);
+const LinkedListVisualizer = ({ nodes = [], onNodesChange }) => {
   // State for the memory pool
   const [memoryPool, setMemoryPool] = useState(
     Array(MEMORY_POOL_SIZE).fill().map((_, index) => ({
@@ -25,16 +23,16 @@ const LinkedListVisualizer = () => {
   // Function to allocate memory from the pool
   const allocateMemory = (data) => {
     const availableSlot = memoryPool.findIndex(slot => !slot.inUse);
-    
+
     if (availableSlot === -1) {
       alert('Memory pool is full! Cannot allocate more memory.');
       return null;
     }
-    
+
     const newMemoryPool = [...memoryPool];
     newMemoryPool[availableSlot].inUse = true;
     setMemoryPool(newMemoryPool);
-    
+
     return {
       data,
       address: memoryPool[availableSlot].address,
@@ -47,7 +45,7 @@ const LinkedListVisualizer = () => {
   // Function to free memory
   const freeMemory = (memoryIndex) => {
     if (memoryIndex === null || memoryIndex === undefined) return;
-    
+
     const newMemoryPool = [...memoryPool];
     newMemoryPool[memoryIndex].inUse = false;
     setMemoryPool(newMemoryPool);
@@ -59,19 +57,19 @@ const LinkedListVisualizer = () => {
       alert('Please enter a value for the node');
       return;
     }
-    
+
     const newNode = allocateMemory(inputValue);
     if (!newNode) return;
-    
+
     if (nodes.length > 0) {
       newNode.next = nodes[0].memoryIndex;
       const newNodes = [...nodes];
       newNodes[0].prev = newNode.memoryIndex;
-      setNodes([newNode, ...newNodes]);
+      onNodesChange([newNode, ...newNodes]);
     } else {
-      setNodes([newNode]);
+      onNodesChange([newNode]);
     }
-    
+
     setInputValue('');
   };
 
@@ -81,19 +79,19 @@ const LinkedListVisualizer = () => {
       alert('Please enter a value for the node');
       return;
     }
-    
+
     const newNode = allocateMemory(inputValue);
     if (!newNode) return;
-    
+
     if (nodes.length > 0) {
       newNode.prev = nodes[nodes.length - 1].memoryIndex;
       const newNodes = [...nodes];
       newNodes[nodes.length - 1].next = newNode.memoryIndex;
-      setNodes([...newNodes, newNode]);
+      onNodesChange([...newNodes, newNode]);
     } else {
-      setNodes([newNode]);
+      onNodesChange([newNode]);
     }
-    
+
     setInputValue('');
   };
 
@@ -103,37 +101,37 @@ const LinkedListVisualizer = () => {
       alert('Please enter a value for the node');
       return;
     }
-    
+
     const position = parseInt(positionInput);
     if (isNaN(position) || position < 0 || position > nodes.length) {
       alert(`Please enter a valid position between 0 and ${nodes.length}`);
       return;
     }
-    
+
     if (position === 0) {
       insertAtBeginning();
       return;
     }
-    
+
     if (position === nodes.length) {
       insertAtEnd();
       return;
     }
-    
+
     const newNode = allocateMemory(inputValue);
     if (!newNode) return;
-    
+
     const newNodes = [...nodes];
-    
+
     newNode.prev = newNodes[position - 1].memoryIndex;
     newNode.next = newNodes[position].memoryIndex;
-    
+
     newNodes[position - 1].next = newNode.memoryIndex;
     newNodes[position].prev = newNode.memoryIndex;
-    
+
     newNodes.splice(position, 0, newNode);
-    setNodes(newNodes);
-    
+    onNodesChange(newNodes);
+
     setInputValue('');
     setPositionInput('');
   };
@@ -144,16 +142,16 @@ const LinkedListVisualizer = () => {
       alert('List is empty');
       return;
     }
-    
+
     const newNodes = [...nodes];
     const deletedNode = newNodes.shift();
-    
+
     if (newNodes.length > 0) {
       newNodes[0].prev = null;
     }
-    
+
     freeMemory(deletedNode.memoryIndex);
-    setNodes(newNodes);
+    onNodesChange(newNodes);
   };
 
   // Function to delete a node from the end
@@ -162,16 +160,16 @@ const LinkedListVisualizer = () => {
       alert('List is empty');
       return;
     }
-    
+
     const newNodes = [...nodes];
     const deletedNode = newNodes.pop();
-    
+
     if (newNodes.length > 0) {
       newNodes[newNodes.length - 1].next = null;
     }
-    
+
     freeMemory(deletedNode.memoryIndex);
-    setNodes(newNodes);
+    onNodesChange(newNodes);
   };
 
   // Function to delete a node from a specific position
@@ -181,20 +179,20 @@ const LinkedListVisualizer = () => {
       alert(`Please enter a valid position between 0 and ${nodes.length - 1}`);
       return;
     }
-    
+
     if (position === 0) {
       deleteFromBeginning();
       return;
     }
-    
+
     if (position === nodes.length - 1) {
       deleteFromEnd();
       return;
     }
-    
+
     const newNodes = [...nodes];
     const deletedNode = newNodes[position];
-    
+
     // Update the prev and next pointers
     if (position > 0) {
       const prevNode = newNodes.find(node => node.memoryIndex === deletedNode.prev);
@@ -202,18 +200,18 @@ const LinkedListVisualizer = () => {
         prevNode.next = deletedNode.next;
       }
     }
-    
+
     if (position < newNodes.length - 1) {
       const nextNode = newNodes.find(node => node.memoryIndex === deletedNode.next);
       if (nextNode) {
         nextNode.prev = deletedNode.prev;
       }
     }
-    
+
     newNodes.splice(position, 1);
     freeMemory(deletedNode.memoryIndex);
-    setNodes(newNodes);
-    
+    onNodesChange(newNodes);
+
     setPositionInput('');
   };
 
@@ -223,8 +221,8 @@ const LinkedListVisualizer = () => {
     nodes.forEach(node => {
       freeMemory(node.memoryIndex);
     });
-    
-    setNodes([]);
+
+    onNodesChange([]);
   };
 
   // Check for memory leaks
@@ -232,7 +230,7 @@ const LinkedListVisualizer = () => {
     const leaks = memoryPool
       .filter(slot => slot.inUse && !nodes.some(node => node.memoryIndex === slot.index))
       .map(slot => slot.address);
-    
+
     setMemoryLeaks(leaks);
   }, [nodes, memoryPool]);
 
@@ -240,6 +238,7 @@ const LinkedListVisualizer = () => {
   return (
     <div className="visualization">
       <div className="controls">
+        <div>
         <input
           type="text"
           value={inputValue}
@@ -250,10 +249,12 @@ const LinkedListVisualizer = () => {
           type="number"
           value={positionInput}
           onChange={(e) => setPositionInput(e.target.value)}
-          placeholder="Position"
+          placeholder="0"
           min="0"
           max={nodes.length}
         />
+        </div>
+        <div className = "controls">
         <button onClick={insertAtBeginning}>Insert at Beginning</button>
         <button onClick={insertAtEnd}>Insert at End</button>
         <button onClick={insertAtPosition}>Insert at Position</button>
@@ -261,33 +262,40 @@ const LinkedListVisualizer = () => {
         <button onClick={deleteFromEnd}>Delete from End</button>
         <button onClick={deleteFromPosition}>Delete from Position</button>
         <button onClick={clearList}>Clear List</button>
+        </div>
       </div>
-      
-      <div className="linked-list-display">
-        {nodes.map((node, index) => (
-          <div key={index} className="node-container">
-            {index > 0 && (
-              <div className="pointer-left">
-                <FaArrowLeft />
-              </div>
-            )}
-            <div className="node node-active">
-              <div className="node-address">Address: {node.address}</div>
-              <div className="node-data">Data: {node.data}</div>
-              <div className="node-pointers">
-                <div>prev: {node.prev !== null ? memoryPool[node.prev]?.address : 'nullptr'}</div>
-                <div>next: {node.next !== null ? memoryPool[node.next]?.address : 'nullptr'}</div>
-              </div>
-            </div>
-            {index < nodes.length - 1 && (
-              <div className="pointer-right">
-                <FaArrowRight />
-              </div>
-            )}
+
+<div className="linked-list-display">
+  {nodes.length === 0 ? (
+    <div className="placeholder">
+      Insert something to visualize the linked list
+    </div>
+  ) : (
+    nodes.map((node, index) => (
+      <div key={index} className="node-container">
+        {index > 0 && (
+          <div className="pointer-left">
+            <FaArrowLeft />
           </div>
-        ))}
+        )}
+        <div className="node node-active">
+          <div className="node-address">Address: {node.address}</div>
+          <div className="node-data">Data: {node.data}</div>
+          <div className="node-pointers">
+            <div>prev: {node.prev !== null ? memoryPool[node.prev]?.address : 'nullptr'}</div>
+            <div>next: {node.next !== null ? memoryPool[node.next]?.address : 'nullptr'}</div>
+          </div>
+        </div>
+        {index < nodes.length - 1 && (
+          <div className="pointer-right">
+            <FaArrowRight />
+          </div>
+        )}
       </div>
-      
+    ))
+  )}
+</div>
+
       <h3>Memory Pool</h3>
       <div className="memory-grid">
         {memoryPool.map((slot, index) => (
@@ -302,7 +310,7 @@ const LinkedListVisualizer = () => {
           </div>
         ))}
       </div>
-      
+
       {memoryLeaks.length > 0 && (
         <div className="memory-leak-warning">
           <FaExclamationTriangle /> Memory Leak Detected! 
