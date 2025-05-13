@@ -449,8 +449,9 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
 
-  /* add glow */
-  
+  /* prevent descender clipping */
+  line-height: 1.2;
+  padding-bottom: 8px;
 }
 
 @keyframes waveGradient {
@@ -767,6 +768,20 @@
   z-index: 10;
 }
 
+/* push it up by 40px */
+#robocats {
+  margin-top: -40px;
+  /* or, if you prefer: */
+  /* position: relative; top: -40px; */
+}
+
+.robocats-svg {
+  /* pull it up by however many pixels you need */
+  margin-top: -80px;
+  /* optionally make sure it’s displayed as a block so margin works predictably */
+  display: block;
+}
+
 /* Responsive styles */
 @media (min-width: 768px) {
   .homepage-card-grid {
@@ -861,5 +876,18 @@
   
   .homepage-divider {
     background: rgba(255, 255, 255, 0.3);
+  }
+  .homepage-card {
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+  }
+  .homepage-card:hover {
+    box-shadow: 0 15px 35px rgba(255, 255, 255, 0.3);
+  }
+  .homepage-card-disabled {
+    background-color: #2C2A3A !important;
+    color: #FFFFFF;
+  }
+  .homepage-card-disabled .homepage-card-title-box {
+    background-color: rgba(255, 255, 255, 0.1);
   }
 }
