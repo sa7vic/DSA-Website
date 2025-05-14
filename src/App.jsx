@@ -4,11 +4,13 @@ import { motion } from 'framer-motion'
 import { FaHome } from 'react-icons/fa'
 import './App.css'
 import './components/LinkedListPage.css'
+import './styles/Sorting.css'
 import CodeViewer from './components/CodeViewer'
 import LinkedListVisualizer from './components/LinkedListVisualizer'
 import DiySection from './components/DiySection'
 import DoublyLinkedListExplanation from './components/DoublyLinkedListExplanation'
 import HomePage from './components/HomePage'
+import SortingVisualizer from './components/SortingVisualizer'
 import { generateCppCode } from './utils/codeGenerator'
 
 // Create a wrapper component to handle LinkedList page state
@@ -147,6 +149,7 @@ function App() {
             />
           }
         />
+        <Route path="/sorting" element={<SortingVisualizer />} />
         <Route path="/index.html" element={<Navigate replace to="/" />} />
       </Routes>
     </Router>
