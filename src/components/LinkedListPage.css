@@ -54,6 +54,47 @@
   animation: waveGradient 5s ease infinite;
 }
 
+.home-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(139, 62, 211, 0.4), rgba(74, 63, 110, 0.4));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: absolute;
+  left: 24px;
+  z-index: 10;
+}
+
+.home-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  background: linear-gradient(135deg, rgba(139, 62, 211, 0.5), rgba(74, 63, 110, 0.5));
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 20px rgba(139, 62, 211, 0.3);
+}
+
+.home-button:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 2px 10px rgba(139, 62, 211, 0.2);
+}
+
+.home-button svg {
+  transition: transform 0.3s ease;
+}
+
+.home-button:hover svg {
+  transform: translateX(-3px);
+}
+
 .split-view {
   display: flex;
   flex: 1;

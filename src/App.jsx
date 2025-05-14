@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { FaHome } from 'react-icons/fa'
 import './App.css'
 import './components/LinkedListPage.css'
 import CodeViewer from './components/CodeViewer'
@@ -24,7 +25,11 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <h1>C++ Doubly Linked List Visualization</h1>
+        <Link to="/" className="home-button">
+          <FaHome size={18} />
+          <span>Home</span>
+        </Link>
+        <h1 style={{ flex: 1, textAlign: 'center' }}>C++ Doubly Linked List Visualization</h1>
       </motion.header>
 
       <motion.div 
