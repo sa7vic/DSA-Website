@@ -4,25 +4,47 @@ import { FaArrowRight, FaArrowLeft, FaExclamationTriangle } from 'react-icons/fa
 // Memory pool size
 const MEMORY_POOL_SIZE = 10;
 
-const LinkedListVisualizer = ({ nodes = [], onNodesChange }) => {
+const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit }) => {
+  // Generate and store memory addresses that will be reused
+  const [memoryAddresses] = useState(() => 
+    Array(MEMORY_POOL_SIZE).fill().map(() => 
+      `0x${(Math.random() * 0xFFF | 0).toString(16).toUpperCase().padStart(3, '0')}`
+    )
+  );
+
   // State for the memory pool
-  const [memoryPool, setMemoryPool] = useState(
-    Array(MEMORY_POOL_SIZE).fill().map((_, index) => ({
-      address: `0x${(Math.random() * 0xFFF | 0).toString(16).toUpperCase().padStart(3, '0')}`,
+  const [memoryPool, setMemoryPool] = useState(() => {
+    const pool = Array(MEMORY_POOL_SIZE).fill().map((_, index) => ({
+      address: memoryAddresses[index],
       inUse: false,
       index
-    }))
-  );
-  // State for the input value
-  const [inputValue, setInputValue] = useState('');
-  // State for the position input
-  const [positionInput, setPositionInput] = useState('');
-  // State for memory leaks
-  const [memoryLeaks, setMemoryLeaks] = useState([]);
+    }));
+    if (onMemoryPoolInit) {
+      onMemoryPoolInit(pool.map(slot => slot.address));
+    }
+    return pool;
+  });
+
+  // Track the next available sequential index
+  const [nextAvailableIndex, setNextAvailableIndex] = useState(0);
+
+  // Function to get next sequential available index
+  const getNextAvailableIndex = () => {
+    let index = nextAvailableIndex;
+    // If current index is in use, find the next free one
+    while (index < MEMORY_POOL_SIZE && memoryPool[index].inUse) {
+      index++;
+    }
+    // If we reached the end, start from beginning
+    if (index >= MEMORY_POOL_SIZE) {
+      index = memoryPool.findIndex(slot => !slot.inUse);
+    }
+    return index;
+  };
 
   // Function to allocate memory from the pool
   const allocateMemory = (data) => {
-    const availableSlot = memoryPool.findIndex(slot => !slot.inUse);
+    const availableSlot = getNextAvailableIndex();
 
     if (availableSlot === -1) {
       alert('Memory pool is full! Cannot allocate more memory.');
@@ -32,6 +54,8 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange }) => {
     const newMemoryPool = [...memoryPool];
     newMemoryPool[availableSlot].inUse = true;
     setMemoryPool(newMemoryPool);
+    // Update next available index to the next slot
+    setNextAvailableIndex((availableSlot + 1) % MEMORY_POOL_SIZE);
 
     return {
       data,
@@ -49,7 +73,40 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange }) => {
     const newMemoryPool = [...memoryPool];
     newMemoryPool[memoryIndex].inUse = false;
     setMemoryPool(newMemoryPool);
+    
+    // If this was the earliest index, update nextAvailableIndex
+    if (memoryIndex < nextAvailableIndex) {
+      setNextAvailableIndex(memoryIndex);
+    }
   };
+
+  // Initialize memory pool function
+  function initializeMemoryPool() {
+    const pool = Array(MEMORY_POOL_SIZE).fill().map((_, index) => ({
+      address: memoryAddresses[index],
+      inUse: false,
+      index
+    }));
+    if (onMemoryPoolInit) {
+      onMemoryPoolInit(pool.map(slot => slot.address));
+    }
+    setNextAvailableIndex(0);
+    return pool;
+  }
+
+  // Reset state when component mounts/unmounts
+  useEffect(() => {
+    setMemoryPool(initializeMemoryPool());
+    return () => {
+      setMemoryPool(initializeMemoryPool());
+    };
+  }, []);
+  // State for the input value
+  const [inputValue, setInputValue] = useState('');
+  // State for the position input
+  const [positionInput, setPositionInput] = useState('');
+  // State for memory leaks
+  const [memoryLeaks, setMemoryLeaks] = useState([]);
 
   // Function to insert a node at the beginning
   const insertAtBeginning = () => {
@@ -227,9 +284,21 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange }) => {
 
   // Update memory pool status based on nodes
   useEffect(() => {
-    const newMemoryPool = memoryPool.map(slot => ({
+    // When nodes array becomes empty, clear all memory allocations
+    if (nodes.length === 0) {
+      const clearedMemoryPool = memoryPool.map(slot => ({
+        ...slot,
+        inUse: false
+      }));
+      setMemoryPool(clearedMemoryPool);
+      setMemoryLeaks([]);
+      return;
+    }
+
+    // Update memory pool status based on current nodes
+    const newMemoryPool = memoryPool.map((slot, index) => ({
       ...slot,
-      inUse: nodes.some(node => node.memoryIndex === slot.index)
+      inUse: nodes.some(node => node.memoryIndex === index)
     }));
     setMemoryPool(newMemoryPool);
     

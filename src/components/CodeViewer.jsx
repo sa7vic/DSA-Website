@@ -4,6 +4,12 @@ import Editor from "@monaco-editor/react";
 const CodeViewer = ({ code, onChange }) => {
   const editorRef = useRef(null);
 
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.setValue(code);
+    }
+  }, [code]);
+
   function handleEditorDidMount(editor, monaco) {
     editorRef.current = editor;
     // Remove the blue outline
@@ -11,8 +17,14 @@ const CodeViewer = ({ code, onChange }) => {
   }
 
   function handleEditorChange(value) {
-    if (onChange) {
-      // Parse the code and update visualization
+    if (!onChange) return;
+
+    // Use a debounced timer to prevent rapid updates
+    if (editorRef.current.updateTimer) {
+      clearTimeout(editorRef.current.updateTimer);
+    }
+
+    editorRef.current.updateTimer = setTimeout(() => {
       try {
         const lines = value.split('\n');
         const nodesData = [];
@@ -41,7 +53,7 @@ const CodeViewer = ({ code, onChange }) => {
       } catch (error) {
         console.error('Error parsing code:', error);
       }
-    }
+    }, 300); // Add a small delay to debounce rapid changes
   }
 
   return (

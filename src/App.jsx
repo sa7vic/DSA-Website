@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import './App.css'
@@ -14,19 +14,41 @@ function App() {
   const [nodes, setNodes] = useState([]);
   const [code, setCode] = useState(generateCppCode([]));
 
+  // Reset state when component unmounts or route changes
+  useEffect(() => {
+    return () => {
+      setNodes([]);
+      setCode(generateCppCode([]));
+    };
+  }, []);
+
+  // Store memory pool addresses
+  const [memoryPoolAddresses, setMemoryPoolAddresses] = useState([]);
+
+  // Function to handle memory pool initialization
+  const handleMemoryPoolInit = (addresses) => {
+    setMemoryPoolAddresses(addresses);
+  };
+
   // Function to update visualization based on code changes
   const handleCodeChange = (nodesData) => {
-    if (Array.isArray(nodesData)) {
-      // Convert the parsed code data into proper nodes format with consistent memory allocation
+    if (Array.isArray(nodesData) && memoryPoolAddresses.length > 0) {
+      // Track used indices to avoid duplicates
+      const usedIndices = new Set();
+      
       const newNodes = nodesData.map((node, index) => {
-        // Get a reference to the LinkedListVisualizer component to access memoryPool
-        const memoryPool = document.querySelector('.memory-grid')?.children;
-        const address = memoryPool ? memoryPool[index % 10].querySelector('.node-address').textContent.split(': ')[1] : `0x${index.toString(16).toUpperCase().padStart(3, '0')}`;
+        // Find first available index
+        let memoryIndex = index;
+        while (usedIndices.has(memoryIndex % 10)) {
+          memoryIndex++;
+        }
+        memoryIndex = memoryIndex % 10;
+        usedIndices.add(memoryIndex);
         
         return {
           data: node.data,
-          address: address,
-          memoryIndex: index % 10, // Cycle through memory pool slots
+          address: memoryPoolAddresses[memoryIndex],
+          memoryIndex: memoryIndex,
           prev: index > 0 ? (index - 1) % 10 : null,
           next: index < nodesData.length - 1 ? (index + 1) % 10 : null
         };
@@ -35,9 +57,10 @@ function App() {
     }
   };
 
-  // Function to update both nodes and code
+  // Function to update both nodes and code when using buttons
   const updateNodesAndCode = (newNodes) => {
     setNodes(newNodes);
+    // Update the code state which will trigger CodeViewer update
     setCode(generateCppCode(newNodes));
   };
 
@@ -87,7 +110,8 @@ function App() {
                   <h2>Interactive Visualization</h2>
                   <LinkedListVisualizer 
                     nodes={nodes} 
-                    onNodesChange={updateNodesAndCode} 
+                    onNodesChange={updateNodesAndCode}
+                    onMemoryPoolInit={handleMemoryPoolInit}
                   />
                   <DoublyLinkedListExplanation />
                   <DiySection code={code} />
