@@ -2,6 +2,34 @@ import { useState } from 'react';
 
 const DiySection = ({ code }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [copyCount, setCopyCount] = useState(0);
+  const [copyText, setCopyText] = useState("Copy Code to Clipboard");
+  
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(code);
+    setCopyCount(prev => prev + 1);
+    
+    // Fun copy messages
+    const messages = [
+      "Copied!",
+      "Copied twice!",
+      "Mega copy!",
+      "Super copy!",
+      "Ultra copy!",
+      "MAXIMUM COPY!",
+      "LEGENDARY COPY!!",
+      "GODLIKE COPY!!!",
+      "BEYOND COPY!!!!",
+      "∞ COPY ∞"
+    ];
+    
+    setCopyText(messages[Math.min(copyCount, messages.length - 1)]);
+    
+    // Reset text after 2 seconds
+    setTimeout(() => {
+      setCopyText("Copy Code to Clipboard");
+    }, 2000);
+  };
   
   return (
     <div className="diy-section">
@@ -33,8 +61,11 @@ const DiySection = ({ code }) => {
             <li>Think of how you could use this to make a stack</li>
           </ul>
           
-          <button onClick={() => navigator.clipboard.writeText(code)}>
-            Copy Code to Clipboard
+          <button 
+            onClick={handleCopy}
+            className={`copy-button ${copyText !== "Copy Code to Clipboard" ? 'copied' : ''}`}
+          >
+            {copyText}
           </button>
         </div>
       )}

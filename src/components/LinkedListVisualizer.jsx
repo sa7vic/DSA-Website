@@ -225,14 +225,21 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange }) => {
     onNodesChange([]);
   };
 
-  // Check for memory leaks
+  // Update memory pool status based on nodes
   useEffect(() => {
+    const newMemoryPool = memoryPool.map(slot => ({
+      ...slot,
+      inUse: nodes.some(node => node.memoryIndex === slot.index)
+    }));
+    setMemoryPool(newMemoryPool);
+    
+    // Check for memory leaks
     const leaks = memoryPool
       .filter(slot => slot.inUse && !nodes.some(node => node.memoryIndex === slot.index))
       .map(slot => slot.address);
 
     setMemoryLeaks(leaks);
-  }, [nodes, memoryPool]);
+  }, [nodes]);
 
   // Render the component
   return (

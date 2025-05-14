@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import './App.css'
+import './components/LinkedListPage.css'
 import CodeViewer from './components/CodeViewer'
 import LinkedListVisualizer from './components/LinkedListVisualizer'
 import DiySection from './components/DiySection'
@@ -9,9 +11,29 @@ import HomePage from './components/HomePage'
 import { generateCppCode } from './utils/codeGenerator'
 
 function App() {
-  // Maintain shared state at the top level
   const [nodes, setNodes] = useState([]);
   const [code, setCode] = useState(generateCppCode([]));
+
+  // Function to update visualization based on code changes
+  const handleCodeChange = (nodesData) => {
+    if (Array.isArray(nodesData)) {
+      // Convert the parsed code data into proper nodes format with consistent memory allocation
+      const newNodes = nodesData.map((node, index) => {
+        // Get a reference to the LinkedListVisualizer component to access memoryPool
+        const memoryPool = document.querySelector('.memory-grid')?.children;
+        const address = memoryPool ? memoryPool[index % 10].querySelector('.node-address').textContent.split(': ')[1] : `0x${index.toString(16).toUpperCase().padStart(3, '0')}`;
+        
+        return {
+          data: node.data,
+          address: address,
+          memoryIndex: index % 10, // Cycle through memory pool slots
+          prev: index > 0 ? (index - 1) % 10 : null,
+          next: index < nodesData.length - 1 ? (index + 1) % 10 : null
+        };
+      });
+      setNodes(newNodes);
+    }
+  };
 
   // Function to update both nodes and code
   const updateNodesAndCode = (newNodes) => {
@@ -27,15 +49,41 @@ function App() {
           path="/linked-list" 
           element={
             <div className="app-container">
-              <header className="app-header">
+              <div className="linkedlist-bg-overlay"></div>
+              <div className="floating-orb orb-1"></div>
+              <div className="floating-orb orb-2"></div>
+              
+              <motion.header 
+                className="app-header"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
                 <h1>C++ Doubly Linked List Visualization</h1>
-              </header>
-              <div className="split-view">
-                <div className="panel panel-left">
+              </motion.header>
+
+              <motion.div 
+                className="split-view"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <motion.div 
+                  className="panel panel-left"
+                  initial={{ x: -20 }}
+                  animate={{ x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                >
                   <h2>C++ Implementation</h2>
-                  <CodeViewer code={code} />
-                </div>
-                <div className="panel panel-right">
+                  <CodeViewer code={code} onChange={handleCodeChange} />
+                </motion.div>
+
+                <motion.div 
+                  className="panel panel-right"
+                  initial={{ x: 20 }}
+                  animate={{ x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                >
                   <h2>Interactive Visualization</h2>
                   <LinkedListVisualizer 
                     nodes={nodes} 
@@ -43,12 +91,11 @@ function App() {
                   />
                   <DoublyLinkedListExplanation />
                   <DiySection code={code} />
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </div>
           }
         />
-        {/* Redirect legacy URLs to the new paths if needed */}
         <Route path="/index.html" element={<Navigate replace to="/" />} />
       </Routes>
     </Router>

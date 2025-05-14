@@ -1,27 +1,71 @@
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useEffect, useRef } from 'react';
+import Editor from "@monaco-editor/react";
 
-//Syntax Highlighter is kinda saving our ass and making it pretty, thanks prism
-const CodeViewer = ({ code}) => {
+const CodeViewer = ({ code, onChange }) => {
+  const editorRef = useRef(null);
+
+  function handleEditorDidMount(editor, monaco) {
+    editorRef.current = editor;
+    // Remove the blue outline
+    editor.getDomNode()?.style.setProperty('outline', 'none');
+  }
+
+  function handleEditorChange(value) {
+    if (onChange) {
+      // Parse the code and update visualization
+      try {
+        const lines = value.split('\n');
+        const nodesData = [];
+        
+        // Find the main function or relevant code section
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          // Look for node creation and operations
+          if (line.includes('insert') || line.includes('delete')) {
+            const matches = line.match(/\d+/);
+            if (matches) {
+              const value = parseInt(matches[0]);
+              if (line.includes('insertAtBeginning')) {
+                nodesData.unshift({ data: value });
+              } else if (line.includes('insertAtEnd')) {
+                nodesData.push({ data: value });
+              } else if (line.includes('deleteFromBeginning')) {
+                nodesData.shift();
+              } else if (line.includes('deleteFromEnd')) {
+                nodesData.pop();
+              }
+            }
+          }
+        }
+        onChange(nodesData);
+      } catch (error) {
+        console.error('Error parsing code:', error);
+      }
+    }
+  }
+
   return (
-    <div className="code-viewer">
-      <SyntaxHighlighter 
-        language="cpp" 
-        style={vscDarkPlus}
-        showLineNumbers={true}
-        wrapLines={true}
-        customStyle={{
-          backgroundColor: '#161b22',
-          margin: 0,
-          padding: '1rem',
-          borderRadius: '6px',
-          fontSize: '18px',
-          overflow: 'auto',
-          maxHeight: 'calc(100vh - 2rem)'
+    <div className="code-viewer" style={{ outline: 'none' }}>
+      <Editor
+        height="70vh"
+        defaultLanguage="cpp"
+        defaultValue={code}
+        theme="vs-dark"
+        options={{
+          fontSize: 16,
+          minimap: { enabled: false },
+          lineNumbers: 'on',
+          roundedSelection: false,
+          scrollBeyondLastLine: false,
+          readOnly: false,
+          automaticLayout: true,
+          // Remove focus outline
+          folding: true,
+          fixedOverflowWidgets: true,
         }}
-      >
-        {code}
-      </SyntaxHighlighter>
+        onMount={handleEditorDidMount}
+        onChange={handleEditorChange}
+      />
     </div>
   );
 };
