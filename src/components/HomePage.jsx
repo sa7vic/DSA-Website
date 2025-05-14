@@ -77,7 +77,7 @@ const HomePage = () => {
     },
     {
       title: 'Heaps',
-      icon: <FaTree size={40} color={getIconColor('#2A623D')} />,
+      icon: <FaLayerGroup size={40} color={getIconColor('#2A623D')} />,
       color: '#2A623D', // Green
       enabled: false
     }
