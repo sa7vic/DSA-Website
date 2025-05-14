@@ -1,9 +1,90 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { FaHome, FaRandom, FaSortAmountDown, FaSlidersH } from 'react-icons/fa';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import '../styles/Sorting.css';
+import '../styles/control-section.css';
 
+// CodeHighlighter component using react-syntax-highlighter with auto-scroll to highlighted line
+const CodeHighlighter = ({ code, currentLine }) => {
+  const codeContainerRef = useRef(null);
+  
+  if (!code) return null;
+  
+  // Custom renderer to add line highlighting
+  const lineProps = (lineNumber) => {
+    const style = {
+      display: 'block',
+      padding: '0 0.5rem',
+      width: '100%',
+    };
+    
+    // Check if this is the line that needs highlighting
+    if (currentLine === lineNumber) {
+      return {
+        style: {
+          ...style,
+          backgroundColor: 'rgba(88, 166, 255, 0.1)', 
+          borderLeft: '2px solid #58a6ff',
+          paddingLeft: '1rem',
+        },
+        className: 'highlight-line',
+      };
+    }
+    
+    return { style };
+  };
+  
+  // Effect to scroll to the highlighted line when it changes
+  useEffect(() => {
+    if (!currentLine || !codeContainerRef.current) return;
+    
+    // Find the highlighted line element
+    const highlightedLine = codeContainerRef.current.querySelector('.highlight-line');
+    
+    if (highlightedLine) {
+      // Scroll the highlighted line into view with smooth behavior
+      highlightedLine.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }, [currentLine, code]);
+  
+  return (
+    <div 
+      className="algorithm-code"
+      ref={codeContainerRef}
+      style={{ height: '100%', display: 'flex', flexDirection: 'column', flex: 1 }}
+    >
+      <SyntaxHighlighter
+        language="javascript"
+        style={atomDark}
+        wrapLines={true}
+        showLineNumbers={true}
+        lineProps={lineNumber => lineProps(lineNumber)}
+        customStyle={{
+          margin: 0,
+          padding: '0.75rem',
+          borderRadius: '6px',
+          backgroundColor: '#0d1117',
+          fontSize: '0.85rem',
+          lineHeight: '1.5',
+          height: 'auto', 
+          overflow: 'visible',
+          flex: 1,
+          minHeight: '300px'
+        }}
+      >
+        {code}
+      </SyntaxHighlighter>
+    </div>
+  );
+};
+
+// Spring animation configuration for smooth transitions
 const springAnim = {
   type: "spring",
   damping: 20,
@@ -323,6 +404,7 @@ const SortingVisualizer = () => {
   const [showInfo, setShowInfo] = useState(false);
   const [showCodePanel, setShowCodePanel] = useState(true); // Always show by default
   const [currentStep, setCurrentStep] = useState(""); // Current algorithm step description
+  const [currentLine, setCurrentLine] = useState(0); // Current highlighted line in the code
 
   const createArray = (size = Math.floor(window.innerWidth / 60)) => {
     let arr = [];
@@ -369,6 +451,47 @@ const SortingVisualizer = () => {
       setTimeout(() => {
         setArray(results[i].array);
         setCurrentStep(results[i].step);
+        
+        // Update the highlighted line based on the algorithm and current step
+        // These line numbers correspond to the pseudocode in algorithmInfo
+        if (method === "Selection Sort") {
+          if (results[i].step.includes("Finding minimum")) {
+            setCurrentLine(3);
+          } else if (results[i].step.includes("Found new minimum")) {
+            setCurrentLine(6);
+          } else if (results[i].step.includes("Swapping")) {
+            setCurrentLine(8);
+          } else if (results[i].step.includes("sorted successfully")) {
+            setCurrentLine(10);
+          }
+        } else if (method === "Merge Sort") {
+          if (results[i].step.includes("Dividing array")) {
+            setCurrentLine(1);
+          } else if (results[i].step.includes("Merging subarrays")) {
+            setCurrentLine(5);
+          } else if (results[i].step.includes("Comparing and merging")) {
+            setCurrentLine(15);
+          } else if (results[i].step.includes("Adding remaining")) {
+            setCurrentLine(18);
+          } else if (results[i].step.includes("sorted successfully")) {
+            setCurrentLine(null);
+          }
+        } else if (method === "Quick Sort") {
+          if (results[i].step.includes("Selecting pivot")) {
+            setCurrentLine(2);
+          } else if (results[i].step.includes("Partitioning")) {
+            setCurrentLine(9);
+          } else if (results[i].step.includes("Comparing")) {
+            setCurrentLine(12);
+          } else if (results[i].step.includes("less than pivot")) {
+            setCurrentLine(14);
+          } else if (results[i].step.includes("Placing pivot")) {
+            setCurrentLine(16);
+          } else if (results[i].step.includes("sorted successfully")) {
+            setCurrentLine(null);
+          }
+        }
+        
         if (i === results.length - 1) {
           setIsAnimating(false);
         }
@@ -419,105 +542,136 @@ const SortingVisualizer = () => {
           className={`code-panel-toggle ${showCodePanel ? 'active' : ''}`} 
           onClick={() => setShowCodePanel(!showCodePanel)}
         >
-          {showCodePanel ? 'Hide Steps' : 'Show Steps'}
+          {showCodePanel ? 'Hide Code' : 'Show Code'}
         </button>
       </motion.header>
 
       {/* Main content */}
       <motion.div 
-        className={`sorting-content ${showCodePanel ? 'with-code-panel' : ''}`}
+        className="sorting-content"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
       >
-        {/* Steps Panel */}
-        {showCodePanel && (
-          <motion.div 
-            className="code-panel"
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: "350px" }}
-            exit={{ opacity: 0, width: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <h3>Algorithm Steps</h3>
-            
-            <div className="algorithm-info">
-              {method !== "Select Algorithm" && (
-                <div className="algorithm-metrics">
-                  <div className="metric">
-                    <span className="metric-label">Time Complexity:</span>
-                    <span className="metric-value">{algorithmInfo[method]?.timeComplexity}</span>
-                  </div>
-                  <div className="metric">
-                    <span className="metric-label">Space Complexity:</span>
-                    <span className="metric-value">{algorithmInfo[method]?.spaceComplexity}</span>
-                  </div>
+        {/* Steps Panel - always visible */}
+        <motion.div 
+          className="code-panel"
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: "320px" }}
+          exit={{ opacity: 0, width: 0 }}
+          transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
+        >
+          <h3>Algorithm Steps</h3>
+          
+          <div className="algorithm-info">
+            {method !== "Select Algorithm" && (
+              <div className="algorithm-metrics">
+                <div className="metric">
+                  <span className="metric-label">Time Complexity:</span>
+                  <span className="metric-value">{algorithmInfo[method]?.timeComplexity}</span>
                 </div>
-              )}
-            </div>
-            
-            <div className="step-display">
-              <h4>Current Operation:</h4>
-              <div className={`step-description ${isAnimating ? 'active-step' : ''}`}>
-                {currentStep || "Select an algorithm and press 'Sort' to start visualization"}
+                <div className="metric">
+                  <span className="metric-label">Space Complexity:</span>
+                  <span className="metric-value">{algorithmInfo[method]?.spaceComplexity}</span>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        )}
-        {/* Controls Panel */}
-        <div className="sorting-controls">
-          <div className="control-group">
-            <button 
-              className="control-button" 
-              onClick={randomize} 
-              disabled={isAnimating}
-            >
-              <FaRandom /> Randomize
-            </button>
-            
-            <div className="algorithm-dropdown">
-              <button className="control-button dropdown-toggle">
-                <FaSortAmountDown /> {method}
-              </button>
-              <div className="algorithm-dropdown-content">
-                <button onClick={() => setMethod("Selection Sort")}>Selection Sort</button>
-                <button onClick={() => setMethod("Merge Sort")}>Merge Sort</button>
-                <button onClick={() => setMethod("Quick Sort")}>Quick Sort</button>
-              </div>
-            </div>
-            
-            <button 
-              className="control-button sort-button" 
-              onClick={handleSort}
-              disabled={isAnimating}
-            >
-              Sort
-            </button>
+            )}
           </div>
           
-          <div className="control-group sliders">
-            <div className="slider-container">
-              <label>Array Size</label>
-              <input 
-                type="range" 
-                min="5" 
-                max={Math.floor(window.innerWidth / 40)} 
-                value={length} 
-                onChange={handleSizeChange}
-                disabled={isAnimating}
-              />
+          <div className="step-display">
+            <h4>Current Operation:</h4>
+            <div className={`step-description ${isAnimating ? 'active-step' : ''}`}>
+              {currentStep || "Select an algorithm and press 'Sort' to start visualization"}
             </div>
             
-            <div className="slider-container">
-              <label>Animation Speed</label>
-              <input 
-                type="range" 
-                min="100" 
-                max="1000" 
-                defaultValue="500" 
-                onChange={handleSpeedChange}
+            {/* Learn More section - moved from bottom info panel */}
+            {method !== "Select Algorithm" && (
+              <div className="algorithm-details-container">
+                <p className="algorithm-description">{algorithmInfo[method]?.description}</p>
+                <button 
+                  className="info-toggle-button" 
+                  onClick={() => setShowInfo(!showInfo)}
+                >
+                  {showInfo ? "Hide Details" : "Learn More"}
+                </button>
+                
+                {showInfo && (
+                  <motion.div 
+                    className="algorithm-details"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {method === "Selection Sort" && (
+                      <p>Selection sort is simple but inefficient for large datasets. It divides the array into a sorted and unsorted region, repeatedly finding the minimum element from the unsorted region and moving it to the beginning of the sorted region.</p>
+                    )}
+                    {method === "Merge Sort" && (
+                      <p>Merge sort is more efficient than basic sorting algorithms like insertion or selection sort. It uses a divide-and-conquer approach that breaks down the array into equal halves until atomic values are reached, then rebuilds by merging and sorting.</p>
+                    )}
+                    {method === "Quick Sort" && (
+                      <p>Quick sort is generally faster in practice than other O(n log n) algorithms because its inner loop can be efficiently implemented on most architectures. It works by selecting a 'pivot' element and partitioning the other elements into two sub-arrays according to whether they are less than or greater than the pivot.</p>
+                    )}
+                  </motion.div>
+                )}
+              </div>
+            )}
+          </div>
+        </motion.div>          {/* Controls Panel */}
+        <div className="sorting-controls">
+          <div className="control-section">
+            <div className="control-group">
+              <button 
+                className="control-button" 
+                onClick={randomize} 
                 disabled={isAnimating}
-              />
+              >
+                <FaRandom /> Randomize
+              </button>
+              
+              <div className="algorithm-dropdown">
+                <button className="control-button dropdown-toggle">
+                  <FaSortAmountDown /> {method}
+                </button>
+                <div className="algorithm-dropdown-content">
+                  <button onClick={() => setMethod("Selection Sort")}>Selection Sort</button>
+                  <button onClick={() => setMethod("Merge Sort")}>Merge Sort</button>
+                  <button onClick={() => setMethod("Quick Sort")}>Quick Sort</button>
+                </div>
+              </div>
+              
+              <button 
+                className="control-button sort-button" 
+                onClick={handleSort}
+                disabled={isAnimating}
+              >
+                Sort
+              </button>
+            </div>
+          
+            <div className="control-group sliders">
+              <div className="slider-container">
+                <label>Array Size</label>
+                <input 
+                  type="range" 
+                  min="5" 
+                  max={Math.floor(window.innerWidth / 40)} 
+                  value={length} 
+                  onChange={handleSizeChange}
+                  disabled={isAnimating}
+                />
+              </div>
+              
+              <div className="slider-container">
+                <label>Animation Speed</label>
+                <input 
+                  type="range" 
+                  min="100" 
+                  max="1000" 
+                  defaultValue="500" 
+                  onChange={handleSpeedChange}
+                  disabled={isAnimating}
+                />
+              </div>
             </div>
           </div>
           
@@ -526,11 +680,38 @@ const SortingVisualizer = () => {
               Please select an algorithm first!
             </div>
           )}
+          
+          {/* Algorithm Code Block - moved below controls */}
+          {showCodePanel && method !== "Select Algorithm" && (
+            <motion.div 
+              className="algorithm-code-container"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                flex: 1, 
+                minHeight: '400px',
+                height: 'auto',
+                maxHeight: 'none'
+              }}
+            >
+              <h4>Algorithm Code:</h4>
+              <div style={{ flex: 1, display: 'flex', overflow: 'visible' }}>
+                <CodeHighlighter 
+                  code={algorithmInfo[method]?.pseudocode || 'No code available'} 
+                  currentLine={currentLine}
+                />
+              </div>
+            </motion.div>
+          )}
         </div>
         
         {/* Visualization Area */}
         <div className="sorting-visualization-container">
-          {/* Algorithm Info Panel */}
+          {/* Algorithm Info Panel - simplified without Learn More section */}
           {method !== "Select Algorithm" && (
             <motion.div 
               className="algorithm-info-panel"
@@ -549,32 +730,6 @@ const SortingVisualizer = () => {
                   <span className="metric-value">{algorithmInfo[method]?.spaceComplexity}</span>
                 </div>
               </div>
-              <p className="algorithm-description">{algorithmInfo[method]?.description}</p>
-              <button 
-                className="info-toggle-button" 
-                onClick={() => setShowInfo(!showInfo)}
-              >
-                {showInfo ? "Hide Details" : "Learn More"}
-              </button>
-              
-              {showInfo && (
-                <motion.div 
-                  className="algorithm-details"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {method === "Selection Sort" && (
-                    <p>Selection sort is simple but inefficient for large datasets. It divides the array into a sorted and unsorted region, repeatedly finding the minimum element from the unsorted region and moving it to the beginning of the sorted region.</p>
-                  )}
-                  {method === "Merge Sort" && (
-                    <p>Merge sort is more efficient than basic sorting algorithms like insertion or selection sort. It uses a divide-and-conquer approach that breaks down the array into equal halves until atomic values are reached, then rebuilds by merging and sorting.</p>
-                  )}
-                  {method === "Quick Sort" && (
-                    <p>Quick sort is generally faster in practice than other O(n log n) algorithms because its inner loop can be efficiently implemented on most architectures. It works by selecting a 'pivot' element and partitioning the other elements into two sub-arrays according to whether they are less than or greater than the pivot.</p>
-                  )}
-                </motion.div>
-              )}
             </motion.div>
           )}
           
