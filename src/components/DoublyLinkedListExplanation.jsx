@@ -1,10 +1,53 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const DoublyLinkedListExplanation = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   
   return (
     <div className="explanation-section">
+      <div className="navigation-controls" style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10 }}>
+        <Link 
+          to="/" 
+          className="return-button" 
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            padding: '10px 18px',
+            backgroundColor: '#3a4a5c',
+            color: 'white',
+            borderRadius: '6px',
+            textDecoration: 'none',
+            fontSize: '15px',
+            fontWeight: 'bold',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+            transition: 'all 0.3s ease',
+            border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(4px)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#2d3748';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.25)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#3a4a5c';
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+          }}
+        >
+          <span style={{ 
+            marginRight: '8px', 
+            fontWeight: 'bold', 
+            fontSize: '18px',
+            transition: 'transform 0.3s ease'
+          }}>←</span>
+          Return to Home
+        </Link>
+      </div>
+      
       <h3 onClick={() => setIsExpanded(!isExpanded)} style={{ cursor: 'pointer' }}>
         {isExpanded ? '▼' : '►'} Understanding Doubly Linked Lists
       </h3>
