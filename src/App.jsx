@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import './App.css'
 import './components/LinkedListPage.css'
@@ -10,17 +10,76 @@ import DoublyLinkedListExplanation from './components/DoublyLinkedListExplanatio
 import HomePage from './components/HomePage'
 import { generateCppCode } from './utils/codeGenerator'
 
-function App() {
-  const [nodes, setNodes] = useState([]);
-  const [code, setCode] = useState(generateCppCode([]));
+// Create a wrapper component to handle LinkedList page state
+function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, handleMemoryPoolInit, handleCodeChange, updateNodesAndCode }) {
+  return (
+    <div className="app-container">
+      <div className="linkedlist-bg-overlay"></div>
+      <div className="floating-orb orb-1"></div>
+      <div className="floating-orb orb-2"></div>
+      
+      <motion.header 
+        className="app-header"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <h1>C++ Doubly Linked List Visualization</h1>
+      </motion.header>
 
-  // Reset state when component unmounts or route changes
+      <motion.div 
+        className="split-view"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+      >
+        <motion.div 
+          className="panel panel-left"
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <h2>C++ Implementation</h2>
+          <CodeViewer code={code} onChange={handleCodeChange} />
+        </motion.div>
+
+        <motion.div 
+          className="panel panel-right"
+          initial={{ x: 20 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <h2>Interactive Visualization</h2>
+          <LinkedListVisualizer 
+            nodes={nodes} 
+            onNodesChange={updateNodesAndCode}
+            onMemoryPoolInit={handleMemoryPoolInit}
+          />
+          <DoublyLinkedListExplanation />
+          <DiySection code={code} />
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
+
+function App() {
+  // Persist state at App level
+  const [nodes, setNodes] = useState(() => {
+    const saved = sessionStorage.getItem('linkedListNodes');
+    return saved ? JSON.parse(saved) : [];
+  });
+  
+  const [code, setCode] = useState(() => {
+    const saved = sessionStorage.getItem('linkedListCode');
+    return saved || generateCppCode([]);
+  });
+
+  // Save state to sessionStorage when it changes
   useEffect(() => {
-    return () => {
-      setNodes([]);
-      setCode(generateCppCode([]));
-    };
-  }, []);
+    sessionStorage.setItem('linkedListNodes', JSON.stringify(nodes));
+    sessionStorage.setItem('linkedListCode', code);
+  }, [nodes, code]);
 
   // Store memory pool addresses
   const [memoryPoolAddresses, setMemoryPoolAddresses] = useState([]);
@@ -71,53 +130,16 @@ function App() {
         <Route 
           path="/linked-list" 
           element={
-            <div className="app-container">
-              <div className="linkedlist-bg-overlay"></div>
-              <div className="floating-orb orb-1"></div>
-              <div className="floating-orb orb-2"></div>
-              
-              <motion.header 
-                className="app-header"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                <h1>C++ Doubly Linked List Visualization</h1>
-              </motion.header>
-
-              <motion.div 
-                className="split-view"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <motion.div 
-                  className="panel panel-left"
-                  initial={{ x: -20 }}
-                  animate={{ x: 0 }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
-                >
-                  <h2>C++ Implementation</h2>
-                  <CodeViewer code={code} onChange={handleCodeChange} />
-                </motion.div>
-
-                <motion.div 
-                  className="panel panel-right"
-                  initial={{ x: 20 }}
-                  animate={{ x: 0 }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
-                >
-                  <h2>Interactive Visualization</h2>
-                  <LinkedListVisualizer 
-                    nodes={nodes} 
-                    onNodesChange={updateNodesAndCode}
-                    onMemoryPoolInit={handleMemoryPoolInit}
-                  />
-                  <DoublyLinkedListExplanation />
-                  <DiySection code={code} />
-                </motion.div>
-              </motion.div>
-            </div>
+            <LinkedListPage
+              nodes={nodes}
+              setNodes={setNodes}
+              code={code}
+              setCode={setCode}
+              memoryPoolAddresses={memoryPoolAddresses}
+              handleMemoryPoolInit={handleMemoryPoolInit}
+              handleCodeChange={handleCodeChange}
+              updateNodesAndCode={updateNodesAndCode}
+            />
           }
         />
         <Route path="/index.html" element={<Navigate replace to="/" />} />

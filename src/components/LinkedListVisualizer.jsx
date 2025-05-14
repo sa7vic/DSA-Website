@@ -4,23 +4,24 @@ import { FaArrowRight, FaArrowLeft, FaExclamationTriangle } from 'react-icons/fa
 // Memory pool size
 const MEMORY_POOL_SIZE = 10;
 
+// Pre-generate fixed memory addresses
+const MEMORY_ADDRESSES = Array(MEMORY_POOL_SIZE).fill().map((_, i) => 
+  `0x${(i * 100).toString(16).toUpperCase().padStart(3, '0')}`
+);
+
 const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit }) => {
-  // Generate and store memory addresses that will be reused
-  const [memoryAddresses] = useState(() => 
-    Array(MEMORY_POOL_SIZE).fill().map(() => 
-      `0x${(Math.random() * 0xFFF | 0).toString(16).toUpperCase().padStart(3, '0')}`
-    )
-  );
+  // Use the pre-generated addresses
+  const [memoryAddresses] = useState(MEMORY_ADDRESSES);
 
   // State for the memory pool
   const [memoryPool, setMemoryPool] = useState(() => {
     const pool = Array(MEMORY_POOL_SIZE).fill().map((_, index) => ({
-      address: memoryAddresses[index],
+      address: MEMORY_ADDRESSES[index],
       inUse: false,
       index
     }));
     if (onMemoryPoolInit) {
-      onMemoryPoolInit(pool.map(slot => slot.address));
+      onMemoryPoolInit(MEMORY_ADDRESSES);
     }
     return pool;
   });
@@ -59,7 +60,7 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit }) =
 
     return {
       data,
-      address: memoryPool[availableSlot].address,
+      address: MEMORY_ADDRESSES[availableSlot],
       memoryIndex: availableSlot,
       prev: null,
       next: null
@@ -83,12 +84,12 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit }) =
   // Initialize memory pool function
   function initializeMemoryPool() {
     const pool = Array(MEMORY_POOL_SIZE).fill().map((_, index) => ({
-      address: memoryAddresses[index],
+      address: MEMORY_ADDRESSES[index],
       inUse: false,
       index
     }));
     if (onMemoryPoolInit) {
-      onMemoryPoolInit(pool.map(slot => slot.address));
+      onMemoryPoolInit(MEMORY_ADDRESSES);
     }
     setNextAvailableIndex(0);
     return pool;
