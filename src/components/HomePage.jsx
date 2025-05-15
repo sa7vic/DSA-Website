@@ -59,9 +59,10 @@ const HomePage = () => {
     },
     {
       title: 'Trees',
+      link: '/trees',
       icon: <FaTree size={40} color={getIconColor('#2A623D')} />,
       color: '#2A623D', // Green
-      enabled: false
+      enabled: true
     },
     {
       title: 'Graphs',
