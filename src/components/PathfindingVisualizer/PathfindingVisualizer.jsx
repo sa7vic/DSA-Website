@@ -66,12 +66,12 @@ class PathfindingVisualizer extends Component {
     if (this.animating) return;
     
     // Limit grid size to be more manageable and prevent performance issues
-    let row_size = Math.min(Math.floor((window.innerHeight - 200) / 27), 20);
-    let col_size = Math.min(Math.floor((window.innerWidth - 100) / 27), 30); 
+    let row_size = Math.min(Math.floor((window.innerHeight - 200) / 45), 15);
+    let col_size = Math.min(Math.floor((window.innerWidth - 100) / 45), 20); 
     
     // Ensure we have at least minimum grid size
     row_size = Math.max(row_size, 8);
-    col_size = Math.max(col_size, 15);
+    col_size = Math.max(col_size, 12);
     
     console.log(`Creating grid of size ${row_size} x ${col_size}`);
     

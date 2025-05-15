@@ -1,4 +1,6 @@
 import React from "react";
+import ydgImage from "../../assets/ydg.png";
+import baviImage from "../../assets/bavi.png";
 
 const Node = ({ 
   value,
@@ -43,8 +45,26 @@ const Node = ({
       onMouseLeave={() => onMouseLeave(row, col)}
       onDragStart={preventDefaultEvent}
       draggable={false}
-      style={{ cursor: 'pointer' }}
-    />
+      style={{ 
+        cursor: 'pointer',
+        position: 'relative'
+      }}
+    >
+      {isStart && (
+        <img 
+          src={ydgImage} 
+          alt="Start" 
+          className="node-image start-image"
+        />
+      )}
+      {isEnd && (
+        <img 
+          src={baviImage} 
+          alt="End" 
+          className="node-image end-image"
+        />
+      )}
+    </td>
   );
 };
 
