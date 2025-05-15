@@ -1,6 +1,7 @@
 import React from "react";
 import ydgImage from "../../assets/ydg.png";
 import baviImage from "../../assets/bavi.png";
+import blockImage from "../../assets/block.jpg"; // Add this import
 
 const Node = ({ 
   value,
@@ -62,6 +63,13 @@ const Node = ({
           src={baviImage} 
           alt="End" 
           className="node-image end-image"
+        />
+      )}
+      {isWall && (
+        <img 
+          src={blockImage} 
+          alt="Wall" 
+          className="node-image wall-image"
         />
       )}
     </td>
