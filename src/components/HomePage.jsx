@@ -66,9 +66,10 @@ const HomePage = () => {
     },
     {
       title: 'Graphs',
+      link: '/graphs',
       icon: <FaProjectDiagram size={40} color={getIconColor('#4A3F6E')} />,
       color: '#4A3F6E', // Purple
-      enabled: false
+      enabled: true
     },
     {
       title: 'Hash Tables',
