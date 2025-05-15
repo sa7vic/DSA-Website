@@ -1351,19 +1351,23 @@ const TreeVisualizer = () => {
       <div className="tree-controls">
         <div className="control-group">
           <div className="dropdown-container" ref={dropdownRef}>
-            <button className="dropdown-button" onClick={() => setDropdownOpen(!dropdownOpen)}>
+            <button 
+              className={`dropdown-button ${dropdownOpen ? 'open' : ''}`} 
+              onClick={() => setDropdownOpen(prev => !prev)}
+              aria-haspopup="true"
+              aria-expanded={dropdownOpen}
+            >
               {operation}
             </button>
-            {dropdownOpen && (
-              <div className="dropdown-menu">
-                <button onClick={() => handleOperationSelect("Insert")}>Insert</button>
-                <button onClick={() => handleOperationSelect("Search")}>Search</button>
-                <button onClick={() => handleOperationSelect("Delete")}>Delete</button>
-                <button onClick={() => handleOperationSelect("In-Order")}>In-Order Traversal</button>
-                <button onClick={() => handleOperationSelect("Pre-Order")}>Pre-Order Traversal</button>
-                <button onClick={() => handleOperationSelect("Post-Order")}>Post-Order Traversal</button>                
-              </div>
-            )}
+            <div className={`dropdown-menu ${dropdownOpen ? 'show' : ''}`}>
+              <button onClick={() => handleOperationSelect("Insert")}>Insert</button>
+              <button onClick={() => handleOperationSelect("Search")}>Search</button>
+              <button onClick={() => handleOperationSelect("Delete")}>Delete</button>
+              <button onClick={() => handleOperationSelect("In-Order")}>In-Order Traversal</button>
+              <button onClick={() => handleOperationSelect("Pre-Order")}>Pre-Order Traversal</button>
+              <button onClick={() => handleOperationSelect("Post-Order")}>Post-Order Traversal</button>
+              <button onClick={() => handleOperationSelect("Level-Order")}>Level-Order Traversal</button>
+            </div>
           </div>
           
           {["Insert", "Search", "Delete"].includes(operation) && (

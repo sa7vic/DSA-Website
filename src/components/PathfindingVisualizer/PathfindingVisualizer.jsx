@@ -4,6 +4,7 @@ import { FaHome, FaInfoCircle } from "react-icons/fa";
 import "../../styles/Pathfinding.css";
 import Node from "./Node";
 import Dijkstra from "./algorithms/Dijkstra.jsx";
+import AStar from "./algorithms/AStar.jsx";
 
 // Instructions Modal Component
 const InstructionsModal = ({ show, onClose, children }) => {
@@ -48,11 +49,11 @@ class PathfindingVisualizer extends Component {
           url: ""
         },
         "Dijkstra's Algorithm": {
-          text: "Dijkstra's algorithm is very similar to Prim's algorithm for minimum spanning tree. Like Prim's MST, we generate a SPT (shortest path tree) with given source as root. We maintain two sets, one set contains vertices included in shortest path tree, other set includes vertices not yet included in shortest path tree. At every step of the algorithm, we find a vertex which is in the other set (set of not yet included) and has a minimum distance from the source.",
+          text: "Dijkstra's algorithm finds the shortest path in a weighted graph. Starting from a source node, it visits nodes in order of their distance, updating distances as shorter paths are found. The algorithm maintains two sets: nodes with finalized shortest distances and nodes still being evaluated. It's guaranteed to find the optimal path in graphs with non-negative edge weights.",
           url: "https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/"
         },
         "A* Search": {
-          text: "Informally speaking, A* Search algorithms, unlike other traversal techniques, it has \"brains\". What it means is that it is really a smart algorithm which separates it from the other conventional algorithms. This fact is cleared in detail in below sections. And it is also worth mentioning that many games and web-based maps use this algorithm to find the shortest path very efficiently (approximation).",
+          text: "A* (A-star) is a pathfinding algorithm that combines Dijkstra's approach with heuristic estimates. It uses a best-first search strategy prioritizing paths that appear to lead closer to the goal. Unlike Dijkstra, which explores in all directions, A* uses a heuristic function to guide the search toward the target, making it faster and more efficient for finding paths to a specific destination.",
           url: "https://www.geeksforgeeks.org/a-search-algorithm/"
         }
       }
@@ -170,11 +171,17 @@ class PathfindingVisualizer extends Component {
     if (this.state.mouseClicked) {
       let arr = this.state.grid;
       if (this.state.mainClicked === "start") {
+        // Don't allow start point to overlap with end point
+        if (arr[row][col].isEnd) return;
+        
         arr[row][col].isStart = true;
         this.setState({
           start_node: [row, col]
         });
       } else if (this.state.mainClicked === "end") {
+        // Don't allow end point to overlap with start point
+        if (arr[row][col].isStart) return;
+        
         arr[row][col].isEnd = true;
         this.setState({
           end_node: [row, col]
@@ -256,7 +263,16 @@ class PathfindingVisualizer extends Component {
     }
     
     // Run the algorithm
-    let { visited_nodes, shortestPath } = Dijkstra(this.state.grid, this.state.start_node, this.state.end_node);
+    let visited_nodes, shortestPath;
+    
+    if (this.state.method === "Dijkstra's Algorithm") {
+      ({ visited_nodes, shortestPath } = Dijkstra(this.state.grid, this.state.start_node, this.state.end_node));
+    } else if (this.state.method === "A* Search") {
+      ({ visited_nodes, shortestPath } = AStar(this.state.grid, this.state.start_node, this.state.end_node));
+    } else {
+      // Default to Dijkstra if no algorithm is selected somehow
+      ({ visited_nodes, shortestPath } = Dijkstra(this.state.grid, this.state.start_node, this.state.end_node));
+    }
     
     // Animate the results
     const animate = async () => {

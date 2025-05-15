@@ -70,9 +70,11 @@
   flex-wrap: wrap;
 }
 
+/* New dropdown styles */
 .dropdown-container {
   position: relative;
-  z-index: 1000; /* Ensure container has high z-index */
+  z-index: 1000;
+  display: inline-block;
 }
 
 .dropdown-button {
@@ -85,43 +87,58 @@
   min-width: 180px;
   text-align: left;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.dropdown-button:hover {
+  background-color: #367c48;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 .dropdown-button:after {
   content: '▼';
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
   font-size: 0.8rem;
+  transition: transform 0.3s ease;
+  margin-left: 8px;
+}
+
+/* Add style for when dropdown is open */
+.dropdown-button.open:after {
+  transform: rotate(180deg);
 }
 
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 5px);
   left: 0;
-  background-color: rgba(15, 25, 20, 0.95);
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), 0 0 1px rgba(255, 255, 255, 0.1);
-  z-index: 1000; /* Increased z-index to ensure it's above other elements */
-  min-width: 200px;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: rgba(20, 30, 25, 0.95);
+  border-radius: 4px;
+  min-width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  display: none;
+  animation: slideDown 0.2s ease-out forwards;
   overflow: hidden;
-  transform-origin: top center;
-  animation: dropdownAppear 0.2s ease-out forwards;
-  max-height: 70vh; /* Limit height to prevent it going off screen */
-  overflow-y: auto; /* Add scroll if too many items */
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-@keyframes dropdownAppear {
+/* Show the menu when .show class is added */
+.dropdown-menu.show {
+  display: block;
+}
+
+@keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px) scale(0.95);
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -129,14 +146,14 @@
   display: block;
   width: 100%;
   text-align: left;
-  padding: 0.6rem 1rem;
+  padding: 0.75rem 1rem;
   background: none;
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.85);
+  color: white;
   font-size: 0.9rem;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
 .dropdown-menu button:last-child {
@@ -145,7 +162,6 @@
 
 .dropdown-menu button:hover {
   background-color: rgba(74, 175, 80, 0.15);
-  color: white;
   padding-left: 1.5rem;
 }
 

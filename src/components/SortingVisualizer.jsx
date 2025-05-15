@@ -737,16 +737,15 @@ function heapify(arr, n, i):
 
 const SortingVisualizer = () => {
   const [array, setArray] = useState([]);
-  const [method, setMethod] = useState("Select Algorithm");
+  const [method, setMethod] = useState("Choose an Algorithm");
   const [length, setLength] = useState(0);
   const [speed, setSpeed] = useState(100);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showError, setShowError] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-  const [showCodePanel, setShowCodePanel] = useState(true); // Always show by default
-  const [currentStep, setCurrentStep] = useState(""); // Current algorithm step description
-  const [currentLine, setCurrentLine] = useState(0); // Current highlighted line in the code
-  const [isPaused, setIsPaused] = useState(false);
+  const [showCodePanel, setShowCodePanel] = useState(true);
+  const [currentStep, setCurrentStep] = useState("");
+  const [currentLine, setCurrentLine] = useState(0);
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customInput, setCustomInput] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -793,39 +792,20 @@ const SortingVisualizer = () => {
     }
     animationState.current = { index: 0, results: [] };
     setIsAnimating(false);
-    setIsPaused(false);
     setCurrentStep("");
     setCurrentLine(null);
-    createArray(length);
-  };
-
-  const togglePause = () => {
-    setIsPaused(prev => {
-      if (!prev) { // If we're pausing
-        if (animationFrame.current) {
-          cancelAnimationFrame(animationFrame.current);
-          animationFrame.current = null;
-        }
-      } else { // If we're resuming
-        requestAnimationFrame(() => {
-          setTimeout(updateAnimation, speed);
-        });
-      }
-      return !prev;
-    });
+    
+    // Don't recreate array - fix the selected bars instead
+    const restoredArray = array.map(item => ({
+      ...item,
+      style: "bar"
+    }));
+    setArray(restoredArray);
   };
 
   const handleSort = () => {
-    if (isAnimating && !isPaused) return;
+    if (isAnimating) return;
     
-    if (isPaused) {
-      setIsPaused(false);
-      requestAnimationFrame(() => {
-        setTimeout(updateAnimation, speed);
-      });
-      return;
-    }
-
     if (method === "Select Algorithm") {
       setShowError(true);
       return;
@@ -877,78 +857,75 @@ const SortingVisualizer = () => {
         animationFrame.current = null;
       }
       setIsAnimating(false);
-      setIsPaused(false);
       return;
     }
 
-    if (!isPaused) {
-      setArray(results[index].array);
-      setCurrentStep(results[index].step);
-      
-      // Debug the current step
-      console.log(`Step: ${results[index].step}`);
-      
-      // Update line highlighting based on current step
-      // Make sure these are the correct line numbers for your pseudocode
-      switch (method) {
-        case "Bubble Sort":
-          if (results[index].step.includes("Comparing")) setCurrentLine(4);
-          else if (results[index].step.includes("Swapping")) setCurrentLine(5);
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
-          break;
-        case "Selection Sort":
-          if (results[index].step.includes("Finding minimum")) setCurrentLine(4);  // was 3
-          else if (results[index].step.includes("Found new minimum")) setCurrentLine(7);  // was 6
-          else if (results[index].step.includes("Swapping")) setCurrentLine(9);  // was 8
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
-          break;
-        case "Insertion Sort":
-          if (results[index].step.includes("Inserting")) setCurrentLine(5);  // was 4
-          else if (results[index].step.includes("Shifting")) setCurrentLine(8);  // was 7
-          else if (results[index].step.includes("Placed")) setCurrentLine(10);  // was 9
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
-          break;
-        case "Merge Sort":
-          if (results[index].step.includes("Dividing array")) setCurrentLine(5);  // was 4
-          else if (results[index].step.includes("Merging subarrays")) setCurrentLine(8);  // was 7
-          else if (results[index].step.includes("Comparing and merging")) setCurrentLine(16);  // was 15
-          else if (results[index].step.includes("Adding remaining")) setCurrentLine(19);  // was 18
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
-          break;
-        case "Quick Sort":
-          if (results[index].step.includes("Selecting pivot")) setCurrentLine(3);  // was 2
-          else if (results[index].step.includes("Partitioning")) setCurrentLine(9);  // was 8
-          else if (results[index].step.includes("Comparing")) setCurrentLine(13);  // was 12
-          else if (results[index].step.includes("less than pivot")) setCurrentLine(15);  // was 14
-          else if (results[index].step.includes("Placing pivot")) setCurrentLine(17);  // was 16
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
-          break;
-        case "Heap Sort":
-          if (results[index].step.includes("Building max heap")) setCurrentLine(4);  // was 3
-          else if (results[index].step.includes("Heapifying")) setCurrentLine(16);  // was 15
-          else if (results[index].step.includes("Moving largest")) setCurrentLine(9);  // was 8
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
-          break;
-        case "Counting Sort":
-          if (results[index].step.includes("Counting occurrence")) setCurrentLine(4);  // was 3
-          else if (results[index].step.includes("calculating cumulative")) setCurrentLine(9);  // was 8
-          else if (results[index].step.includes("Placing")) setCurrentLine(13);  // was 12
-          else if (results[index].step.includes("Copying sorted")) setCurrentLine(15);  // was 14
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
-          break;
-      }
-
-      // Log the current line for debugging
-      console.log(`Current Line: ${currentLine}`);
-
-      animationState.current.index = index + 1;
-      if (animationFrame.current) {
-        cancelAnimationFrame(animationFrame.current);
-      }
-      animationFrame.current = requestAnimationFrame(() => {
-        setTimeout(updateAnimation, speed);
-      });
+    setArray(results[index].array);
+    setCurrentStep(results[index].step);
+    
+    // Debug the current step
+    console.log(`Step: ${results[index].step}`);
+    
+    // Update line highlighting based on current step
+    // Make sure these are the correct line numbers for your pseudocode
+    switch (method) {
+      case "Bubble Sort":
+        if (results[index].step.includes("Comparing")) setCurrentLine(4);
+        else if (results[index].step.includes("Swapping")) setCurrentLine(5);
+        else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+        break;
+      case "Selection Sort":
+        if (results[index].step.includes("Finding minimum")) setCurrentLine(4);  // was 3
+        else if (results[index].step.includes("Found new minimum")) setCurrentLine(7);  // was 6
+        else if (results[index].step.includes("Swapping")) setCurrentLine(9);  // was 8
+        else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+        break;
+      case "Insertion Sort":
+        if (results[index].step.includes("Inserting")) setCurrentLine(5);  // was 4
+        else if (results[index].step.includes("Shifting")) setCurrentLine(8);  // was 7
+        else if (results[index].step.includes("Placed")) setCurrentLine(10);  // was 9
+        else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+        break;
+      case "Merge Sort":
+        if (results[index].step.includes("Dividing array")) setCurrentLine(5);  // was 4
+        else if (results[index].step.includes("Merging subarrays")) setCurrentLine(8);  // was 7
+        else if (results[index].step.includes("Comparing and merging")) setCurrentLine(16);  // was 15
+        else if (results[index].step.includes("Adding remaining")) setCurrentLine(19);  // was 18
+        else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+        break;
+      case "Quick Sort":
+        if (results[index].step.includes("Selecting pivot")) setCurrentLine(3);  // was 2
+        else if (results[index].step.includes("Partitioning")) setCurrentLine(9);  // was 8
+        else if (results[index].step.includes("Comparing")) setCurrentLine(13);  // was 12
+        else if (results[index].step.includes("less than pivot")) setCurrentLine(15);  // was 14
+        else if (results[index].step.includes("Placing pivot")) setCurrentLine(17);  // was 16
+        else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+        break;
+      case "Heap Sort":
+        if (results[index].step.includes("Building max heap")) setCurrentLine(4);  // was 3
+        else if (results[index].step.includes("Heapifying")) setCurrentLine(16);  // was 15
+        else if (results[index].step.includes("Moving largest")) setCurrentLine(9);  // was 8
+        else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+        break;
+      case "Counting Sort":
+        if (results[index].step.includes("Counting occurrence")) setCurrentLine(4);  // was 3
+        else if (results[index].step.includes("calculating cumulative")) setCurrentLine(9);  // was 8
+        else if (results[index].step.includes("Placing")) setCurrentLine(13);  // was 12
+        else if (results[index].step.includes("Copying sorted")) setCurrentLine(15);  // was 14
+        else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+        break;
     }
+
+    // Log the current line for debugging
+    console.log(`Current Line: ${currentLine}`);
+
+    animationState.current.index = index + 1;
+    if (animationFrame.current) {
+      cancelAnimationFrame(animationFrame.current);
+    }
+    animationFrame.current = requestAnimationFrame(() => {
+      setTimeout(updateAnimation, speed);
+    });
   };
 
   const handleSpeedChange = (e) => {
@@ -1043,10 +1020,9 @@ const SortingVisualizer = () => {
         {/* Steps Panel - always visible */}
         <motion.div 
           className="code-panel"
-          initial={{ opacity: 0, width: 0 }}
-          animate={{ opacity: 1, width: "320px" }}
-          exit={{ opacity: 0, width: 0 }}
-          transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
         >
           <h3>Algorithm Steps</h3>
           
@@ -1167,19 +1143,16 @@ const SortingVisualizer = () => {
               
               <div className="algorithm-dropdown" ref={dropdownRef}>
                 <button 
-                  className="control-button dropdown-toggle"
+                  className={`control-button dropdown-toggle ${dropdownOpen ? 'active' : ''}`}
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   disabled={isAnimating}
+                  aria-haspopup="true"
+                  aria-expanded={dropdownOpen}
                 >
-                  <FaSortAmountDown /> {method}
+                  <FaSortAmountDown /> {method} <span style={{ marginLeft: 'auto' }}>▼</span>
                 </button>
                 {dropdownOpen && (
-                  <motion.div 
-                    className="algorithm-dropdown-content"
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                  >
+                  <div className="algorithm-dropdown-content">
                     {["Bubble Sort", "Selection Sort", "Insertion Sort", "Merge Sort", "Quick Sort", "Heap Sort", "Counting Sort"].map(algo => (
                       <button 
                         key={algo}
@@ -1189,33 +1162,18 @@ const SortingVisualizer = () => {
                         {algo}
                       </button>
                     ))}
-                  </motion.div>
+                  </div>
                 )}
               </div>
               
               <button 
                 className="control-button sort-button" 
                 onClick={handleSort}
-                disabled={isAnimating && !isPaused}
+                disabled={isAnimating}
               >
                 Sort
               </button>
-              {isAnimating && (
-                <>
-                  <button 
-                    className="control-button"
-                    onClick={togglePause}
-                  >
-                    {isPaused ? 'Resume' : 'Pause'}
-                  </button>
-                  <button 
-                    className="control-button"
-                    onClick={stopSorting}
-                  >
-                    Stop
-                  </button>
-                </>
-              )}
+
             </div>
           
             <div className="control-group sliders">
