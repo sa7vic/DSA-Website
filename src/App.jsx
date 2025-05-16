@@ -12,6 +12,7 @@ import LinkedListVisualizer from './components/LinkedListVisualizer'
 import DiySection from './components/DiySection'
 import DoublyLinkedListExplanation from './components/DoublyLinkedListExplanation'
 import HomePage from './components/HomePage'
+import AboutUs from './components/AboutUs'
 import SortingVisualizer from './components/SortingVisualizer'
 import TreeVisualizer from './components/TreeVisualizer'
 import PathfindingVisualizer from './components/PathfindingVisualizer/PathfindingVisualizer'
@@ -156,6 +157,7 @@ function App() {
         <Route path="/sorting" element={<SortingVisualizer />} />
         <Route path="/trees" element={<TreeVisualizer />} />
         <Route path="/graphs" element={<PathfindingVisualizer />} />
+        <Route path="/about" element={<AboutUs />} />
         <Route path="/index.html" element={<Navigate replace to="/" />} />
       </Routes>
     </Router>

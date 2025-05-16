@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ydgImage from "../../assets/ydg.png";
 import baviImage from "../../assets/bavi.png";
 import blockImage from "../../assets/block.jpg"; // Add this import
@@ -17,6 +17,14 @@ const Node = ({
   onMouseUp,
   onMouseLeave
 }) => {
+  // Track the previous wall state to detect changes
+  const [prevIsWall, setPrevIsWall] = useState(isWall);
+  
+  // Update prevIsWall when isWall changes
+  useEffect(() => {
+    setPrevIsWall(isWall);
+  }, [isWall]);
+  
   // Determine the class name based on node properties
   const getNodeClassName = () => {
     if (isStart) return "node_start";
@@ -67,9 +75,15 @@ const Node = ({
       )}
       {isWall && (
         <img 
+          key={`wall-${row}-${col}-${isWall}`} /* Key forces re-render */
           src={blockImage} 
           alt="Wall" 
           className="node-image wall-image"
+          style={{
+            // Add a transition for smoother appearance/disappearance
+            opacity: isWall ? 1 : 0,
+            transition: 'opacity 0.15s ease-in-out'
+          }}
         />
       )}
     </td>

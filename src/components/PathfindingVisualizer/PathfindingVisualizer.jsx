@@ -67,6 +67,11 @@ class PathfindingVisualizer extends Component {
   makeGrid = () => {
     if (this.animating) return;
     
+    // Update status message
+    this.setState({
+      currentStep: "Resetting grid..."
+    });
+    
     // Limit grid size to be more manageable and prevent performance issues
     let row_size = Math.min(Math.floor((window.innerHeight - 200) / 45), 15);
     let col_size = Math.min(Math.floor((window.innerWidth - 100) / 45), 35); // Increased max columns
@@ -76,6 +81,21 @@ class PathfindingVisualizer extends Component {
     col_size = Math.max(col_size, 20); // Increased minimum columns
     
     console.log(`Creating grid of size ${row_size} x ${col_size}`);
+    
+    // Clear any existing walls to ensure wall images are removed
+    if (this.state.grid && this.state.grid.length > 0) {
+      for (let i = 0; i < this.state.grid.length; i++) {
+        for (let j = 0; j < this.state.grid[i].length; j++) {
+          if (this.state.grid[i][j].isWall) {
+            const nodeId = `node-${i}-${j}`;
+            const nodeElement = document.getElementById(nodeId);
+            if (nodeElement) {
+              nodeElement.className = "node_";
+            }
+          }
+        }
+      }
+    }
     
     let arr = [];
     
@@ -146,7 +166,8 @@ class PathfindingVisualizer extends Component {
   handleMouseDown = (row, col) => {
     if (this.animating) return;
     
-    let arr = this.state.grid;
+    let arr = [...this.state.grid]; // Create a copy of the grid
+    
     if (arr[row][col].isStart) {
       this.setState({
         mainClicked: "start"
@@ -156,9 +177,29 @@ class PathfindingVisualizer extends Component {
         mainClicked: "end"
       });
     } else if (!arr[row][col].isWall && !arr[row][col].isStart && !arr[row][col].isEnd) {
-      arr[row][col].isWall = true;
+      // Create a new copy of the node with isWall=true
+      arr[row] = [...arr[row]];
+      arr[row][col] = {
+        ...arr[row][col],
+        isWall: true
+      };
+      
+      // Update current operation
+      this.setState({
+        currentStep: `Adding wall at (${row}, ${col})`
+      });
     } else if (arr[row][col].isWall) {
-      arr[row][col].isWall = false;
+      // Create a new copy of the node with isWall=false
+      arr[row] = [...arr[row]];
+      arr[row][col] = {
+        ...arr[row][col],
+        isWall: false
+      };
+      
+      // Update current operation
+      this.setState({
+        currentStep: `Removing wall at (${row}, ${col})`
+      });
     }
     
     this.setState({
@@ -171,42 +212,81 @@ class PathfindingVisualizer extends Component {
     if (this.animating) return;
     
     if (this.state.mouseClicked) {
-      let arr = this.state.grid;
+      let arr = [...this.state.grid]; // Create a copy of the grid
+      
       if (this.state.mainClicked === "start") {
         // Don't allow start point to overlap with end point
         if (arr[row][col].isEnd) return;
         
-        arr[row][col].isStart = true;
+        // Create a copy of the row
+        arr[row] = [...arr[row]];
+        arr[row][col] = {
+          ...arr[row][col],
+          isStart: true
+        };
+        
         this.setState({
+          grid: arr,
           start_node: [row, col]
         });
       } else if (this.state.mainClicked === "end") {
         // Don't allow end point to overlap with start point
         if (arr[row][col].isStart) return;
         
-        arr[row][col].isEnd = true;
+        // Create a copy of the row
+        arr[row] = [...arr[row]];
+        arr[row][col] = {
+          ...arr[row][col],
+          isEnd: true
+        };
+        
         this.setState({
+          grid: arr,
           end_node: [row, col]
         });
       } else if (!arr[row][col].isWall && !arr[row][col].isStart && !arr[row][col].isEnd) {
-        arr[row][col].isWall = true;
+        // Create a copy of the row
+        arr[row] = [...arr[row]];
+        arr[row][col] = {
+          ...arr[row][col],
+          isWall: true
+        };
+        
+        this.setState({
+          grid: arr,
+          currentStep: `Adding wall at (${row}, ${col})`
+        });
       } else if (arr[row][col].isWall) {
-        arr[row][col].isWall = false;
+        // Create a copy of the row
+        arr[row] = [...arr[row]];
+        arr[row][col] = {
+          ...arr[row][col],
+          isWall: false
+        };
+        
+        this.setState({
+          grid: arr,
+          currentStep: `Removing wall at (${row}, ${col})`
+        });
       }
-      
-      this.setState({
-        grid: arr
-      });
     }
   };
   
   handleMouseLeave = (row, col) => {
     if (this.animating) return;
     
-    let arr = this.state.grid;
     if (this.state.mainClicked !== "") {
-      arr[row][col].isStart = false;
-      arr[row][col].isEnd = false;
+      // Create a copy of the grid and the affected row
+      let arr = [...this.state.grid];
+      arr[row] = [...arr[row]];
+      
+      // Update the node properties
+      arr[row][col] = {
+        ...arr[row][col],
+        isStart: false,
+        isEnd: false
+      };
+      
       this.setState({
         grid: arr
       });
