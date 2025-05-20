@@ -446,8 +446,7 @@
 .empty-tree-message p {
   margin: 0;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
 }
 
 .tree-node-foreign-object {
@@ -625,19 +624,23 @@
 }
 
 @keyframes statusDotPulse {
-  0%, 100% {
-    transform: scale(0.7);
-    opacity: 0.5;
+  0% {
+    transform: scale(0.6);
+    opacity: 0.6;
   }
   50% {
     transform: scale(1);
     opacity: 1;
   }
+  100% {
+    transform: scale(0.6);
+    opacity: 0.6;
+  }
 }
 
 .status-ready {
   color: #4CAF50;
-  font-weight: bold;
+  font-size: 1rem;
 }
 
 .status-title {
@@ -646,134 +649,296 @@
 }
 
 .current-step {
-  font-size: 1.1rem;
-  position: relative;
-  padding: 0.5rem 0;
-  transition: all 0.3s ease-in-out;
-  animation: fadeStepIn 0.3s ease-out forwards;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-@keyframes fadeStepIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.tree-display-container {
+  width: 100%;
+  height: 400px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.animation-progress {
+  width: 100%;
+  margin-top: 1rem;
 }
 
-/* Tree zoom controls */
-.tree-controls-overlay {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  z-index: 100;
-}
-
-.zoom-button {
-  background-color: rgba(0, 0, 0, 0.6);
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
   color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: background-color 0.2s;
 }
 
-.zoom-button:hover {
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #2A623D;
+  transition: width 0.3s ease;
+}
+
+/* Controls Styling */
+.controls-container {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.controls-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.operation-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.value-input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  width: 120px;
+}
+
+.control-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid #2A623D;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.control-button:hover {
+  background-color: #2A623D;
+  transform: translateY(-2px);
+}
+
+.control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.random-button {
   background-color: #2A623D;
 }
 
-/* Enhanced tree node styling */
-.rd3t-node circle {
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.3));
+.icon {
+  font-size: 0.8rem;
 }
 
-.rd3t-node:hover circle {
-  transform: scale(1.1);
+.gen-controls {
+  display: flex;
+  gap: 0.5rem;
 }
 
-.node-circle[filter="url(#glow)"] {
-  animation: pulse 1.5s infinite alternate;
+.animation-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-@keyframes pulse {
+.playback-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.play-button {
+  flex: 1;
+}
+
+.speed-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.speed-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: white;
+}
+
+.speed-slider {
+  width: 100%;
+  accent-color: #2A623D;
+}
+
+/* Visualization Styling */
+.visualization-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.visualization-status {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 0.75rem;
+  border-radius: 12px;
+  color: white;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-running {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.status-running .dot {
+  width: 6px;
+  height: 6px;
+  background-color: #4CAF50;
+  border-radius: 50%;
+  animation: statusDotPulse 1.4s infinite ease-in-out;
+}
+
+.status-running .dot1 {
+  animation-delay: 0s;
+}
+
+.status-running .dot2 {
+  animation-delay: 0.2s;
+}
+
+.status-running .dot3 {
+  animation-delay: 0.4s;
+}
+
+@keyframes statusDotPulse {
   0% {
+    transform: scale(0.6);
+    opacity: 0.6;
+  }
+  50% {
     transform: scale(1);
-    filter: drop-shadow(0px 0px 3px rgba(255, 127, 80, 0.4));
+    opacity: 1;
   }
   100% {
-    transform: scale(1.15);
-    filter: drop-shadow(0px 0px 8px rgba(255, 127, 80, 0.8));
+    transform: scale(0.6);
+    opacity: 0.6;
   }
 }
 
-.rd3t-link {
-  stroke-width: 2px !important;
-  stroke: rgba(74, 144, 72, 0.8) !important;
-  filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.2));
+.status-ready {
+  color: #4CAF50;
+  font-size: 1rem;
 }
 
-/* Improve tree container */
-.rd3t-tree-container {
-  width: 100% !important;
-  height: 100% !important;
+.current-step {
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-/* Custom node coloring based on tree level */
-.depth-0 circle {
-  fill: #2a623d !important;
-  stroke-width: 2px !important;
+/* Information Section */
+.tree-info-section {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  color: white;
 }
 
-.depth-1 circle {
-  fill: #347c49 !important;
+.tree-info-section h2 {
+  margin-top: 0;
+  color: #4CAF50;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
 }
 
-.depth-2 circle {
-  fill: #3d8d52 !important;
+.tree-info-section p {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
 }
 
-.depth-3 circle {
-  fill: #459e5c !important;
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
 }
 
-.depth-4 circle {
-  fill: #4eb166 !important;
+.info-card {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.depth-5 circle {
-  fill: #58c270 !important;
+.info-card h3 {
+  margin-top: 0;
+  color: #4CAF50;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
 }
 
-/* Scale nodes based on depth for better visual hierarchy */
-.depth-0 circle {
-  transform: scale(1.1);
+.info-card ul {
+  margin: 0;
+  padding-left: 1.5rem;
 }
 
-.depth-1 circle {
-  transform: scale(1.05);
-}
-
-.depth-5 circle,
-.depth-6 circle,
-.depth-7 circle {
-  transform: scale(0.9);
+.info-card li {
+  margin-bottom: 0.5rem;
 }
 
 /* Responsive styles */
@@ -1109,4 +1274,171 @@ kbd {
 
 .keyboard-icon {
   font-size: 1.1rem;
+}
+
+/* Enhanced tree node styling */
+.rd3t-node circle {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.3));
+}
+
+.rd3t-node:hover circle {
+  transform: scale(1.1);
+}
+
+.node-circle[filter="url(#glow)"] {
+  animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0px 0px 3px rgba(255, 127, 80, 0.4));
+  }
+  100% {
+    transform: scale(1.15);
+    filter: drop-shadow(0px 0px 8px rgba(255, 127, 80, 0.8));
+  }
+}
+
+.rd3t-link {
+  stroke-width: 2px !important;
+  stroke: rgba(74, 144, 72, 0.8) !important;
+  filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* Improve tree container */
+.rd3t-tree-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Custom node coloring based on tree level */
+.depth-0 circle {
+  fill: #2a623d !important;
+  stroke-width: 2px !important;
+}
+
+.depth-1 circle {
+  fill: #347c49 !important;
+}
+
+.depth-2 circle {
+  fill: #3d8d52 !important;
+}
+
+.depth-3 circle {
+  fill: #459e5c !important;
+}
+
+.depth-4 circle {
+  fill: #4eb166 !important;
+}
+
+.depth-5 circle {
+  fill: #58c270 !important;
+}
+
+/* Scale nodes based on depth for better visual hierarchy */
+.depth-0 circle {
+  transform: scale(1.1);
+}
+
+.depth-1 circle {
+  transform: scale(1.05);
+}
+
+.depth-5 circle,
+.depth-6 circle,
+.depth-7 circle {
+  transform: scale(0.9);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .controls-row {
+    flex-direction: column;
+  }
+  
+  .operation-controls {
+    flex-wrap: wrap;
+  }
+  
+  .value-input {
+    width: 100%;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* SVG Tree styles */
+svg {
+  width: 100%;
+  height: auto;
+  max-height: 350px;
+}
+
+/* Additional styling */
+.floating-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.4;
+  z-index: -1;
+  animation: floatOrb 15s ease-in-out infinite alternate;
+}
+
+.orb-1 {
+  width: 300px;
+  height: 300px;
+  background-color: rgba(74, 175, 80, 0.2);
+  top: 20%;
+  left: 5%;
+}
+
+.orb-2 {
+  width: 250px;
+  height: 250px;
+  background-color: rgba(42, 98, 61, 0.2);
+  bottom: 10%;
+  right: 5%;
+  animation-delay: 2s;
+}
+
+@keyframes floatOrb {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(30px, 20px);
+  }
+}
+
+.svg-tree {
+  width: 100%;
+  height: 100%;
+  max-height: 400px;
+  border-radius: 12px;
+  overflow: visible;
+}
+
+.intro-section {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  color: white;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  line-height: 1.6;
 }
