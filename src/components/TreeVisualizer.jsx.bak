@@ -2,14 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaHome } from 'react-icons/fa';
-import { BinaryTree } from '../lib/animated-binary-tree';
-import { SvgTree } from './AnimatedBinaryTree';
-import { VisualizerControls } from './VisualizerControls';
-import { inOrderTraversal, preOrderTraversal, postOrderTraversal, traversalCodeSnippets } from '../lib/traversal-algorithms';
-import '../styles/TreeVisualizer.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import CodeHighlighter from './CodeHighlighter';
+import { SplayTree } from '../lib/animated-splay-tree';
+import { SvgTree } from './AnimatedBinaryTree';
+import { VisualizerControls } from './VisualizerControls';
+import '../styles/TreeVisualizer.css';
+import '../styles/code-highlighter.css';
 
 // Tree visualization styles
 const nodeSize = { x: 140, y: 140 };
@@ -60,31 +59,97 @@ const renderCustomNodeElement = ({ nodeDatum, toggleNode, hierarchyPointNode }) 
   );
 };
 
+// Enhanced CodeHighlighter component with fixed highlighting
+const CodeHighlighter = ({ code, currentLine }) => {
+  const codeContainerRef = useRef(null);
+  
+  if (!code) return null;
+  
+  // Custom renderer to add line highlighting
+  const lineProps = (lineNumber) => {
+    const style = { display: 'block' };
+    if (lineNumber === currentLine) {
+      style.backgroundColor = '#2a4d38';
+      style.borderLeft = '3px solid #4CAF50';
+    }
+    return { style };
+  };
+  
+  // Effect to scroll to the highlighted line with a delay to ensure rendering
+  useEffect(() => {
+    if (currentLine && codeContainerRef.current) {
+      const lineElement = codeContainerRef.current.querySelector(`[data-line-number="${currentLine}"]`);
+      if (lineElement) {
+        setTimeout(() => {
+          lineElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    }
+  }, [currentLine, code]);
+  
+  return (
+    <div 
+      className="algorithm-code"
+      ref={codeContainerRef}
+      style={{ 
+        height: '100%', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        flex: 1,
+        position: 'relative'
+      }}
+    >
+      <SyntaxHighlighter
+        language="javascript"
+        style={atomDark}
+        wrapLines={true}
+        showLineNumbers={true}
+        lineProps={lineNumber => lineProps(lineNumber)}
+        customStyle={{
+          margin: 0,
+          padding: '0.75rem',
+          borderRadius: '6px',
+          backgroundColor: '#0d1117',
+          fontSize: '0.85rem',
+          lineHeight: '1.8',
+          height: 'auto', 
+          overflow: 'auto',
+          flex: 1,
+          minHeight: '300px'
+        }}
+        lineNumberStyle={{
+          minWidth: '2.5em',
+          paddingRight: '1em',
+          color: '#6e7681',
+          textAlign: 'right'
+        }}
+      >
+        {code}
+      </SyntaxHighlighter>
+      
+      {currentLine && (
+        <div style={{
+          position: 'absolute',
+          top: '4px',
+          right: '8px',
+          background: 'rgba(0,0,0,0.5)',
+          color: 'white',
+          padding: '2px 6px',
+          borderRadius: '4px',
+          fontSize: '12px'
+        }}>
+          Line: {currentLine}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Spring animation configuration for smooth transitions
 const springAnim = {
   type: "spring",
   damping: 20,
   stiffness: 300
-};
-
-// Convert Splay Tree node to hierarchy data format for visualization
-const toHierarchyData = (node) => {
-  if (!node) return null;
-  
-  const hierarchyNode = {
-    name: node.key.toString(),
-    children: []
-  };
-  
-  if (node.left) {
-    hierarchyNode.children[0] = toHierarchyData(node.left);
-  }
-  
-  if (node.right) {
-    hierarchyNode.children[1] = toHierarchyData(node.right);
-  }
-  
-  return hierarchyNode;
 };
 
 // Tree data structure operations
@@ -372,6 +437,321 @@ const bstDelete = (root, value) => {
   return { tree: newRoot || null, results };
 };
 
+// Tree Traversal - In-Order
+const inOrderTraversal = (root) => {
+  const results = [];
+  let currentStep = "";
+  const traversalResult = [];
+  
+  const traverse = (node, path = []) => {
+    if (!node) return;
+    
+    // Traverse left subtree
+    if (node.children && node.children[0]) {
+      currentStep = `Going left of ${node.name}`;
+      results.push({ 
+        tree: JSON.parse(JSON.stringify(root)), 
+        step: currentStep,
+        line: 5,
+        path: [...path, 'left']
+      });
+      traverse(node.children[0], [...path, 'left']);
+    }
+    
+    // Visit node
+    currentStep = `Visiting node ${node.name}`;
+    traversalResult.push(node.name);
+    
+    const highlightedTree = JSON.parse(JSON.stringify(root));
+    const currentNode = getNodeByPath(highlightedTree, path);
+    if (currentNode) {
+      currentNode.highlight = true;
+    }
+    
+    results.push({ 
+      tree: highlightedTree, 
+      step: currentStep,
+      line: 8,
+      path,
+      traversalResult: [...traversalResult]
+    });
+    
+    // Traverse right subtree
+    if (node.children && node.children[1]) {
+      currentStep = `Going right of ${node.name}`;
+      results.push({ 
+        tree: JSON.parse(JSON.stringify(root)), 
+        step: currentStep,
+        line: 11,
+        path: [...path, 'right']
+      });
+      traverse(node.children[1], [...path, 'right']);
+    }
+  };
+  
+  const getNodeByPath = (node, path) => {
+    if (path.length === 0) return node;
+    
+    let current = node;
+    for (const direction of path) {
+      if (!current.children) return null;
+      current = current.children[direction === 'left' ? 0 : 1];
+      if (!current) return null;
+    }
+    return current;
+  };
+  
+  traverse(root);
+  
+  currentStep = `In-order traversal complete: [${traversalResult.join(', ')}]`;
+  results.push({ 
+    tree: JSON.parse(JSON.stringify(root)), 
+    step: currentStep,
+    line: 14,
+    traversalResult
+  });
+  
+  return { results, traversalResult };
+};
+
+// Tree Traversal - Pre-Order
+const preOrderTraversal = (root) => {
+  const results = [];
+  let currentStep = "";
+  const traversalResult = [];
+  
+  const traverse = (node, path = []) => {
+    if (!node) return;
+    
+    // Visit node
+    currentStep = `Visiting node ${node.name}`;
+    traversalResult.push(node.name);
+    
+    const highlightedTree = JSON.parse(JSON.stringify(root));
+    const currentNode = getNodeByPath(highlightedTree, path);
+    if (currentNode) {
+      currentNode.highlight = true;
+    }
+    
+    results.push({ 
+      tree: highlightedTree, 
+      step: currentStep,
+      line: 4,
+      path,
+      traversalResult: [...traversalResult]
+    });
+    
+    // Traverse left subtree
+    if (node.children && node.children[0]) {
+      currentStep = `Going left of ${node.name}`;
+      results.push({ 
+        tree: JSON.parse(JSON.stringify(root)), 
+        step: currentStep,
+        line: 7,
+        path: [...path, 'left']
+      });
+      traverse(node.children[0], [...path, 'left']);
+    }
+    
+    // Traverse right subtree
+    if (node.children && node.children[1]) {
+      currentStep = `Going right of ${node.name}`;
+      results.push({ 
+        tree: JSON.parse(JSON.stringify(root)), 
+        step: currentStep,
+        line: 10,
+        path: [...path, 'right']
+      });
+      traverse(node.children[1], [...path, 'right']);
+    }
+  };
+  
+  const getNodeByPath = (node, path) => {
+    if (path.length === 0) return node;
+    
+    let current = node;
+    for (const direction of path) {
+      if (!current.children) return null;
+      current = current.children[direction === 'left' ? 0 : 1];
+      if (!current) return null;
+    }
+    return current;
+  };
+  
+  traverse(root);
+  
+  currentStep = `Pre-order traversal complete: [${traversalResult.join(', ')}]`;
+  results.push({ 
+    tree: JSON.parse(JSON.stringify(root)), 
+    step: currentStep,
+    line: 13,
+    traversalResult
+  });
+  
+  return { results, traversalResult };
+};
+
+// Tree Traversal - Post-Order
+const postOrderTraversal = (root) => {
+  const results = [];
+  let currentStep = "";
+  const traversalResult = [];
+  
+  const traverse = (node, path = []) => {
+    if (!node) return;
+    
+    // Traverse left subtree
+    if (node.children && node.children[0]) {
+      currentStep = `Going left of ${node.name}`;
+      results.push({ 
+        tree: JSON.parse(JSON.stringify(root)), 
+        step: currentStep,
+        line: 5,
+        path: [...path, 'left']
+      });
+      traverse(node.children[0], [...path, 'left']);
+    }
+    
+    // Traverse right subtree
+    if (node.children && node.children[1]) {
+      currentStep = `Going right of ${node.name}`;
+      results.push({ 
+        tree: JSON.parse(JSON.stringify(root)), 
+        step: currentStep,
+        line: 8,
+        path: [...path, 'right']
+      });
+      traverse(node.children[1], [...path, 'right']);
+    }
+    
+    // Visit node
+    currentStep = `Visiting node ${node.name}`;
+    traversalResult.push(node.name);
+    
+    const highlightedTree = JSON.parse(JSON.stringify(root));
+    const currentNode = getNodeByPath(highlightedTree, path);
+    if (currentNode) {
+      currentNode.highlight = true;
+    }
+    
+    results.push({ 
+      tree: highlightedTree, 
+      step: currentStep,
+      line: 11,
+      path,
+      traversalResult: [...traversalResult]
+    });
+  };
+  
+  const getNodeByPath = (node, path) => {
+    if (path.length === 0) return node;
+    
+    let current = node;
+    for (const direction of path) {
+      if (!current.children) return null;
+      current = current.children[direction === 'left' ? 0 : 1];
+      if (!current) return null;
+    }
+    return current;
+  };
+  
+  traverse(root);
+  
+  currentStep = `Post-order traversal complete: [${traversalResult.join(', ')}]`;
+  results.push({ 
+    tree: JSON.parse(JSON.stringify(root)), 
+    step: currentStep,
+    line: 14,
+    traversalResult
+  });
+  
+  return { results, traversalResult };
+};
+
+// Tree Traversal - Level Order
+const levelOrderTraversal = (root) => {
+  const results = [];
+  let currentStep = "";
+  const traversalResult = [];
+  
+  if (!root) {
+    currentStep = "Tree is empty";
+    results.push({ 
+      tree: null, 
+      step: currentStep,
+      line: 4
+    });
+    return { results, traversalResult };
+  }
+  
+  const queue = [{ node: root, path: [] }];
+  
+  while (queue.length > 0) {
+    const { node, path } = queue.shift();
+    
+    // Visit node
+    traversalResult.push(node.name);
+    currentStep = `Visiting node ${node.name}`;
+    
+    const highlightedTree = JSON.parse(JSON.stringify(root));
+    const currentNode = getNodeByPath(highlightedTree, path);
+    if (currentNode) {
+      currentNode.highlight = true;
+    }
+    
+    results.push({ 
+      tree: highlightedTree, 
+      step: currentStep,
+      line: 12,
+      traversalResult: [...traversalResult]
+    });
+    
+    // Add left child to queue
+    if (node.children && node.children[0]) {
+      currentStep = `Adding left child of ${node.name} to queue`;
+      results.push({ 
+        tree: JSON.parse(JSON.stringify(root)), 
+        step: currentStep,
+        line: 15
+      });
+      queue.push({ node: node.children[0], path: [...path, 'left'] });
+    }
+    
+    // Add right child to queue
+    if (node.children && node.children[1]) {
+      currentStep = `Adding right child of ${node.name} to queue`;
+      results.push({ 
+        tree: JSON.parse(JSON.stringify(root)), 
+        step: currentStep,
+        line: 18
+      });
+      queue.push({ node: node.children[1], path: [...path, 'right'] });
+    }
+  }
+  
+  const getNodeByPath = (node, path) => {
+    if (path.length === 0) return node;
+    
+    let current = node;
+    for (const direction of path) {
+      if (!current.children) return null;
+      current = current.children[direction === 'left' ? 0 : 1];
+      if (!current) return null;
+    }
+    return current;
+  };
+  
+  currentStep = `Level-order traversal complete: [${traversalResult.join(', ')}]`;
+  results.push({ 
+    tree: JSON.parse(JSON.stringify(root)), 
+    step: currentStep,
+    line: 21,
+    traversalResult
+  });
+  
+  return { results, traversalResult };
+};
+
 // Algorithm explanations
 const algorithmInfo = {
   "Insert": {
@@ -494,7 +874,7 @@ const algorithmInfo = {
 
 const TreeVisualizer = () => {
   // Tree state
-  const [tree, setTree] = useState(new BinaryTree());
+  const [tree, setTree] = useState(new SplayTree());
   const [value, setValue] = useState("");
   
   // Animation state
@@ -502,8 +882,13 @@ const TreeVisualizer = () => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(1000);
-  const [currentTraversal, setCurrentTraversal] = useState(null);
   const timeoutRef = useRef(null);
+
+  // Code display state
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState("Insert");
+  const [code, setCode] = useState(algorithmInfo["Insert"].pseudocode);
+  const [currentLine, setCurrentLine] = useState(null);
+  const [traversalResult, setTraversalResult] = useState(null);
 
   // Animation control functions
   const handlePlayPause = () => {
@@ -524,8 +909,100 @@ const TreeVisualizer = () => {
     }
   };
 
+  // Handler for algorithm selection change
+  const handleAlgorithmChange = (event) => {
+    const algorithm = event.target.value;
+    setSelectedAlgorithm(algorithm);
+    setCode(algorithmInfo[algorithm].pseudocode);
+    setCurrentLine(null);
+  };
+
+  // Traversal handlers
+  const handleInOrderTraversal = () => {
+    if (!tree.root) {
+      alert("Tree is empty. Please add nodes first.");
+      return;
+    }
+    
+    // Convert the tree.root to the format required by inOrderTraversal
+    const treeFormat = convertToFormatForTraversal(tree.root);
+    const { results, traversalResult } = inOrderTraversal(treeFormat);
+    
+    setSelectedAlgorithm("In-Order");
+    setCode(algorithmInfo["In-Order"].pseudocode);
+    setAnimationSteps(results);
+    setCurrentStepIndex(0);
+    setIsPlaying(true);
+    setTraversalResult(traversalResult);
+  };
+  
+  const handlePreOrderTraversal = () => {
+    if (!tree.root) {
+      alert("Tree is empty. Please add nodes first.");
+      return;
+    }
+    
+    const treeFormat = convertToFormatForTraversal(tree.root);
+    const { results, traversalResult } = preOrderTraversal(treeFormat);
+    
+    setSelectedAlgorithm("Pre-Order");
+    setCode(algorithmInfo["Pre-Order"].pseudocode);
+    setAnimationSteps(results);
+    setCurrentStepIndex(0);
+    setIsPlaying(true);
+    setTraversalResult(traversalResult);
+  };
+  
+  const handlePostOrderTraversal = () => {
+    if (!tree.root) {
+      alert("Tree is empty. Please add nodes first.");
+      return;
+    }
+    
+    const treeFormat = convertToFormatForTraversal(tree.root);
+    const { results, traversalResult } = postOrderTraversal(treeFormat);
+    
+    setSelectedAlgorithm("Post-Order");
+    setCode(algorithmInfo["Post-Order"].pseudocode);
+    setAnimationSteps(results);
+    setCurrentStepIndex(0);
+    setIsPlaying(true);
+    setTraversalResult(traversalResult);
+  };
+  
+  // Helper function to convert SplayTree node format to the format required by traversal functions
+  const convertToFormatForTraversal = (node) => {
+    if (!node) return null;
+    
+    const formattedNode = {
+      name: node.key.toString(),
+      children: []
+    };
+    
+    if (node.left) {
+      formattedNode.children[0] = convertToFormatForTraversal(node.left);
+    }
+    
+    if (node.right) {
+      formattedNode.children[1] = convertToFormatForTraversal(node.right);
+    }
+    
+    return formattedNode;
+  };
+  
+  // Reset traversal result when performing non-traversal operations
+  const clearTraversalResult = () => {
+    if (traversalResult) {
+      setTraversalResult(null);
+    }
+  };
+  
   // Operation handlers
   const handleInsert = () => {
+    clearTraversalResult();
+    setSelectedAlgorithm("Insert");
+    setCode(algorithmInfo["Insert"].pseudocode);
+    
     const key = parseInt(value);
     if (isNaN(key) || key <= 0) {
       alert("Please enter a positive integer");
@@ -542,6 +1019,10 @@ const TreeVisualizer = () => {
   };
 
   const handleFind = () => {
+    clearTraversalResult();
+    setSelectedAlgorithm("Search");
+    setCode(algorithmInfo["Search"].pseudocode);
+    
     const key = parseInt(value);
     if (isNaN(key) || key <= 0) {
       alert("Please enter a positive integer");
@@ -558,6 +1039,10 @@ const TreeVisualizer = () => {
   };
 
   const handleDelete = () => {
+    clearTraversalResult();
+    setSelectedAlgorithm("Delete");
+    setCode(algorithmInfo["Delete"].pseudocode);
+    
     const key = parseInt(value);
     if (isNaN(key) || key <= 0) {
       alert("Please enter a positive integer");
@@ -575,7 +1060,7 @@ const TreeVisualizer = () => {
 
   const handleGenerateRandom = () => {
     const size = Math.floor(Math.random() * 7) + 3; // Between 3 and 10 nodes
-    const randomTree = BinaryTree.random(size);
+    const randomTree = SplayTree.random(size);
     setTree(randomTree);
     setAnimationSteps([
       {
@@ -588,7 +1073,7 @@ const TreeVisualizer = () => {
   };
 
   const handleClear = () => {
-    setTree(new BinaryTree());
+    setTree(new SplayTree());
     setAnimationSteps([
       {
         tree: null,
@@ -597,49 +1082,6 @@ const TreeVisualizer = () => {
       },
     ]);
     setCurrentStepIndex(0);
-  };
-
-  // Traversal handlers
-  const handleInOrderTraversal = () => {
-    if (!tree || !tree.root) {
-      alert("Tree is empty. Please insert some values first.");
-      return;
-    }
-    
-    const treeData = toHierarchyData(tree.cloneNode(tree.root));
-    const { results } = inOrderTraversal(treeData);
-    setAnimationSteps(results);
-    setCurrentStepIndex(0);
-    setIsPlaying(true);
-    setCurrentTraversal("In-Order");
-  };
-  
-  const handlePreOrderTraversal = () => {
-    if (!tree || !tree.root) {
-      alert("Tree is empty. Please insert some values first.");
-      return;
-    }
-    
-    const treeData = toHierarchyData(tree.cloneNode(tree.root));
-    const { results } = preOrderTraversal(treeData);
-    setAnimationSteps(results);
-    setCurrentStepIndex(0);
-    setIsPlaying(true);
-    setCurrentTraversal("Pre-Order");
-  };
-  
-  const handlePostOrderTraversal = () => {
-    if (!tree || !tree.root) {
-      alert("Tree is empty. Please insert some values first.");
-      return;
-    }
-    
-    const treeData = toHierarchyData(tree.cloneNode(tree.root));
-    const { results } = postOrderTraversal(treeData);
-    setAnimationSteps(results);
-    setCurrentStepIndex(0);
-    setIsPlaying(true);
-    setCurrentTraversal("Post-Order");
   };
 
   // Animation timer effect
@@ -663,6 +1105,16 @@ const TreeVisualizer = () => {
       }
     };
   }, [isPlaying, currentStepIndex, animationSteps, animationSpeed]);
+
+  // Effect to update current line based on animation step
+  useEffect(() => {
+    if (animationSteps.length > 0 && currentStepIndex >= 0 && currentStepIndex < animationSteps.length) {
+      const step = animationSteps[currentStepIndex];
+      if (step.line) {
+        setCurrentLine(step.line);
+      }
+    }
+  }, [currentStepIndex, animationSteps]);
 
   // Current tree data based on animation step
   const currentTreeData =
@@ -697,7 +1149,7 @@ const TreeVisualizer = () => {
           <span>Home</span>
         </Link>
         <h1 style={{ flex: 1, textAlign: 'center', fontSize: '1.5rem' }}>
-          Binary Search Tree Visualization
+          Splay Tree Visualization
         </h1>
       </motion.header>
       
@@ -709,8 +1161,8 @@ const TreeVisualizer = () => {
         transition={{ duration: 0.6, delay: 0.2 }}
       >
         <p>
-          A binary search tree is a data structure where each node has at most two children,
-          with the left child containing values less than the node and the right child containing values greater than the node.
+          A self-balancing binary search tree with quick access to recently used elements.
+          Each operation automatically brings the accessed element to the root.
         </p>
       </motion.div>
       
@@ -736,7 +1188,7 @@ const TreeVisualizer = () => {
         handlePostOrderTraversal={handlePostOrderTraversal}
       />
       
-      {/* Tree Visualization Section with Code Panel */}
+      {/* Tree Visualization Section */}
       <div className="visualization-container">
         <div className="visualization-status">
           <div className="status-header">
@@ -752,57 +1204,31 @@ const TreeVisualizer = () => {
               )}
             </div>
             <div className="status-title">
-              {isPlaying ? 'Visualizing' : 'Status'} {currentTraversal ? `- ${currentTraversal} Traversal` : ''}
+              {isPlaying ? 'Visualizing' : 'Status'}
             </div>
           </div>
           <div className="current-step">{currentDescription}</div>
         </div>
         
-        <div className="visualization-panels">
-          <div className="tree-display-panel">
-            {currentTreeData ? (
-              <SvgTree tree={currentTreeData} cursor={currentCursor} />
-            ) : (
-              <div className="empty-tree-message">
-                <div className="empty-tree-icon">
-                  <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fillRule="evenodd" clipRule="evenodd" d="M12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8ZM6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12Z" fill="currentColor"/>
-                  </svg>
-                </div>
-                <h3>Tree is empty</h3>
-                <p>Use Insert to add nodes or generate a random tree</p>
-                <button 
-                  onClick={handleGenerateRandom} 
-                  className="action-button generate-button"
-                  style={{ marginTop: "1rem" }}
-                >
-                  Generate Random Tree
-                </button>
+        <div className="tree-display-container">
+          {currentTreeData ? (
+            <SvgTree tree={currentTreeData} cursor={currentCursor} />
+          ) : (
+            <div className="empty-tree-message">
+              <div className="empty-tree-icon">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8ZM6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12Z" fill="currentColor"/>
+                </svg>
               </div>
-            )}
-          </div>
-          
-          {currentTraversal && (
-            <div className="code-panel">
-              <CodeHighlighter 
-                code={traversalCodeSnippets[currentTraversal === "In-Order" ? "inOrder" : 
-                                          currentTraversal === "Pre-Order" ? "preOrder" : "postOrder"]} 
-                currentLine={animationSteps[currentStepIndex]?.line}
-                title={`${currentTraversal} Traversal Algorithm`}
-              />
-              
-              {animationSteps[currentStepIndex]?.traversalResult && (
-                <div className="traversal-result">
-                  <h3>Traversal Result</h3>
-                  <div className="result-values">
-                    {animationSteps[currentStepIndex].traversalResult.map((value, index) => (
-                      <span key={index} className="result-value">
-                        {value}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <h3>Tree is empty</h3>
+              <p>Use Insert to add nodes or generate a random tree</p>
+              <button 
+                onClick={handleGenerateRandom} 
+                className="action-button generate-button"
+                style={{ marginTop: "1rem" }}
+              >
+                Generate Random Tree
+              </button>
             </div>
           )}
         </div>
@@ -828,30 +1254,76 @@ const TreeVisualizer = () => {
         </div>
       )}
       
-      {/* Information about Binary Search Trees */}
+      {/* Code Display Section */}
+      <div className="code-display-section">
+        <div className="code-display-header">
+          <h2 className="code-display-title">Algorithm Visualization</h2>
+          <select 
+            className="algorithm-selector" 
+            value={selectedAlgorithm}
+            onChange={handleAlgorithmChange}
+          >
+            <option value="Insert">Insert</option>
+            <option value="Search">Search</option>
+            <option value="Delete">Delete</option>
+            <option value="In-Order">In-Order Traversal</option>
+            <option value="Pre-Order">Pre-Order Traversal</option>
+            <option value="Post-Order">Post-Order Traversal</option>
+            <option value="Level-Order">Level-Order Traversal</option>
+          </select>
+        </div>
+        
+        <div className="code-info">
+          <div className="code-info-item">
+            <strong>Time Complexity:</strong> {algorithmInfo[selectedAlgorithm].timeComplexity}
+          </div>
+          <div className="code-info-item">
+            <strong>Space Complexity:</strong> {algorithmInfo[selectedAlgorithm].spaceComplexity}
+          </div>
+        </div>
+        
+        <p className="algorithm-description">{algorithmInfo[selectedAlgorithm].description}</p>
+        
+        <CodeHighlighter 
+          code={code} 
+          currentLine={animationSteps[currentStepIndex]?.line || null}
+        />
+        
+        {/* Display Traversal Results if available */}
+        {traversalResult && (
+          <div className="traversal-result">
+            <h3>Traversal Result</h3>
+            <div className="result-path">
+              [{traversalResult.join(', ')}]
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Information about Splay Trees */}
       <div className="tree-info-section">
-        <h2>About Binary Search Trees</h2>
+        <h2>About Splay Trees</h2>
         <p>
-          A binary search tree (BST) is a node-based binary tree data structure that 
-          maintains the BST property: the key in each node is greater than all keys in its 
-          left subtree and less than all keys in its right subtree. This enables efficient 
-          operations like search, insertion, and deletion.
+          A splay tree is a self-adjusting binary search tree with the additional 
+          property that recently accessed elements are quick to access again. 
+          After an operation (insert, delete, or find), the tree is restructured 
+          to bring the accessed item to the root of the tree.
         </p>
         <div className="info-grid">
           <div className="info-card">
             <h3>Time Complexity</h3>
             <ul>
-              <li><strong>Insert:</strong> O(log n) average, O(n) worst case</li>
-              <li><strong>Delete:</strong> O(log n) average, O(n) worst case</li>
-              <li><strong>Find:</strong> O(log n) average, O(n) worst case</li>
+              <li><strong>Insert:</strong> O(log n) amortized</li>
+              <li><strong>Delete:</strong> O(log n) amortized</li>
+              <li><strong>Find:</strong> O(log n) amortized</li>
             </ul>
           </div>
           <div className="info-card">
             <h3>Key Properties</h3>
             <ul>
-              <li>Ordered storage of elements</li>
-              <li>Efficient for searching and sorting</li>
-              <li>Simple implementation and low overhead</li>
+              <li>Self-balancing through splaying</li>
+              <li>Fast access to recently used elements</li>
+              <li>Good performance for sequential access patterns</li>
             </ul>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaPlay, FaPause, FaStepBackward, FaStepForward, FaPlus, FaSearch, FaTrash, FaRandom } from 'react-icons/fa';
+import { FaPlay, FaPause, FaStepBackward, FaStepForward, FaPlus, FaSearch, FaTrash, FaRandom, FaListOl, FaCode, FaSitemap } from 'react-icons/fa';
 
 /**
  * Controls for the tree visualizer
@@ -19,7 +19,10 @@ export function VisualizerControls({
   animationSteps,
   handleInsert,
   handleFind,
-  handleDelete
+  handleDelete,
+  handleInOrderTraversal,
+  handlePreOrderTraversal,
+  handlePostOrderTraversal
 }) {
   return (
     <div className="controls-container">
@@ -30,6 +33,9 @@ export function VisualizerControls({
           handleInsert={handleInsert}
           handleFind={handleFind}
           handleDelete={handleDelete}
+          handleInOrderTraversal={handleInOrderTraversal}
+          handlePreOrderTraversal={handlePreOrderTraversal}
+          handlePostOrderTraversal={handlePostOrderTraversal}
         />
         
         <div className="controls-group">
@@ -62,6 +68,9 @@ function TreeOperationControls({
   handleInsert,
   handleDelete,
   handleFind,
+  handleInOrderTraversal,
+  handlePreOrderTraversal,
+  handlePostOrderTraversal,
 }) {
   return (
     <div className="operation-controls">
@@ -85,6 +94,23 @@ function TreeOperationControls({
       <button onClick={handleDelete} className="control-button">
         <FaTrash className="icon" />
         Delete
+      </button>
+      
+      <div className="operation-divider"></div>
+      
+      <button onClick={handleInOrderTraversal} className="control-button">
+        <FaListOl className="icon" />
+        In-Order
+      </button>
+      
+      <button onClick={handlePreOrderTraversal} className="control-button">
+        <FaSitemap className="icon" />
+        Pre-Order
+      </button>
+      
+      <button onClick={handlePostOrderTraversal} className="control-button">
+        <FaCode className="icon" />
+        Post-Order
       </button>
     </div>
   );
