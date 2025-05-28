@@ -1039,6 +1039,7 @@ const SortingVisualizer = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
+        style={{ gap: '1rem', padding: '1rem' }}
       >
         {/* Steps Panel - always visible */}
         <motion.div 
@@ -1047,6 +1048,7 @@ const SortingVisualizer = () => {
           animate={{ opacity: 1, width: "320px" }}
           exit={{ opacity: 0, width: 0 }}
           transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
+          style={{ minWidth: "320px", borderRadius: "8px" }}
         >
           <h3>Algorithm Steps</h3>
           
@@ -1115,7 +1117,9 @@ const SortingVisualizer = () => {
               </div>
             )}
           </div>
-        </motion.div>          {/* Controls Panel */}
+        </motion.div>
+        
+        {/* Controls Panel */}
         <div className="sorting-controls">
           <div className="control-section">
             <div className="control-group">
