@@ -3,21 +3,24 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-ro
 import { motion } from 'framer-motion'
 import { FaHome } from 'react-icons/fa'
 import './App.css'
-import './components/LinkedListPage.css'
-import './styles/Sorting.css'
-import './styles/TreeVisualizer.css'
-import './styles/Pathfinding.css'
-import CodeViewer from './components/CodeViewer'
-import LinkedListVisualizer from './components/LinkedListVisualizer'
-import DiySection from './components/DiySection'
-import DoublyLinkedListExplanation from './components/DoublyLinkedListExplanation'
-import HomePage from './components/HomePage'
-import AboutUs from './components/AboutUs'
-import SortingVisualizer from './components/SortingVisualizer'
-import StackQueueVisualizer from './components/StackQueueVisualizer'
-import TreeVisualizer from './components/TreeVisualizer'
-import PathfindingVisualizer from './components/PathfindingVisualizer/PathfindingVisualizer'
+import './features/common/styles/common.css'
+import './features/linkedList/styles/LinkedList.css'
+import './features/sorting/styles/Sorting.css'
+import './features/tree/styles/TreeVisualizerEnhanced.css'
+import './features/pathfinding/styles/Pathfinding.css'
+import ErrorBoundary from './features/common/components/ErrorBoundary'
+import CodeViewer from './features/common/components/CodeViewer'
+import LinkedListVisualizer from './features/linkedList/components/LinkedListVisualizer'
+import DiySection from './features/linkedList/components/DiySection'
+import DoublyLinkedListExplanation from './features/linkedList/components/DoublyLinkedListExplanation'
+import HomePage from './features/home/components/HomePage'
+import AboutUs from './features/about/components/AboutUs'
+import SortingVisualizer from './features/sorting/components/SortingVisualizer'
+import StackQueueVisualizer from './features/stackQueue/components/StackQueueVisualizer'
+import TreeVisualizer from './features/tree/components/TreeVisualizer'
+import PathfindingVisualizer from './features/pathfinding/components/PathfindingVisualizer'
 import { generateCppCode } from './utils/codeGenerator'
+import { setStorageItem, getStorageItem } from './utils/helpers'
 
 // Create a wrapper component to handle LinkedList page state
 function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, handleMemoryPoolInit, handleCodeChange, updateNodesAndCode }) {
@@ -77,21 +80,21 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
 }
 
 function App() {
-  // Persist state at App level
+  // Persist state at App level using helper functions
   const [nodes, setNodes] = useState(() => {
-    const saved = sessionStorage.getItem('linkedListNodes');
+    const saved = getStorageItem('linkedListNodes', 'session');
     return saved ? JSON.parse(saved) : [];
   });
   
   const [code, setCode] = useState(() => {
-    const saved = sessionStorage.getItem('linkedListCode');
+    const saved = getStorageItem('linkedListCode', 'session');
     return saved || generateCppCode([]);
   });
 
   // Save state to sessionStorage when it changes
   useEffect(() => {
-    sessionStorage.setItem('linkedListNodes', JSON.stringify(nodes));
-    sessionStorage.setItem('linkedListCode', code);
+    setStorageItem('linkedListNodes', JSON.stringify(nodes), 'session');
+    setStorageItem('linkedListCode', code, 'session');
   }, [nodes, code]);
 
   // Store memory pool addresses
@@ -110,19 +113,30 @@ function App() {
       
       const newNodes = nodesData.map((node, index) => {
         // Find first available index
-        let memoryIndex = index;
-        while (usedIndices.has(memoryIndex % 10)) {
-          memoryIndex++;
+        let memoryIndex = index % MEMORY_POOL_SIZE; // Make sure we don't go beyond pool size
+        
+        // Only increment if this index is already used
+        if (usedIndices.has(memoryIndex)) {
+          let attemptsCount = 0;
+          while (usedIndices.has(memoryIndex) && attemptsCount < MEMORY_POOL_SIZE) {
+            memoryIndex = (memoryIndex + 1) % MEMORY_POOL_SIZE;
+            attemptsCount++;
+          }
+          
+          // If we couldn't find an available slot, just use the original index
+          if (attemptsCount >= MEMORY_POOL_SIZE) {
+            memoryIndex = index % MEMORY_POOL_SIZE;
+          }
         }
-        memoryIndex = memoryIndex % 10;
+        
         usedIndices.add(memoryIndex);
         
         return {
           data: node.data,
           address: memoryPoolAddresses[memoryIndex],
           memoryIndex: memoryIndex,
-          prev: index > 0 ? (index - 1) % 10 : null,
-          next: index < nodesData.length - 1 ? (index + 1) % 10 : null
+          prev: index > 0 ? index - 1 : null,  // Use array indices for links
+          next: index < nodesData.length - 1 ? index + 1 : null
         };
       });
       setNodes(newNodes);
@@ -137,32 +151,36 @@ function App() {
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route 
-          path="/linked-list" 
-          element={
-            <LinkedListPage
-              nodes={nodes}
-              setNodes={setNodes}
-              code={code}
-              setCode={setCode}
-              memoryPoolAddresses={memoryPoolAddresses}
-              handleMemoryPoolInit={handleMemoryPoolInit}
-              handleCodeChange={handleCodeChange}
-              updateNodesAndCode={updateNodesAndCode}
-            />
-          }
-        />
-        <Route path="/sorting" element={<SortingVisualizer />} />
-        <Route path="/stacks-queues" element={<StackQueueVisualizer />} />
-        <Route path="/trees" element={<TreeVisualizer />} />
-        <Route path="/graphs" element={<PathfindingVisualizer />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/index.html" element={<Navigate replace to="/" />} />
-      </Routes>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route 
+            path="/linked-list" 
+            element={
+              <ErrorBoundary>
+                <LinkedListPage
+                  nodes={nodes}
+                  setNodes={setNodes}
+                  code={code}
+                  setCode={setCode}
+                  memoryPoolAddresses={memoryPoolAddresses}
+                  handleMemoryPoolInit={handleMemoryPoolInit}
+                  handleCodeChange={handleCodeChange}
+                  updateNodesAndCode={updateNodesAndCode}
+                />
+              </ErrorBoundary>
+            }
+          />
+          <Route path="/sorting" element={<ErrorBoundary><SortingVisualizer /></ErrorBoundary>} />
+          <Route path="/stacks-queues" element={<ErrorBoundary><StackQueueVisualizer /></ErrorBoundary>} />
+          <Route path="/trees" element={<ErrorBoundary><TreeVisualizer /></ErrorBoundary>} />
+          <Route path="/graphs" element={<ErrorBoundary><PathfindingVisualizer /></ErrorBoundary>} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/index.html" element={<Navigate replace to="/" />} />
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   )
 }
 
