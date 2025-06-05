@@ -14,6 +14,7 @@ import DoublyLinkedListExplanation from './components/DoublyLinkedListExplanatio
 import HomePage from './components/HomePage'
 import AboutUs from './components/AboutUs'
 import SortingVisualizer from './components/SortingVisualizer'
+import StackQueueVisualizer from './components/StackQueueVisualizer'
 import TreeVisualizer from './components/TreeVisualizer'
 import PathfindingVisualizer from './components/PathfindingVisualizer/PathfindingVisualizer'
 import { generateCppCode } from './utils/codeGenerator'
@@ -155,6 +156,7 @@ function App() {
           }
         />
         <Route path="/sorting" element={<SortingVisualizer />} />
+        <Route path="/stacks-queues" element={<StackQueueVisualizer />} />
         <Route path="/trees" element={<TreeVisualizer />} />
         <Route path="/graphs" element={<PathfindingVisualizer />} />
         <Route path="/about" element={<AboutUs />} />

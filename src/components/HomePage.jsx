@@ -49,13 +49,12 @@ const HomePage = () => {
       link: '/linked-list', 
       icon: <FaListUl size={40} color={getIconColor('#4A3F6E')} />,
       color: '#4A3F6E', // Purple
-      enabled: true
-    },
-    {
+      enabled: true    },    {
       title: 'Stacks & Queues',
-      icon: <FaLayerGroup size={40} color={getIconColor('#FFFFFF')} />,
-      color: '#FFFFFF', // White
-      enabled: false
+      link: '/stacks-queues',
+      icon: <FaLayerGroup size={40} color={getIconColor('#4A3F6E')} />,
+      color: '#4A3F6E', // Purple
+      enabled: true
     },
     {
       title: 'Trees',
