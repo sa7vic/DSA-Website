@@ -22,8 +22,8 @@ export class BinaryTree {
 
   /**
    * Create a deep copy of a node and its children
-   * @param {import('./types').BinaryTreeNode} node The node to clone
-   * @returns {import('./types').BinaryTreeNode|null} A new node with the same structure
+   * @param {import('../../../lib/types').BinaryTreeNode} node The node to clone
+   * @returns {import('../../../lib/types').BinaryTreeNode|null} A new node with the same structure
    */
   cloneNode(node) {
     if (!node) return null;
@@ -37,7 +37,7 @@ export class BinaryTree {
   /**
    * Insert a key into the binary search tree
    * @param {number} key The key to insert
-   * @returns {Array<import('./types').AnimationStep>} Animation steps for the insert operation
+   * @returns {Array<import('../../../lib/types').AnimationStep>} Animation steps for the insert operation
    */
   insert(key) {
     const steps = [];
@@ -116,7 +116,7 @@ export class BinaryTree {
   /**
    * Find a key in the tree
    * @param {number} key The key to find
-   * @returns {Array<import('./types').AnimationStep>} Animation steps for the find operation
+   * @returns {Array<import('../../../lib/types').AnimationStep>} Animation steps for the find operation
    */
   find(key) {
     const steps = [];
@@ -194,7 +194,7 @@ export class BinaryTree {
   /**
    * Delete a key from the tree
    * @param {number} key The key to delete
-   * @returns {Array<import('./types').AnimationStep>} Animation steps for the delete operation
+   * @returns {Array<import('../../../lib/types').AnimationStep>} Animation steps for the delete operation
    */
   delete(key) {
     const steps = [];
