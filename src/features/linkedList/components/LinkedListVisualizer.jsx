@@ -423,39 +423,39 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit }) =
       )}
 
       {/* Linked List Display */}
-      <div className="linked-list-display">
-        {nodes.length === 0 ? (
-          <div className="placeholder">
-            <p>Insert something to visualize the linked list</p>
-            <small>Use Insert at Beginning or Insert at End to add nodes</small>
+<div className="linked-list-display">
+  {nodes.length === 0 ? (
+    <div className="placeholder">
+      <p>Insert something to visualize the linked list</p>
+      <small>Use Insert at Beginning or Insert at End to add nodes</small>
+    </div>
+  ) : (
+    nodes.map((node, index) => (
+      <div key={`${node.address}-${index}`} className="node-container">
+        {index > 0 && (
+          <div className="pointer-left">
+            <FaArrowLeft />
           </div>
-        ) : (
-          <div className="nodes-container">
-            {nodes.map((node, index) => (
-              <div key={`${node.address}-${index}`} className="node-container">
-                {index > 0 && (
-                  <div className="pointer-left" aria-hidden="true">
-                    <FaArrowLeft />
-                  </div>
-                )}
-                <div className="node node-active" role="listitem">
-                  <div className="node-address">Address: {node.address}</div>
-                  <div className="node-data">Data: {node.data}</div>
-                  <div className="node-pointers">
-                    <div>prev: {node.prev !== null ? memoryPool[node.prev]?.address || 'nullptr' : 'nullptr'}</div>
-                    <div>next: {node.next !== null ? memoryPool[node.next]?.address || 'nullptr' : 'nullptr'}</div>
-                  </div>
-                </div>
-                {index < nodes.length - 1 && (
-                  <div className="pointer-right" aria-hidden="true">
-                    <FaArrowRight />
-                  </div>
-                )}
-              </div>
-            ))}
+        )}
+        <div className="node node-active">
+          <div className="node-address">Address: {node.address}</div>
+          <div className="node-data">Data: {node.data}</div>
+          <div className="node-pointers">
+            <div>prev: {node.prev !== null ? 
+              memoryPool[node.prev]?.address || 'nullptr' : 'nullptr'}</div>
+            <div>next: {node.next !== null ? 
+              memoryPool[node.next]?.address || 'nullptr' : 'nullptr'}</div>
+          </div>
+        </div>
+        {index < nodes.length - 1 && (
+          <div className="pointer-right">
+            <FaArrowRight />
           </div>
         )}
       </div>
+    ))
+  )}
+</div>
       
       {/* Memory Pool Display */}
       <h3>Memory Pool</h3>
