@@ -67,11 +67,6 @@ class PathfindingVisualizer extends Component {
   makeGrid = () => {
     if (this.animating) return;
     
-    // Update status message
-    this.setState({
-      currentStep: "Resetting grid..."
-    });
-    
     // Limit grid size to be more manageable and prevent performance issues
     let row_size = Math.min(Math.floor((window.innerHeight - 200) / 45), 15);
     let col_size = Math.min(Math.floor((window.innerWidth - 100) / 45), 35); // Increased max columns
@@ -81,24 +76,6 @@ class PathfindingVisualizer extends Component {
     col_size = Math.max(col_size, 20); // Increased minimum columns
     
     console.log(`Creating grid of size ${row_size} x ${col_size}`);
-    
-    // Completely clean up the existing grid to prevent persistence issues
-    if (this.state.grid && this.state.grid.length > 0) {
-      for (let i = 0; i < this.state.grid.length; i++) {
-        for (let j = 0; j < this.state.grid[i].length; j++) {
-          const nodeId = `node-${i}-${j}`;
-          const nodeElement = document.getElementById(nodeId);
-          if (nodeElement) {
-            // Reset class
-            nodeElement.className = "node_";
-            
-            // Remove all images within the node to ensure complete cleanup
-            const images = nodeElement.querySelectorAll('img');
-            images.forEach(img => img.remove());
-          }
-        }
-      }
-    }
     
     let arr = [];
     
@@ -169,128 +146,71 @@ class PathfindingVisualizer extends Component {
   handleMouseDown = (row, col) => {
     if (this.animating) return;
     
-    // Create a deep copy of the grid for reliable state updates
-    let arr = JSON.parse(JSON.stringify(this.state.grid));
-    
+    let arr = this.state.grid;
     if (arr[row][col].isStart) {
-      // Clear the current start node immediately to prevent duplicates
-      const [startRow, startCol] = this.state.start_node;
-      arr[startRow][startCol].isStart = false;
-      
       this.setState({
-        mainClicked: "start",
-        mouseClicked: true,
-        currentStep: "Moving start node..."
+        mainClicked: "start"
       });
     } else if (arr[row][col].isEnd) {
-      // Clear the current end node immediately to prevent duplicates
-      const [endRow, endCol] = this.state.end_node;
-      arr[endRow][endCol].isEnd = false;
-      
       this.setState({
-        mainClicked: "end",
-        mouseClicked: true,
-        currentStep: "Moving end node..."
+        mainClicked: "end"
       });
     } else if (!arr[row][col].isWall && !arr[row][col].isStart && !arr[row][col].isEnd) {
-      // Create a wall
       arr[row][col].isWall = true;
-      
-      this.setState({
-        grid: arr,
-        mouseClicked: true,
-        currentStep: `Adding wall at (${row}, ${col})`
-      });
     } else if (arr[row][col].isWall) {
-      // Remove wall
       arr[row][col].isWall = false;
-      
-      this.setState({
-        grid: arr,
-        mouseClicked: true,
-        currentStep: `Removing wall at (${row}, ${col})`
-      });
-    } else {
-      // Just mark as clicked for other cases
-      this.setState({
-        mouseClicked: true
-      });
     }
+    
+    this.setState({
+      grid: arr,
+      mouseClicked: true
+    });
   };
   
   handleMouseEnter = (row, col) => {
     if (this.animating) return;
     
     if (this.state.mouseClicked) {
-      // Create a deep copy of the grid for reliable state updates
-      let arr = JSON.parse(JSON.stringify(this.state.grid));
-      
+      let arr = this.state.grid;
       if (this.state.mainClicked === "start") {
         // Don't allow start point to overlap with end point
         if (arr[row][col].isEnd) return;
         
-        // Check if we're entering a new node
-        if (this.state.start_node && 
-            (this.state.start_node[0] !== row || this.state.start_node[1] !== col)) {
-          
-          // Clear the old start node
-          const [prevRow, prevCol] = this.state.start_node;
-          arr[prevRow][prevCol].isStart = false;
-          
-          // Set the new start node
-          arr[row][col].isStart = true;
-          
-          this.setState({
-            grid: arr,
-            start_node: [row, col],
-            currentStep: `Set start at (${row}, ${col})`
-          });
-        }
+        arr[row][col].isStart = true;
+        this.setState({
+          start_node: [row, col]
+        });
       } else if (this.state.mainClicked === "end") {
         // Don't allow end point to overlap with start point
         if (arr[row][col].isStart) return;
         
-        // Check if we're entering a new node
-        if (this.state.end_node && 
-            (this.state.end_node[0] !== row || this.state.end_node[1] !== col)) {
-          
-          // Clear the old end node
-          const [prevRow, prevCol] = this.state.end_node;
-          arr[prevRow][prevCol].isEnd = false;
-          
-          // Set the new end node
-          arr[row][col].isEnd = true;
-          
-          this.setState({
-            grid: arr,
-            end_node: [row, col],
-            currentStep: `Set end at (${row}, ${col})`
-          });
-        }
+        arr[row][col].isEnd = true;
+        this.setState({
+          end_node: [row, col]
+        });
       } else if (!arr[row][col].isWall && !arr[row][col].isStart && !arr[row][col].isEnd) {
-        // Create a wall
         arr[row][col].isWall = true;
-        
-        this.setState({
-          grid: arr,
-          currentStep: `Adding wall at (${row}, ${col})`
-        });
       } else if (arr[row][col].isWall) {
-        // Remove wall
         arr[row][col].isWall = false;
-        
-        this.setState({
-          grid: arr,
-          currentStep: `Removing wall at (${row}, ${col})`
-        });
       }
+      
+      this.setState({
+        grid: arr
+      });
     }
   };
   
   handleMouseLeave = (row, col) => {
-    // No special handling needed - our useEffect-based approach in the Node component
-    // will automatically update the DOM when state changes
-    return;
+    if (this.animating) return;
+    
+    let arr = this.state.grid;
+    if (this.state.mainClicked !== "") {
+      arr[row][col].isStart = false;
+      arr[row][col].isEnd = false;
+      this.setState({
+        grid: arr
+      });
+    }
   };
   
   handleMouseUp = () => {
