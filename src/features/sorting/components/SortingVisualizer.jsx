@@ -970,7 +970,7 @@ const SortingVisualizer = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        style={{ gap: '1rem', padding: '1rem' }}
+        style={{ gap: '1rem', height: 'calc(100vh - 66px)' }}
       >
         {/* Steps Panel - always visible */}
         <motion.div 
@@ -979,12 +979,19 @@ const SortingVisualizer = () => {
           animate={{ opacity: 1, width: "320px" }}
           exit={{ opacity: 0, width: 0 }}
           transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
-          style={{ minWidth: "320px", borderRadius: "8px" }}
+          style={{ 
+            minWidth: "320px", 
+            borderRadius: "8px", 
+            height: "calc(100vh - 88px)", 
+            minHeight: "calc(100vh - 88px)",
+            display: "flex", 
+            flexDirection: "column"
+          }}
         >
           <h3>Algorithm Steps</h3>
           
-          <div className="algorithm-info">
-            {method !== "Select Algorithm" && (
+          {method !== "Select Algorithm" && (
+            <div className="algorithm-info">
               <div className="algorithm-metrics">
                 <div className="metric">
                   <span className="metric-label">Time Complexity:</span>
@@ -995,8 +1002,8 @@ const SortingVisualizer = () => {
                   <span className="metric-value">{algorithmInfo[method]?.spaceComplexity}</span>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
           
           <div className="step-display">
             <h4>Current Operation:</h4>
@@ -1005,9 +1012,9 @@ const SortingVisualizer = () => {
             </div>
             
             {/* Learn More section - moved from bottom info panel */}
-            {method !== "Select Algorithm" && (
+            {method !== "Select Algorithm" ? (
               <div className="algorithm-details-container">
-                <p className="algorithm-description">{algorithmInfo[method]?.description}</p>
+                <div className="algorithm-description" style={{ margin: '0.5rem', padding: '1rem', boxSizing: 'border-box', borderRadius: '6px', border: '1px solid rgba(56, 139, 253, 0.2)', backgroundColor: 'rgba(56, 139, 253, 0.05)' }}>{algorithmInfo[method]?.description}</div>
                 <button 
                   className="info-toggle-button" 
                   onClick={() => setShowInfo(!showInfo)}
@@ -1021,6 +1028,12 @@ const SortingVisualizer = () => {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     transition={{ duration: 0.3 }}
+                    style={{ 
+                      flex: "0 0 auto",
+                      marginBottom: "0.5rem",
+                      maxHeight: "40%",
+                      overflow: "auto"
+                    }}
                   >
                     {method === "Selection Sort" && (
                       <p>Selection sort is simple but inefficient for large datasets. It divides the array into a sorted and unsorted region, repeatedly finding the minimum element from the unsorted region and moving it to the beginning of the sorted region.</p>
@@ -1045,6 +1058,18 @@ const SortingVisualizer = () => {
                     )}
                   </motion.div>
                 )}
+              </div>
+            ) : (
+              <div className="algorithm-details-container" style={{ flex: 1, minHeight: "380px", height: "100%" }}>
+                <div className="algorithm-description" style={{ flex: 1, height: "100%", display: "flex", flexDirection: "column", margin: "0.5rem" }}>
+                  Welcome to the Sorting Algorithm Visualizer! Here you can watch how different sorting algorithms work step by step.
+                  <br/><br/>
+                  🔹 Select an algorithm from the dropdown<br/>
+                  🔹 Customize the array size and animation speed<br/>
+                  🔹 Press 'Sort' to see the magic happen<br/>
+                  🔹 Use 'Pause/Resume' to control the animation<br/>
+                  🔹 Try 'Custom Input' to sort your own numbers
+                </div>
               </div>
             )}
           </div>

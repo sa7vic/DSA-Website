@@ -42,6 +42,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 80px;
 }
 
 .app-header h1 {
@@ -75,18 +76,20 @@
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: absolute;
   left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 10;
 }
 
 .home-button:hover {
-  transform: translateY(-3px) scale(1.02);
+  transform: translateY(-50%) scale(1.02);
   background: linear-gradient(135deg, rgba(139, 62, 211, 0.5), rgba(74, 63, 110, 0.5));
   border-color: rgba(255, 255, 255, 0.25);
   box-shadow: 0 8px 20px rgba(139, 62, 211, 0.3);
 }
 
 .home-button:active {
-  transform: translateY(-1px) scale(0.98);
+  transform: translateY(-50%) scale(0.98);
   box-shadow: 0 2px 10px rgba(139, 62, 211, 0.2);
 }
 
@@ -158,24 +161,48 @@
 
 .controls {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 1rem;
   padding: 1rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 0.5rem;
+  align-items: center;
+}
+
+.input-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  width: 100%;
 }
 
 .controls button {
   background: linear-gradient(135deg, #4A3F6E, #8b3ed3);
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   color: white;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 0 15px rgba(139, 62, 211, 0.3);
+  box-shadow: 0 0 10px rgba(139, 62, 211, 0.2);
   position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
   overflow: hidden;
 }
 
@@ -193,11 +220,26 @@
 
 .controls button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 25px rgba(139, 62, 211, 0.5);
+  box-shadow: 0 0 20px rgba(139, 62, 211, 0.4);
 }
 
 .controls button:hover::before {
   opacity: 1;
+}
+
+.controls button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.controls button.danger {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.controls button.danger:hover {
+  background: linear-gradient(135deg, #c82333, #bd2130);
+  box-shadow: 0 0 20px rgba(220, 53, 69, 0.4);
 }
 
 .controls button span {
@@ -208,9 +250,16 @@
 .controls input {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0.75rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   color: white;
+  font-size: 0.875rem;
+  min-width: 180px;
+  text-align: center;
+}
+
+.controls input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Node styling */
@@ -447,4 +496,34 @@ input.invalid {
   border-color: #ff453a !important;
   background-color: rgba(255, 69, 58, 0.1) !important;
   box-shadow: 0 0 0 1px #ff453a !important;
+}
+
+/* Placeholder styling for empty linked list */
+.placeholder {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  margin: 2rem 0;
+  transition: all 0.3s ease;
+}
+
+.placeholder:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(139, 62, 211, 0.4);
+  transform: translateY(-2px);
+}
+
+.placeholder p {
+  font-size: 1.2rem;
+  color: #a8a8ff;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.placeholder small {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  font-style: italic;
 }

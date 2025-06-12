@@ -67,13 +67,9 @@ class PathfindingVisualizer extends Component {
   makeGrid = () => {
     if (this.animating) return;
     
-    // Limit grid size to be more manageable and prevent performance issues
-    let row_size = Math.min(Math.floor((window.innerHeight - 200) / 45), 15);
-    let col_size = Math.min(Math.floor((window.innerWidth - 100) / 45), 35); // Increased max columns
-    
-    // Ensure we have at least minimum grid size
-    row_size = Math.max(row_size, 8);
-    col_size = Math.max(col_size, 20); // Increased minimum columns
+    // Use more reasonable grid dimensions for better cell size and visibility
+    let row_size = 15;  // Back to 15 rows for better cell size
+    let col_size = 28;  // Reduced from 35 to 28 columns for better proportions
     
     console.log(`Creating grid of size ${row_size} x ${col_size}`);
     
@@ -393,73 +389,44 @@ class PathfindingVisualizer extends Component {
           <p>The algorithm will find the shortest path from start to end, avoiding walls.</p>
         </InstructionsModal>
         
-        {/* Custom Header (no Bootstrap dependency) */}
+        {/* Header with consistent styling */}
         <header className="pathfinding-header">
-          <Link to="/" style={{ marginRight: '20px', display: 'flex', alignItems: 'center' }}>
-            <FaHome style={{ marginRight: '5px' }} /> Home
+          <Link to="/" className="home-button">
+            <FaHome />
+            <span>Home</span>
           </Link>
-          <h1 style={{ flexGrow: 1 }}>Pathfinding Visualizer</h1>
           
-          <div className="control-buttons" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <h1>Pathfinding Visualizer</h1>
+          
+          <div className="control-buttons">
             {/* Algorithm Selector */}
-            <div style={{ margin: '0 10px' }}>
-              <select 
-                value={this.state.method} 
-                onChange={(e) => this.setState({ method: e.target.value })}
-                style={{ 
-                  padding: '5px 10px', 
-                  backgroundColor: '#1a1a2e', 
-                  color: 'white',
-                  border: '1px solid #5bc9b1',
-                  borderRadius: '4px'
-                }}
-              >
-                <option value="Algorithms">Select Algorithm</option>
-                <option value="Dijkstra's Algorithm">Dijkstra's Algorithm</option>
-                <option value="A* Search">A* Search</option>
-              </select>
-            </div>
+            <select 
+              value={this.state.method} 
+              onChange={(e) => this.setState({ method: e.target.value })}
+            >
+              <option value="Algorithms">Select Algorithm</option>
+              <option value="Dijkstra's Algorithm">Dijkstra's Algorithm</option>
+              <option value="A* Search">A* Search</option>
+            </select>
             
             {/* Action Buttons */}
             <button 
               onClick={() => this.makeGrid()} 
-              style={{
-                padding: '5px 15px',
-                backgroundColor: '#2A623D',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
+              className="clear-btn"
             >
               Clear
             </button>
             
             <button 
               onClick={this.showModal}
-              style={{
-                padding: '5px 15px',
-                backgroundColor: '#4A3F6E',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
+              className="instructions-btn"
             >
               Instructions
             </button>
             
             <button 
               onClick={this.runDijkstra}
-              style={{
-                padding: '5px 15px',
-                backgroundColor: '#5bc9b1',
-                color: 'black',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
+              className="find-path-btn"
             >
               Find Path
             </button>
@@ -467,10 +434,10 @@ class PathfindingVisualizer extends Component {
         </header>
         
         {/* Stats and Status Display */}
-        <div style={{ 
+        <div className="pathfinding-stats" style={{ 
           display: 'flex', 
           justifyContent: 'center', 
-          padding: '10px', 
+          padding: '15px', 
           backgroundColor: 'rgba(26, 26, 46, 0.7)',
           borderBottom: '1px solid #5bc9b1',
           flexDirection: 'column',
@@ -530,30 +497,32 @@ class PathfindingVisualizer extends Component {
           Select an algorithm first!
         </div>
         
-        {/* Grid */}
-        <table>
-          {this.state.grid.map((row, rowIndex) => (
-            <tr key={rowIndex} style={{ display: "table-row" }}>
-              {row.map((node, nodeIndex) => (
-                <Node
-                  key={nodeIndex}
-                  value={node}
-                  isWall={node.isWall}
-                  isStart={node.isStart}
-                  isEnd={node.isEnd}
-                  isVisited={node.isVisited}
-                  isShortestPath={node.isShortestPath}
-                  row={rowIndex}
-                  col={nodeIndex}
-                  onMouseDown={this.handleMouseDown}
-                  onMouseEnter={this.handleMouseEnter}
-                  onMouseUp={this.handleMouseUp}
-                  onMouseLeave={this.handleMouseLeave}
-                />
-              ))}
-            </tr>
-          ))}
-        </table>
+        {/* Grid Container - takes remaining space */}
+        <div className="pathfinding-grid-container">
+          <table>
+            {this.state.grid.map((row, rowIndex) => (
+              <tr key={rowIndex} style={{ display: "table-row" }}>
+                {row.map((node, nodeIndex) => (
+                  <Node
+                    key={nodeIndex}
+                    value={node}
+                    isWall={node.isWall}
+                    isStart={node.isStart}
+                    isEnd={node.isEnd}
+                    isVisited={node.isVisited}
+                    isShortestPath={node.isShortestPath}
+                    row={rowIndex}
+                    col={nodeIndex}
+                    onMouseDown={this.handleMouseDown}
+                    onMouseEnter={this.handleMouseEnter}
+                    onMouseUp={this.handleMouseUp}
+                    onMouseLeave={this.handleMouseLeave}
+                  />
+                ))}
+              </tr>
+            ))}
+          </table>
+        </div>
         
         {/* Info Panel */}
         <div className="chat-container">
@@ -563,8 +532,10 @@ class PathfindingVisualizer extends Component {
               className="chat-btn" 
               onClick={this.toggleInfo}
               style={{ display: "block" }}
+              title="Click to view algorithm information"
             >
               <FaInfoCircle />
+              Info
             </button>
           )}
           
