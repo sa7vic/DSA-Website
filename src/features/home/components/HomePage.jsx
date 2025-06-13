@@ -64,8 +64,8 @@ const HomePage = () => {
       enabled: true
     },
     {
-      title: 'Graphs',
-      link: '/graphs',
+      title: 'Pathfinding',
+      link: '/pathfinding-visualizer',
       icon: <FaProjectDiagram size={40} color={getIconColor('#4A3F6E')} />,
       color: '#4A3F6E', // Purple
       enabled: true

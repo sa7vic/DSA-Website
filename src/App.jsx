@@ -194,6 +194,19 @@ function App() {
           <Route path="/sorting" element={<ErrorBoundary><SortingVisualizer /></ErrorBoundary>} />
           <Route path="/stacks-queues" element={<ErrorBoundary><StackQueueVisualizer /></ErrorBoundary>} />
           <Route path="/trees" element={<ErrorBoundary><TreeVisualizer /></ErrorBoundary>} />
+          <Route path="/pathfinding-visualizer" element={
+            <div style={{ width: '100vw', height: '100vh' }}>
+              <iframe 
+                src="/pathfinding.html"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none'
+                }}
+                title="Pathfinding Visualizer"
+              />
+            </div>
+          } />
           <Route path="/graphs" element={<ErrorBoundary><PathfindingVisualizer /></ErrorBoundary>} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/index.html" element={<Navigate replace to="/" />} />
