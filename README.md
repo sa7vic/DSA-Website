@@ -1,12 +1,14 @@
 # DSA Viz
 
 **DSA Viz** by Openverse simplifies your journey through Data Structures by offering interactive visualizations.
+-- Here is a link! : https://visualalgo-ov.web.app/stacks-queues
 
 ---
 
 ## Features:
-- For now, Interactive Visualization of a doubly linked list 
-- Well.. we're working on it would love some contributions adding other data structures / algorithms
+- For now, we have Linked lists, Stacks and queue, Graphs, Trees and Sorting Algorithms
+- If you would like to contribute, just hit us up tell us what you'd like to help with We're always open to collaborate
+
 
 ---
 ## Tech Stack:
@@ -24,5 +26,6 @@ npm install
 npm run dev
 ```
 
-![image](https://github.com/user-attachments/assets/d23e2bb3-9cd2-4a70-8e00-c65bdd484c02)
+![image](https://github.com/user-attachments/assets/73a73d85-ccc3-445b-94c7-44701059311f)
+
 
