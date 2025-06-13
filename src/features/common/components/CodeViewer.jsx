@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import Editor from "@monaco-editor/react";
 
-const CodeViewer = ({ code, onChange }) => {
+const CodeViewer = ({ code, onChange, currentLine, isAnimating, nodes }) => {
   const editorRef = useRef(null);
+  const decorationsRef = useRef([]);
 
   useEffect(() => {
     if (editorRef.current) {
@@ -10,10 +11,55 @@ const CodeViewer = ({ code, onChange }) => {
     }
   }, [code]);
 
+  // Handle line highlighting during animations
+  useEffect(() => {
+    if (editorRef.current && currentLine > 0 && isAnimating) {
+      // Clear previous decorations
+      const model = editorRef.current.getModel();
+      if (model) {
+        decorationsRef.current = editorRef.current.deltaDecorations(
+          decorationsRef.current,
+          [
+            {
+              range: {
+                startLineNumber: currentLine,
+                startColumn: 1,
+                endLineNumber: currentLine,
+                endColumn: model.getLineMaxColumn(currentLine)
+              },
+              options: {
+                isWholeLine: true,
+                className: 'highlighted-line',
+                glyphMarginClassName: 'highlighted-line-glyph'
+              }
+            }
+          ]
+        );
+        
+        // Auto-scroll to highlighted line
+        editorRef.current.revealLineInCenter(currentLine, 1);
+      }
+    } else if (editorRef.current && !isAnimating) {
+      // Clear decorations when animation stops
+      decorationsRef.current = editorRef.current.deltaDecorations(decorationsRef.current, []);
+    }
+  }, [currentLine, isAnimating]);
+
   function handleEditorDidMount(editor, monaco) {
     editorRef.current = editor;
     // Remove the blue outline
     editor.getDomNode()?.style.setProperty('outline', 'none');
+    
+    // Define CSS for line highlighting
+    monaco.editor.defineTheme('highlighted-theme', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {}
+    });
+    
+    // Apply the theme
+    monaco.editor.setTheme('highlighted-theme');
   }
 
   function handleEditorChange(value) {

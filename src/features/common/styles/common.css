@@ -17,6 +17,25 @@
   border-left: 2px solid #58a6ff;
 }
 
+/* Monaco Editor line highlighting styles */
+.monaco-editor .highlighted-line {
+  background-color: rgba(88, 166, 255, 0.15) !important;
+}
+
+.monaco-editor .highlighted-line-glyph {
+  position: relative;
+}
+
+.monaco-editor .highlighted-line-glyph::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: #58a6ff;
+}
+
 /* Control section */
 .control-section {
   display: flex;

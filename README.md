@@ -18,7 +18,7 @@
 ## Installation:
 
 ```bash
-git clone https://github.com/Prajwal-k-tech/DSA-Website.git
+git clone 
 cd DSA-Website
 npm install
 npm run dev

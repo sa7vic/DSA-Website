@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FaHome } from 'react-icons/fa'
@@ -24,6 +24,18 @@ import { setStorageItem, getStorageItem } from './utils/helpers'
 
 // Create a wrapper component to handle LinkedList page state
 function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, handleMemoryPoolInit, handleCodeChange, updateNodesAndCode }) {
+  // State for animation coordination between CodeViewer and LinkedListVisualizer
+  const [currentLine, setCurrentLine] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [currentStep, setCurrentStep] = useState('');
+
+  // Function to handle animation state updates from LinkedListVisualizer
+  const handleAnimationUpdate = useCallback((lineNumber, step, animating) => {
+    setCurrentLine(lineNumber);
+    setCurrentStep(step);
+    setIsAnimating(animating);
+  }, []);
+
   return (
     <div className="app-container">
       <div className="linkedlist-bg-overlay"></div>
@@ -56,7 +68,13 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <h2>C++ Implementation</h2>
-          <CodeViewer code={code} onChange={handleCodeChange} />
+          <CodeViewer 
+            code={code} 
+            onChange={handleCodeChange}
+            currentLine={currentLine}
+            isAnimating={isAnimating}
+            nodes={nodes}
+          />
         </motion.div>
 
         <motion.div 
@@ -70,6 +88,7 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
             nodes={nodes} 
             onNodesChange={updateNodesAndCode}
             onMemoryPoolInit={handleMemoryPoolInit}
+            onAnimationUpdate={handleAnimationUpdate}
           />
           <DoublyLinkedListExplanation />
           <DiySection code={code} />
