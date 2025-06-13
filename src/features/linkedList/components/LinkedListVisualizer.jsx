@@ -766,7 +766,7 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit, onA
             type="number" 
             value={positionInput} 
             onChange={(e) => setPositionInput(e.target.value)} 
-            placeholder="Position (optional)" 
+            placeholder="Position (0 based)" 
             disabled={isAnimating || isLoading}
           />
         </div>

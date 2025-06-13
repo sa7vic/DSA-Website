@@ -52,7 +52,7 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
           <FaHome size={18} />
           <span>Home</span>
         </Link>
-        <h1 style={{ flex: 1, textAlign: 'center' }}>C++ Doubly Linked List Visualization</h1>
+        <h1 style={{ flex: 1, textAlign: 'center' }}>Linked List Visualizer</h1>
       </motion.header>
 
       <motion.div 

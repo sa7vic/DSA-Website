@@ -5,6 +5,8 @@ import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Link } from 'react-router-dom';
 import { FaHome, FaPlus, FaTrash, FaEye } from 'react-icons/fa';
 import CurrentOperationDisplay from './CurrentOperationDisplay';
+import StackQueueExplanation from './StackQueueExplanation';
+import DiySection from './DiySection';
 import '../styles/StackQueueVisualizer.css';
 import '../styles/CurrentOperationDisplay.css';
 import { ANIMATION_SPEEDS, COLORS } from '../../../constants';
@@ -828,6 +830,12 @@ int main() {
               )}
             </div>
           </div>
+          
+          {/* Explanation Section */}
+          <StackQueueExplanation dataStructure={dataStructure} />
+          
+          {/* DIY Section */}
+          <DiySection dataStructure={dataStructure} />
 
         </motion.div>
       </motion.div>

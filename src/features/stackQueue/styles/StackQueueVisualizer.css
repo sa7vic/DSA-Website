@@ -169,6 +169,72 @@
   background: rgba(168, 168, 255, 0.7);
 }
 
+/* Explanation and DIY sections */
+.explanation-section, .diy-section {
+  margin-bottom: 1.5rem;
+}
+
+.explanation-content h4, .diy-content h4 {
+  color: #58a6ff;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.explanation-content ul, .diy-content ul,
+.explanation-content ol, .diy-content ol {
+  padding-left: 1.5rem;
+}
+
+.explanation-content li, .diy-content li {
+  margin-bottom: 0.25rem;
+}
+
+.diy-content pre {
+  background: #161b22;
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #e6edf3;
+  border: 1px solid rgba(168, 168, 255, 0.3);
+  margin: 1rem 0;
+}
+
+.diy-content .copy-button {
+  background: #238636;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.diy-content .copy-button:hover {
+  background: #2ea043;
+}
+
+.diy-content .copy-button.copied {
+  background: #1f6feb;
+}
+
+.diy-content code {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  background: rgba(110, 118, 129, 0.4);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 85%;
+}
+
+.diy-content pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
 /* Code viewer */
 .code-viewer {
   flex: 1;

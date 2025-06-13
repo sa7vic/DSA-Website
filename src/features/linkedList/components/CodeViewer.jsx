@@ -264,7 +264,8 @@ public:
                 fontSize: '0.9rem',
                 lineHeight: '1.6',
                 height: '70vh',
-                overflow: 'auto'
+                overflow: 'auto',
+                background: '#1e1e1e'
               }}
             >
               {getEnhancedCode()}
@@ -288,6 +289,16 @@ public:
               automaticLayout: true,
               folding: true,
               fixedOverflowWidgets: true,
+              scrollbar: {
+                verticalScrollbarSize: 8,
+                horizontalScrollbarSize: 8,
+                verticalSliderSize: 8,
+                horizontalSliderSize: 8,
+                verticalHasArrows: false,
+                horizontalHasArrows: false,
+                arrowSize: 15,
+                useShadows: true
+              },
             }}
             onChange={handleEditorChange}
           />
