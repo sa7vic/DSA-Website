@@ -160,20 +160,20 @@ body {
 
 .instantshortest-path-up{
   /*border: 1px solid #2a2a3e;*/
-  background:url(triangletwo-up.svg);
+  background-image: url(grass.png);
   background-color: #b286ff !important;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 .shortest-path-up{
   /*border: 1px solid #2a2a3e;*/
-  background:url(triangletwo-up.svg);
+  background-image: url(grass.png);
   background-color: #b286ff !important;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   animation-name: triangletwo;
   animation-duration: 1.5s;
   animation-timing-function: linear;
@@ -186,20 +186,20 @@ body {
 
 .instantshortest-path-down{
   /*border: 1px solid #2a2a3e;*/
-  background:url(triangletwo-down.svg);
+  background-image: url(grass.png);
   background-color: rgb(255, 254, 106);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 .shortest-path-down{
   /*border: 1px solid #2a2a3e;*/
-  background:url(triangletwo-down.svg);
+  background-image: url(grass.png);
   background-color: rgb(255, 254, 106);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   animation-name: triangletwo;
   animation-duration: 1.5s;
   animation-timing-function: linear;
@@ -212,20 +212,20 @@ body {
 
 .instantshortest-path-right{
   /*border: 1px solid #2a2a3e;*/
-  background:url(triangletwo-right.svg);
+  background-image: url(grass.png);
   background-color: rgb(255, 254, 106);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 .shortest-path-right{
   /*border: 1px solid #2a2a3e;*/
-  background:url(triangletwo-right.svg);
+  background-image: url(grass.png);
   background-color: rgb(255, 254, 106);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   animation-name: triangletwo;
   animation-duration: 1.5s;
   animation-timing-function: linear;
@@ -238,20 +238,20 @@ body {
 
 .instantshortest-path-left{
   /*border: 1px solid #2a2a3e;*/
-  background:url(triangletwo-left.svg);
+  background-image: url(grass.png);
   background-color: rgb(255, 254, 106);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 .shortest-path-left{
   /*border: 1px solid #2a2a3e;*/
-  background:url(triangletwo-left.svg);
+  background-image: url(grass.png);
   background-color: rgb(255, 254, 106);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   animation-name: triangletwo;
   animation-duration: 1.5s;
   animation-timing-function: linear;
@@ -265,7 +265,7 @@ body {
 .instantStartTransparent{
   /*border: 1px solid #2a2a3e;*/
   opacity: 0.5;
-  background-image:url(triangletwo-right.svg);
+  background-image: url(bavi.png);
   background-color: rgb(255, 254, 106);
   background-position: center;
   background-repeat: no-repeat;
@@ -275,7 +275,7 @@ body {
 .startTransparent{
   /*border: 1px solid #2a2a3e;*/
   opacity: 0.5;
-  background-image:url(triangletwo-right.svg);
+  background-image: url(bavi.png);
   background-color: rgb(255, 254, 106);
   background-position: center;
   background-repeat: no-repeat;
@@ -292,7 +292,7 @@ body {
 
 .visitedStartNodeBlue {
   /*border: 1px solid #2a2a3e;*/
-  background-image:url(triangletwo-right.svg);
+  background-image: url(bavi.png);
   /*background-color: rgb(255, 254, 106);*/
   background-position: center;
   background-repeat: no-repeat;
@@ -309,7 +309,7 @@ body {
 
 .visitedStartNodePurple {
   /*border: 1px solid #2a2a3e;*/
-  background-image:url(triangletwo-right.svg);
+  background-image: url(bavi.png);
   /*background-color: rgb(255, 254, 106);*/
   background-position: center;
   background-repeat: no-repeat;
@@ -340,7 +340,7 @@ body {
 }
 
 .visitedTargetNodeBlue {
-  background-image: url(circle.svg);
+  background-image: url(ydg.png);
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -355,7 +355,7 @@ body {
 }
 
 .visitedTargetNodePurple {
-  background-image: url(circle.svg);
+  background-image: url(ydg.png);
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -580,22 +580,32 @@ body {
 
 .instantvisited{
   border: 1px solid #2a2a3e;
-  background-color: rgba(178, 134, 255, 0.75);
+  background-image: url(yellow.webp);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   /*background-color: rgba(178, 67, 255, 0.75);*/
 }
 
 .instantvisited.weight {
   border: 1px solid #2a2a3e;
-  background-color: rgba(178, 134, 255, 0.75);
-  /*background-color: rgba(178, 67, 255, 0.75);*/
-  background-image: url(weight.svg);
+  background-image: url(yellow.webp);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
+  /*background-color: rgba(178, 67, 255, 0.75);*/
+  background-image: url(weight.svg), url(yellow.webp);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain, cover;
 }
 
 .visited{
   border: 1px solid #2a2a3e;
+  background-image: url(yellow.webp);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   animation-name: visitedAnimation;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
@@ -608,10 +618,10 @@ body {
 
 .visited.weight{
   border: 1px solid #2a2a3e;
-  background-image: url(weight.svg);
+  background-image: url(weight.svg), url(yellow.webp);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: contain, cover;
   animation-name: visitedAnimation;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
@@ -625,22 +635,34 @@ body {
 @keyframes visitedAnimation {
   0% {
     transform: scale(.3);
-    background-color: rgba(74, 63, 110, 0.75);
+    background-image: url(yellow.webp);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     border-radius: 100%;
   }
 
   50% {
-    background-color: rgba(139, 62, 211, 0.75);
+    background-image: url(yellow.webp);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   75% {
     transform: scale(1.2);
-    background-color: rgba(156, 77, 221, 0.75)
+    background-image: url(yellow.webp);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   100% {
     transform: scale(1.0);
-    background-color: rgba(178, 134, 255, 0.75);
+    background-image: url(yellow.webp);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 }
 
@@ -678,23 +700,29 @@ body {
 
 .instantvisitedobject{
   border: 1px solid #2a2a3e;
-  background-color: rgba(178, 67, 255, 0.75);
+  background-image: url(yellow.webp);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   /*background-color: rgba(178, 134, 255, 0.75);*/
 }
 
 .instantvisitedobject.weight{
   border: 1px solid #2a2a3e;
-  background-color: rgba(178, 67, 255, 0.75);
-  /*background-color: rgba(178, 134, 255, 0.75);*/
-  background-image: url(weight.svg);
+  background-image: url(weight.svg), url(yellow.webp);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: contain, cover;
+  /*background-color: rgba(178, 134, 255, 0.75);*/
 }
 
 .visitedobject{
   /*background:red*/
   border: 1px solid #2a2a3e;
+  background-image: url(yellow.webp);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   animation-name: visitedObjectAnimation;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
@@ -708,8 +736,10 @@ body {
 .visitedobject.weight{
   /*background:red*/
   border: 1px solid #2a2a3e;
-  background-image: url(weight.svg);
+  background-image: url(weight.svg), url(yellow.webp);
   background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain, cover;
   background-repeat: no-repeat;
   background-size: contain;
   animation-name: visitedObjectAnimation;
@@ -888,7 +918,11 @@ body {
 
 .instantshortest-path{
   /*border: 1px solid #2a2a3e;*/
+  background-image: url(grass.png);
   background-color: rgb(255, 254, 106);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .instantshortest-path.weight{
@@ -902,10 +936,11 @@ body {
 
 .shortest-path{
   /*border: 1px solid #2a2a3e;*/
+  background-image: url(grass.png);
   background-color: rgb(255, 254, 106);
-  /*background-position: center;
+  background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;*/
+  background-size: cover;
   animation-name: triangletwo;
   animation-duration: 1.5s;
   animation-timing-function: linear;
@@ -952,11 +987,11 @@ body {
 
 .shortest-path-unweighted{
   /*border: 1px solid #2a2a3e;*/
-  background:url(spaceshiptwo-up.svg);
+  background-image: url(grass.png);
   background-color: rgb(255, 254, 106);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain
+  background-size: cover;
 }
 
 

@@ -330,7 +330,8 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
   } else {
     currentNodesToAnimate = [];
     let target = board.nodes[board.target];
-    currentNodesToAnimate.push(board.nodes[target.previousNode], target);
+    // Only add the previous node before the target, not the target itself
+    currentNodesToAnimate.push(board.nodes[target.previousNode]);
   }
 
 }
@@ -345,10 +346,13 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
         shortestPathChange(currentNodesToAnimate[index]);
       } else if (index < currentNodesToAnimate.length) {
         shortestPathChange(currentNodesToAnimate[index], currentNodesToAnimate[index - 1]);
-      } else if (index === currentNodesToAnimate.length) {
+      }
+      /* REMOVED: Don't apply shortest path styling to the target node
+      else if (index === currentNodesToAnimate.length) {
         shortestPathChange(board.nodes[board.target], currentNodesToAnimate[index - 1], "isActualTarget");
       }
-      if (index > currentNodesToAnimate.length) {
+      */
+      if (index > currentNodesToAnimate.length - 1) {
         board.toggleButtons();
         return;
       }
@@ -362,7 +366,7 @@ Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, ty
       let element = document.getElementById(board.object);
       element.className = "objectTransparent";
     } else if (currentNode.id !== board.start) {
-      if (currentNode.id !== board.target || currentNode.id === board.target && isActualTarget) {
+      if (currentNode.id !== board.target) {
         let currentHTMLNode = document.getElementById(currentNode.id);
         if (type === "unweighted") {
           currentHTMLNode.className = "shortest-path-unweighted";
