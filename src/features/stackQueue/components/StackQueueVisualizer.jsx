@@ -800,7 +800,13 @@ int main() {
               )}
             </div>
             
-            <div className={`structure-container ${dataStructure} ${elements.length > 0 ? 'has-elements' : ''}`}>
+            <div className={`structure-container ${dataStructure} ${
+              elements.length > 0 ? 'has-elements' : ''
+            } ${
+              elements.length > 5 ? 'has-many-elements' : ''
+            } ${
+              elements.length > 7 ? 'has-overflow' : ''
+            }`}>
               <AnimatePresence mode="popLayout">
                 {elements.map((element, index) => (
                   <motion.div
