@@ -1,15 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaHome } from 'react-icons/fa';
+import { FaHome, FaExpandArrowsAlt, FaCompressArrowsAlt, FaInfoCircle, FaCode, FaTree } from 'react-icons/fa';
 import { BinaryTree } from '../lib/animated-binary-tree.js';
 import { SvgTree } from './AnimatedBinaryTree';
 import { VisualizerControls } from './VisualizerControls';
 import { inOrderTraversal, preOrderTraversal, postOrderTraversal, traversalCodeSnippets } from '../lib/traversal-algorithms';
-import '../styles/TreeVisualizerEnhanced.css';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import CodeViewer from './CodeViewer';
 import CodeHighlighter from '../../../features/common/components/CodeHighlighter.jsx';
+import '../styles/ModernTreeVisualizer.css';
 
 // Tree visualization styles
 const nodeSize = { x: 140, y: 140 };
@@ -503,6 +502,13 @@ const TreeVisualizer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(1000);
   const [currentTraversal, setCurrentTraversal] = useState(null);
+  const [currentOperation, setCurrentOperation] = useState('insert');
+  
+  // Layout state
+  const [isCodeViewExpanded, setIsCodeViewExpanded] = useState(false);
+  const [showAlgorithmInfo, setShowAlgorithmInfo] = useState(true);
+  const [activePanel, setActivePanel] = useState('tree'); // 'tree', 'code', 'info'
+  
   const timeoutRef = useRef(null);
 
   // Animation control functions
@@ -532,6 +538,7 @@ const TreeVisualizer = () => {
       return;
     }
 
+    setCurrentOperation('insert');
     const clonedTree = tree.clone();
     const steps = clonedTree.insert(key);
     setTree(clonedTree);
@@ -548,6 +555,7 @@ const TreeVisualizer = () => {
       return;
     }
 
+    setCurrentOperation('search');
     const clonedTree = tree.clone();
     const steps = clonedTree.find(key);
     setTree(clonedTree);
@@ -564,6 +572,7 @@ const TreeVisualizer = () => {
       return;
     }
 
+    setCurrentOperation('delete');
     const clonedTree = tree.clone();
     const steps = clonedTree.delete(key);
     setTree(clonedTree);
@@ -681,180 +690,293 @@ const TreeVisualizer = () => {
       : "No operations performed yet";
 
   return (
-    <div className="tree-visualizer-container">
-      <div className="sorting-bg-overlay"></div>
-      <div className="floating-orb orb-1"></div>
-      <div className="floating-orb orb-2"></div>
-      
+    <div className="modern-tree-visualizer">
+      {/* Header Section */}
       <motion.header 
-        className="app-header"
+        className="visualizer-header"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.6 }}
       >
-        <Link to="/" className="home-button">
-          <FaHome size={16} />
-          <span>Home</span>
-        </Link>
-        <h1 style={{ flex: 1, textAlign: 'center', fontSize: '1.5rem' }}>
-          Binary Search Tree Visualization
-        </h1>
+        <div className="header-content">
+          <Link to="/" className="home-button">
+            <FaHome />
+            <span>Home</span>
+          </Link>
+          
+          <div className="header-title">
+            <FaTree className="title-icon" />
+            <h1>Binary Search Tree Visualizer</h1>
+          </div>
+
+          <div className="layout-controls">
+            <button 
+              className={`layout-btn ${activePanel === 'tree' ? 'active' : ''}`}
+              onClick={() => setActivePanel('tree')}
+              title="Tree View"
+            >
+              <FaTree />
+            </button>
+            <button 
+              className={`layout-btn ${activePanel === 'code' ? 'active' : ''}`}
+              onClick={() => setActivePanel('code')}
+              title="Code View"
+            >
+              <FaCode />
+            </button>
+            <button 
+              className={`layout-btn ${activePanel === 'info' ? 'active' : ''}`}
+              onClick={() => setActivePanel('info')}
+              title="Algorithm Info"
+            >
+              <FaInfoCircle />
+            </button>
+            <button 
+              className="expand-btn"
+              onClick={() => setIsCodeViewExpanded(!isCodeViewExpanded)}
+              title={isCodeViewExpanded ? "Collapse" : "Expand"}
+            >
+              {isCodeViewExpanded ? <FaCompressArrowsAlt /> : <FaExpandArrowsAlt />}
+            </button>
+          </div>
+        </div>
       </motion.header>
-      
-      {/* Introduction Section */}
-      <motion.div 
-        className="intro-section"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <p>
-          A binary search tree is a data structure where each node has at most two children,
-          with the left child containing values less than the node and the right child containing values greater than the node.
-        </p>
-      </motion.div>
-      
-      {/* Controls Section */}
-      <VisualizerControls
-        value={value}
-        setValue={setValue}
-        handleGenerateRandom={handleGenerateRandom}
-        animationSpeed={animationSpeed}
-        setAnimationSpeed={setAnimationSpeed}
-        currentStepIndex={currentStepIndex}
-        isPlaying={isPlaying}
-        handleStepForward={handleStepForward}
-        handlePlayPause={handlePlayPause}
-        handleStepBack={handleStepBack}
-        handleClear={handleClear}
-        animationSteps={animationSteps}
-        handleInsert={handleInsert}
-        handleFind={handleFind}
-        handleDelete={handleDelete}
-        handleInOrderTraversal={handleInOrderTraversal}
-        handlePreOrderTraversal={handlePreOrderTraversal}
-        handlePostOrderTraversal={handlePostOrderTraversal}
-      />
-      
-      {/* Tree Visualization Section with Code Panel */}
-      <div className="visualization-container">
-        <div className="visualization-status">
-          <div className="status-header">
-            <div className="status-icon">
-              {isPlaying ? (
-                <div className="status-running" title="Animation running">
-                  <div className="dot dot1"></div>
-                  <div className="dot dot2"></div>
-                  <div className="dot dot3"></div>
-                </div>
-              ) : (
-                <div className="status-ready" title="Ready">✓</div>
-              )}
-            </div>
-            <div className="status-title">
-              {isPlaying ? 'Visualizing' : 'Status'} {currentTraversal ? `- ${currentTraversal} Traversal` : ''}
+
+      {/* Main Content Grid */}
+      <div className={`main-grid ${isCodeViewExpanded ? 'expanded' : ''}`}>
+        
+        {/* Controls Panel */}
+        <motion.section 
+          className="controls-section"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <div className="controls-header">
+            <h2>Operations</h2>
+            <div className="operation-indicator">
+              Current: <span className="current-op">{currentOperation}</span>
             </div>
           </div>
-          <div className="current-step">{currentDescription}</div>
-        </div>
-        
-        <div className="visualization-panels">
-          <div className="tree-display-panel">
-            {currentTreeData ? (
-              <SvgTree tree={currentTreeData} cursor={currentCursor} />
-            ) : (
-              <div className="empty-tree-message">
-                <div className="empty-tree-icon">
-                  <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fillRule="evenodd" clipRule="evenodd" d="M12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8ZM6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12Z" fill="currentColor"/>
-                  </svg>
+          
+          <VisualizerControls
+            value={value}
+            setValue={setValue}
+            handleGenerateRandom={handleGenerateRandom}
+            animationSpeed={animationSpeed}
+            setAnimationSpeed={setAnimationSpeed}
+            currentStepIndex={currentStepIndex}
+            isPlaying={isPlaying}
+            handleStepForward={handleStepForward}
+            handlePlayPause={handlePlayPause}
+            handleStepBack={handleStepBack}
+            handleClear={handleClear}
+            animationSteps={animationSteps}
+            handleInsert={handleInsert}
+            handleFind={handleFind}
+            handleDelete={handleDelete}
+            handleInOrderTraversal={handleInOrderTraversal}
+            handlePreOrderTraversal={handlePreOrderTraversal}
+            handlePostOrderTraversal={handlePostOrderTraversal}
+          />
+        </motion.section>
+
+        {/* Tree Visualization Panel */}
+        <motion.section 
+          className={`tree-section ${activePanel === 'tree' ? 'active' : ''}`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <div className="tree-header">
+            <h2>Binary Search Tree</h2>
+            <div className="tree-stats">
+              {animationSteps.length > 0 && (
+                <div className="animation-progress">
+                  <span>Step {currentStepIndex + 1} of {animationSteps.length}</span>
+                  <div className="progress-bar">
+                    <div 
+                      className="progress-fill"
+                      style={{ width: `${((currentStepIndex + 1) / animationSteps.length) * 100}%` }}
+                    />
+                  </div>
                 </div>
-                <h3>Tree is empty</h3>
-                <p>Use Insert to add nodes or generate a random tree</p>
-                <button 
-                  onClick={handleGenerateRandom} 
-                  className="action-button generate-button"
-                  style={{ marginTop: "1rem" }}
-                >
+              )}
+            </div>
+          </div>
+
+          <div className="tree-display-container">
+            {currentTreeData ? (
+              <div className="tree-visualization">
+                <SvgTree tree={currentTreeData} cursor={currentCursor} />
+                
+                {/* Status Display */}
+                <div className="tree-status">
+                  <div className="status-indicator">
+                    {isPlaying ? (
+                      <div className="status-running">
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                        <div className="dot"></div>
+                      </div>
+                    ) : (
+                      <div className="status-ready">Ready</div>
+                    )}
+                  </div>
+                  <div className="status-text">{currentDescription}</div>
+                </div>
+              </div>
+            ) : (
+              <div className="empty-tree">
+                <FaTree className="empty-icon" />
+                <h3>Tree is Empty</h3>
+                <p>Insert some values or generate a random tree to begin</p>
+                <button onClick={handleGenerateRandom} className="generate-btn">
                   Generate Random Tree
                 </button>
               </div>
             )}
           </div>
-          
-          {currentTraversal && (
-            <div className="code-panel">
-              <CodeHighlighter 
-                code={traversalCodeSnippets[currentTraversal === "In-Order" ? "inOrder" : 
-                                          currentTraversal === "Pre-Order" ? "preOrder" : "postOrder"]} 
-                currentLine={animationSteps[currentStepIndex]?.line}
-                title={`${currentTraversal} Traversal Algorithm`}
+        </motion.section>
+
+        {/* Code Viewer Panel */}
+        <AnimatePresence>
+          {(activePanel === 'code' || isCodeViewExpanded) && (
+            <motion.section 
+              className="code-section"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="code-header">
+                <h2>Algorithm Code</h2>
+                <div className="code-language-info">
+                  Multiple languages supported
+                </div>
+              </div>
+
+              <CodeViewer
+                operation={currentOperation}
+                currentLine={animationSteps[currentStepIndex]?.line || 0}
+                isAnimating={isPlaying}
+                className="main-code-viewer"
               />
-              
-              {animationSteps[currentStepIndex]?.traversalResult && (
-                <div className="traversal-result">
-                  <h3>Traversal Result</h3>
-                  <div className="result-values">
+
+              {/* Traversal Results */}
+              {currentTraversal && animationSteps[currentStepIndex]?.traversalResult && (
+                <motion.div 
+                  className="traversal-results"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <h3>{currentTraversal} Traversal Result</h3>
+                  <div className="result-sequence">
                     {animationSteps[currentStepIndex].traversalResult.map((value, index) => (
-                      <span key={index} className="result-value">
+                      <motion.span 
+                        key={index}
+                        className="result-item"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
                         {value}
-                      </span>
+                      </motion.span>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               )}
-            </div>
+            </motion.section>
           )}
-        </div>
+        </AnimatePresence>
+
+        {/* Algorithm Info Panel */}
+        <AnimatePresence>
+          {(activePanel === 'info' || showAlgorithmInfo) && (
+            <motion.section 
+              className="info-section"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="info-header">
+                <h2>Algorithm Information</h2>
+                <button 
+                  className="close-info"
+                  onClick={() => setShowAlgorithmInfo(false)}
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="algorithm-details">
+                <div className="complexity-info">
+                  <h3>Time Complexity</h3>
+                  <div className="complexity-grid">
+                    <div className="complexity-item">
+                      <span className="operation">Insert</span>
+                      <span className="value">O(log n)</span>
+                    </div>
+                    <div className="complexity-item">
+                      <span className="operation">Search</span>
+                      <span className="value">O(log n)</span>
+                    </div>
+                    <div className="complexity-item">
+                      <span className="operation">Delete</span>
+                      <span className="value">O(log n)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="properties-info">
+                  <h3>BST Properties</h3>
+                  <ul className="properties-list">
+                    <li>Left subtree contains only nodes with values less than the parent</li>
+                    <li>Right subtree contains only nodes with values greater than the parent</li>
+                    <li>Both left and right subtrees are also binary search trees</li>
+                    <li>In-order traversal gives values in sorted order</li>
+                  </ul>
+                </div>
+
+                <div className="use-cases">
+                  <h3>Common Use Cases</h3>
+                  <div className="use-case-grid">
+                    <div className="use-case">Database Indexing</div>
+                    <div className="use-case">Search Operations</div>
+                    <div className="use-case">Expression Parsing</div>
+                    <div className="use-case">Priority Queues</div>
+                  </div>
+                </div>
+              </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
       </div>
-      
-      {/* Animation Progress */}
-      {animationSteps.length > 0 && (
-        <div className="animation-progress">
-          <div className="progress-label">
-            <span>Animation Progress</span>
-            <span>
-              {currentStepIndex + 1} of {animationSteps.length}
-            </span>
-          </div>
-          <div className="progress-bar-container">
-            <div
-              className="progress-bar"
-              style={{
-                width: `${((currentStepIndex + 1) / animationSteps.length) * 100}%`,
-              }}
-            ></div>
-          </div>
-        </div>
-      )}
-      
-      {/* Information about Binary Search Trees */}
-      <div className="tree-info-section">
-        <h2>About Binary Search Trees</h2>
-        <p>
-          A binary search tree (BST) is a node-based binary tree data structure that 
-          maintains the BST property: the key in each node is greater than all keys in its 
-          left subtree and less than all keys in its right subtree. This enables efficient 
-          operations like search, insertion, and deletion.
-        </p>
-        <div className="info-grid">
-          <div className="info-card">
-            <h3>Time Complexity</h3>
-            <ul>
-              <li><strong>Insert:</strong> O(log n) average, O(n) worst case</li>
-              <li><strong>Delete:</strong> O(log n) average, O(n) worst case</li>
-              <li><strong>Find:</strong> O(log n) average, O(n) worst case</li>
-            </ul>
-          </div>
-          <div className="info-card">
-            <h3>Key Properties</h3>
-            <ul>
-              <li>Ordered storage of elements</li>
-              <li>Efficient for searching and sorting</li>
-              <li>Simple implementation and low overhead</li>
-            </ul>
-          </div>
-        </div>
+
+      {/* Mobile Navigation */}
+      <div className="mobile-nav">
+        <button 
+          className={`nav-item ${activePanel === 'tree' ? 'active' : ''}`}
+          onClick={() => setActivePanel('tree')}
+        >
+          <FaTree />
+          <span>Tree</span>
+        </button>
+        <button 
+          className={`nav-item ${activePanel === 'code' ? 'active' : ''}`}
+          onClick={() => setActivePanel('code')}
+        >
+          <FaCode />
+          <span>Code</span>
+        </button>
+        <button 
+          className={`nav-item ${activePanel === 'info' ? 'active' : ''}`}
+          onClick={() => setActivePanel('info')}
+        >
+          <FaInfoCircle />
+          <span>Info</span>
+        </button>
       </div>
     </div>
   );
