@@ -611,24 +611,26 @@ input.invalid {
   flex: 1;
   min-width: 200px;
   max-width: 280px;
-  padding: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.5rem;
-  background: rgba(22, 27, 34, 0.9) !important;
-  color: #c9d1d9 !important;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
+  padding: 0.875rem 1rem;
+  border: 2px solid #30363d;
+  border-radius: 8px;
+  background: #161b22;
+  color: #f0f6fc;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
 }
 
 .input-group input::placeholder {
-  color: rgba(201, 209, 217, 0.6) !important;
+  color: #8b949e;
+  font-weight: 400;
 }
 
 .input-group input:focus {
-  outline: none;
   border-color: #58a6ff;
-  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
-  background: rgba(22, 27, 34, 1) !important;
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+  background: #21262d;
 }
 
 .button-group {

@@ -58,14 +58,14 @@ const HomePage = () => {
     },
     {
       title: 'Trees',
-      link: '/trees',
+      link: '/tree',
       icon: <FaTree size={40} color={getIconColor('#2A623D')} />,
       color: '#2A623D', // Green
       enabled: true
     },
     {
       title: 'Pathfinding',
-      link: '/pathfinding-visualizer',
+      link: '/pathfinding',
       icon: <FaProjectDiagram size={40} color={getIconColor('#4A3F6E')} />,
       color: '#4A3F6E', // Purple
       enabled: true

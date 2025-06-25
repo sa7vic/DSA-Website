@@ -39,18 +39,18 @@ const DiySection = ({ code }) => {
       
       {isExpanded && (
         <div className="diy-content">
-          <h4>Option 1: Online C++ Compiler</h4>
+          <h4>Option 1: Online C Compiler</h4>
           <ol>
             <li>Copy the code from the left panel</li>
-            <li>Visit an online C++ compiler like <a href="https://www.onlinegdb.com/online_c++_compiler" target="_blank" rel="noopener noreferrer">OnlineGDB</a> or <a href="https://www.programiz.com/cpp-programming/online-compiler/" target="_blank" rel="noopener noreferrer">Programiz</a></li>
+            <li>Visit an online C compiler like <a href="https://www.onlinegdb.com/online_c_compiler" target="_blank" rel="noopener noreferrer">OnlineGDB</a> or <a href="https://www.programiz.com/c-programming/online-compiler/" target="_blank" rel="noopener noreferrer">Programiz</a></li>
             <li>Paste the code and click "Run"</li>
             <li>Experiment by modifying the operations in the main() function</li>
           </ol>
           
           <h4>Option 2: Local Development</h4>
           <ol>
-            <li>Save the code as <code>doubly_linked_list.cpp</code></li>
-            <li>Compile with g++: <code>g++ -o doubly_linked_list doubly_linked_list.cpp</code></li>
+            <li>Save the code as <code>doubly_linked_list.c</code></li>
+            <li>Compile with gcc: <code>gcc -o doubly_linked_list doubly_linked_list.c</code></li>
             <li>Run the program: <code>./doubly_linked_list</code></li>
           </ol>
           

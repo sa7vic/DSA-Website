@@ -143,59 +143,59 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit, onA
     const animate = () => {
       switch(step) {
         case 0:
-          setCurrentLine(6);
+          setCurrentLine(12);
           setCurrentStep("Creating new DoublyLinkedList node");
-          onAnimationUpdate && onAnimationUpdate(6, "Creating new DoublyLinkedList node", true);
+          onAnimationUpdate && onAnimationUpdate(12, "Creating new DoublyLinkedList node", true);
           break;
         case 1:
-          setCurrentLine(22);
+          setCurrentLine(35);
           setCurrentStep(`Calling insertAtBeginning(${inputValue})`);
-          onAnimationUpdate && onAnimationUpdate(22, `Calling insertAtBeginning(${inputValue})`, true);
+          onAnimationUpdate && onAnimationUpdate(35, `Calling insertAtBeginning(${inputValue})`, true);
           break;
         case 2:
-          setCurrentLine(23);
+          setCurrentLine(36);
           setCurrentStep("Allocating memory for new node");
-          onAnimationUpdate && onAnimationUpdate(23, "Allocating memory for new node", true);
+          onAnimationUpdate && onAnimationUpdate(36, "Allocating memory for new node", true);
           break;
         case 3:
-          setCurrentLine(24);
+          setCurrentLine(37);
           setCurrentStep(`Setting node data to ${inputValue}`);
-          onAnimationUpdate && onAnimationUpdate(24, `Setting node data to ${inputValue}`, true);
+          onAnimationUpdate && onAnimationUpdate(37, `Setting node data to ${inputValue}`, true);
           break;
         case 4:
-          setCurrentLine(25);
+          setCurrentLine(38);
           setCurrentStep("Setting prev pointer to nullptr");
-          onAnimationUpdate && onAnimationUpdate(25, "Setting prev pointer to nullptr", true);
+          onAnimationUpdate && onAnimationUpdate(38, "Setting prev pointer to nullptr", true);
           break;
         case 5:
           if (nodes.length === 0) {
-            setCurrentLine(26);
+            setCurrentLine(39);
             setCurrentStep("List is empty - node becomes head");
-            onAnimationUpdate && onAnimationUpdate(26, "List is empty - node becomes head", true);
+            onAnimationUpdate && onAnimationUpdate(39, "List is empty - node becomes head", true);
           } else {
-            setCurrentLine(28);
+            setCurrentLine(41);
             setCurrentStep("List has nodes - updating pointers");
-            onAnimationUpdate && onAnimationUpdate(28, "List has nodes - updating pointers", true);
+            onAnimationUpdate && onAnimationUpdate(41, "List has nodes - updating pointers", true);
           }
           break;
         case 6:
           if (nodes.length > 0) {
-            setCurrentLine(29);
+            setCurrentLine(42);
             setCurrentStep("Setting new node\'s next to current head");
-            onAnimationUpdate && onAnimationUpdate(29, "Setting new node\'s next to current head", true);
+            onAnimationUpdate && onAnimationUpdate(42, "Setting new node\'s next to current head", true);
           }
           break;
         case 7:
           if (nodes.length > 0) {
-            setCurrentLine(30);
+            setCurrentLine(43);
             setCurrentStep("Setting current head\'s prev to new node");
-            onAnimationUpdate && onAnimationUpdate(30, "Setting current head\'s prev to new node", true);
+            onAnimationUpdate && onAnimationUpdate(43, "Setting current head\'s prev to new node", true);
           }
           break;
         case 8:
-          setCurrentLine(32);
+          setCurrentLine(45);
           setCurrentStep("Updating head pointer to new node");
-          onAnimationUpdate && onAnimationUpdate(32, "Updating head pointer to new node", true);
+          onAnimationUpdate && onAnimationUpdate(45, "Updating head pointer to new node", true);
           
           try {
             const newNode = allocateMemory(inputValue);
@@ -216,7 +216,7 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit, onA
           }
           break;
         case 9:
-          setCurrentLine(33);
+          setCurrentLine(46);
           setCurrentStep(`Successfully inserted ${inputValue} at beginning`);
           onAnimationUpdate && onAnimationUpdate(33, `Successfully inserted ${inputValue} at beginning`, true);
           setIsAnimating(false);
@@ -248,59 +248,59 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit, onA
     const animate = () => {
       switch(step) {
         case 0:
-          setCurrentLine(6);
+          setCurrentLine(12);
           setCurrentStep("Creating new DoublyLinkedList node");
-          onAnimationUpdate && onAnimationUpdate(6, "Creating new DoublyLinkedList node", true);
+          onAnimationUpdate && onAnimationUpdate(12, "Creating new DoublyLinkedList node", true);
           break;
         case 1:
-          setCurrentLine(35);
+          setCurrentLine(50);
           setCurrentStep(`Calling insertAtEnd(${inputValue})`);
-          onAnimationUpdate && onAnimationUpdate(35, `Calling insertAtEnd(${inputValue})`, true);
+          onAnimationUpdate && onAnimationUpdate(50, `Calling insertAtEnd(${inputValue})`, true);
           break;
         case 2:
-          setCurrentLine(36);
+          setCurrentLine(51);
           setCurrentStep("Allocating memory for new node");
-          onAnimationUpdate && onAnimationUpdate(36, "Allocating memory for new node", true);
+          onAnimationUpdate && onAnimationUpdate(51, "Allocating memory for new node", true);
           break;
         case 3:
-          setCurrentLine(37);
+          setCurrentLine(52);
           setCurrentStep(`Setting node data to ${inputValue}`);
-          onAnimationUpdate && onAnimationUpdate(37, `Setting node data to ${inputValue}`, true);
+          onAnimationUpdate && onAnimationUpdate(52, `Setting node data to ${inputValue}`, true);
           break;
         case 4:
-          setCurrentLine(38);
+          setCurrentLine(53);
           setCurrentStep("Setting next pointer to nullptr");
-          onAnimationUpdate && onAnimationUpdate(38, "Setting next pointer to nullptr", true);
+          onAnimationUpdate && onAnimationUpdate(53, "Setting next pointer to nullptr", true);
           break;
         case 5:
           if (nodes.length === 0) {
-            setCurrentLine(39);
+            setCurrentLine(54);
             setCurrentStep("List is empty - node becomes head/tail");
-            onAnimationUpdate && onAnimationUpdate(39, "List is empty - node becomes head/tail", true);
+            onAnimationUpdate && onAnimationUpdate(54, "List is empty - node becomes head/tail", true);
           } else {
-            setCurrentLine(41);
+            setCurrentLine(56);
             setCurrentStep("List has nodes - finding tail");
-            onAnimationUpdate && onAnimationUpdate(41, "List has nodes - finding tail", true);
+            onAnimationUpdate && onAnimationUpdate(56, "List has nodes - finding tail", true);
           }
           break;
         case 6:
           if (nodes.length > 0) {
-            setCurrentLine(42);
+            setCurrentLine(57);
             setCurrentStep("Setting tail\'s next to new node");
-            onAnimationUpdate && onAnimationUpdate(42, "Setting tail\'s next to new node", true);
+            onAnimationUpdate && onAnimationUpdate(57, "Setting tail\'s next to new node", true);
           }
           break;
         case 7:
           if (nodes.length > 0) {
-            setCurrentLine(43);
+            setCurrentLine(58);
             setCurrentStep("Setting new node\'s prev to tail");
-            onAnimationUpdate && onAnimationUpdate(43, "Setting new node\'s prev to tail", true);
+            onAnimationUpdate && onAnimationUpdate(58, "Setting new node\'s prev to tail", true);
           }
           break;
         case 8:
-          setCurrentLine(45);
+          setCurrentLine(60);
           setCurrentStep("Updating tail pointer");
-          onAnimationUpdate && onAnimationUpdate(45, "Updating tail pointer", true);
+          onAnimationUpdate && onAnimationUpdate(60, "Updating tail pointer", true);
           
           try {
             const newNode = allocateMemory(inputValue);

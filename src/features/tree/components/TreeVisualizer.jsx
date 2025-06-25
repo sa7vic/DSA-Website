@@ -1,669 +1,764 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaHome, FaExpandArrowsAlt, FaCompressArrowsAlt, FaInfoCircle, FaCode, FaTree } from 'react-icons/fa';
-import { BinaryTree } from '../lib/animated-binary-tree.js';
-import { SvgTree } from './AnimatedBinaryTree';
-import { VisualizerControls } from './VisualizerControls';
-import { inOrderTraversal, preOrderTraversal, postOrderTraversal, traversalCodeSnippets } from '../lib/traversal-algorithms';
-import CodeViewer from './CodeViewer';
-import CodeHighlighter from '../../../features/common/components/CodeHighlighter.jsx';
-import '../styles/ModernTreeVisualizer.css';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { FaHome, FaPlus, FaSearch, FaTrash, FaRandom, FaPlay, FaPause, FaStepForward, FaStepBackward } from 'react-icons/fa';
+import '../styles/TreeVisualizer.css';
 
-// Tree visualization styles
-const nodeSize = { x: 140, y: 140 };
-const foreignObjectSize = { width: 80, height: 80 };
-
-// Tree node rendering with enhanced style and depth classes
-const renderCustomNodeElement = ({ nodeDatum, toggleNode, hierarchyPointNode }) => {
-  // Get the node depth for styling
-  const depth = hierarchyPointNode.depth || 0;
-  
-  return (
-    <g className={`depth-${depth}`}>
-      <circle 
-        r={nodeDatum.highlight ? 28 : 25} 
-        fill={nodeDatum.highlight ? "#ff7f50" : "#2A623D"} 
-        stroke={nodeDatum.highlight ? "#ff5722" : "#4CAF50"}
-        strokeWidth={nodeDatum.highlight ? 3 : 1}
-        strokeDasharray={nodeDatum.highlight ? "4,2" : ""}
-        filter={nodeDatum.highlight ? "url(#glow)" : ""}
-        className="node-circle"
-      />
-      <defs>
-        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="3 3" result="glow"/>
-          <feMerge>
-            <feMergeNode in="glow"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-      </defs>
-      <foreignObject 
-        width={foreignObjectSize.width} 
-        height={foreignObjectSize.height} 
-        x={-foreignObjectSize.width / 2} 
-        y={-foreignObjectSize.height / 2}
-        className="tree-node-foreign-object"
-      >
-        <div className={`tree-node ${nodeDatum.highlight ? 'highlighted' : ''}`}>
-          <h3>{nodeDatum.name}</h3>
-          {nodeDatum.children && nodeDatum.children.length > 0 && (
-            <button onClick={toggleNode}>
-              {nodeDatum._children ? '⊕' : '⊖'}
-            </button>
-          )}
-        </div>
-      </foreignObject>
-    </g>
-  );
-};
-
-// Spring animation configuration for smooth transitions
-const springAnim = {
-  type: "spring",
-  damping: 20,
-  stiffness: 300
-};
-
-// Convert Splay Tree node to hierarchy data format for visualization
-const toHierarchyData = (node) => {
-  if (!node) return null;
-  
-  const hierarchyNode = {
-    name: node.key.toString(),
-    children: []
-  };
-  
-  if (node.left) {
-    hierarchyNode.children[0] = toHierarchyData(node.left);
+// BST Node class
+class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
   }
-  
-  if (node.right) {
-    hierarchyNode.children[1] = toHierarchyData(node.right);
-  }
-  
-  return hierarchyNode;
-};
+}
 
-// Tree data structure operations
-// Binary Search Tree Insert
-const bstInsert = (root, value) => {
-  const results = [];
-  let currentStep = "";
-  
-  const insertNode = (node, value, path = []) => {
-    if (!node) {
-      currentStep = `Inserting ${value} at current position`;
-      results.push({ 
-        tree: { name: value.toString(), children: [] },
-        step: currentStep,
-        line: 4
+// Enhanced BST class with strict depth limits and proper error handling
+class BST {
+  constructor() {
+    this.root = null;
+    this.animationSteps = [];
+    this.maxDepth = 4; // Strict limit for reliable display (height 5)
+    this.nodeCount = 0;
+  }
+
+  insert(value) {
+    this.animationSteps = [];
+    
+    // Check if inserting would exceed depth limit
+    if (this.root && this.wouldExceedDepth(this.root, value, 0)) {
+      // Add animation steps showing the depth limit check process
+      this.animationSteps.push({
+        type: 'depth_limit',
+        currentNode: null,
+        value: value,
+        path: [],
+        line: 41, // Line where we check "if (root != NULL && wouldExceedDepth(...))"
+        description: `Checking if inserting ${value} would exceed maximum depth...`
       });
-      return { name: value.toString(), children: [] };
+      this.animationSteps.push({
+        type: 'depth_limit',
+        currentNode: null,
+        value: value,
+        path: [],
+        line: 28, // Line "if (currentDepth >= MAX_DEPTH) return 1;"
+        description: `Depth limit check: currentDepth >= MAX_DEPTH (${this.maxDepth})`
+      });
+      this.animationSteps.push({
+        type: 'depth_limit',
+        currentNode: null,
+        value: value,
+        path: [],
+        line: 42, // Error message line
+        description: `❌ Cannot insert ${value}: Would exceed maximum tree depth of ${this.maxDepth + 1}`,
+        error: true
+      });
+      return this.animationSteps;
     }
     
-    const nodeCopy = { ...node };
-    const nodeValue = parseInt(node.name);
+    this.root = this.insertNodeWithAnimation(this.root, value, []);
+    this.nodeCount++;
+    return this.animationSteps;
+  }
+
+  wouldExceedDepth(node, value, currentDepth) {
+    if (currentDepth >= this.maxDepth) return true;
+    if (!node) return false;
     
-    if (value < nodeValue) {
-      currentStep = `${value} < ${nodeValue}, going left`;
-      path.push('left');
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 7 
+    if (value < node.value) {
+      return this.wouldExceedDepth(node.left, value, currentDepth + 1);
+    } else if (value > node.value) {
+      return this.wouldExceedDepth(node.right, value, currentDepth + 1);
+    }
+    return false; // Duplicate value
+  }
+
+  insertNodeWithAnimation(node, value, path) {
+    // More detailed line highlighting for insert operation
+    if (node === null) {
+      this.animationSteps.push({
+        type: 'insert',
+        currentNode: null,
+        value: value,
+        path: [...path],
+        line: 46, // "if (root == NULL)" check
+        description: `Checking: if (root == NULL) - condition is TRUE, found insertion point`
       });
-      
-      nodeCopy.children = nodeCopy.children || [];
-      nodeCopy.children[0] = insertNode(nodeCopy.children[0], value, path);
-      
-    } else if (value > nodeValue) {
-      currentStep = `${value} > ${nodeValue}, going right`;
-      path.push('right');
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 13
+      this.animationSteps.push({
+        type: 'insert',
+        currentNode: null,
+        value: value,
+        path: [...path],
+        line: 47, // "return createNode(value)"
+        description: `Creating and returning new node with value ${value}`
       });
-      
-      nodeCopy.children = nodeCopy.children || [];
-      nodeCopy.children[1] = insertNode(nodeCopy.children[1], value, path);
-      
+      this.animationSteps.push({
+        type: 'insert',
+        currentNode: value, // Show the newly created node
+        value: value,
+        path: [...path],
+        line: 12, // Show the createNode function being called
+        description: `New node ${value} created successfully and linked to tree`
+      });
     } else {
-      currentStep = `${value} already exists in the tree`;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 19
+      // First show we're at this node
+      this.animationSteps.push({
+        type: 'insert',
+        currentNode: node.value,
+        value: value,
+        path: [...path],
+        line: 46, // "if (root == NULL)" check
+        description: `Checking: if (${node.value} == NULL) - condition is FALSE, need to compare values`
       });
+      
+      // Show the comparison being made
+      this.animationSteps.push({
+        type: 'insert',
+        currentNode: node.value,
+        value: value,
+        path: [...path],
+        line: 50, // Start of comparison "if (value < root->data)"
+        description: `Comparing: ${value} vs ${node.value} to determine direction`
+      });
+      
+      if (value < node.value) {
+        this.animationSteps.push({
+          type: 'insert',
+          currentNode: node.value,
+          value: value,
+          path: [...path],
+          line: 51, // "root->left = insert(root->left, value);"
+          description: `${value} < ${node.value}, inserting in LEFT subtree`
+        });
+      } else if (value > node.value) {
+        this.animationSteps.push({
+          type: 'insert',
+          currentNode: node.value,
+          value: value,
+          path: [...path],
+          line: 53, // "root->right = insert(root->right, value);"
+          description: `${value} > ${node.value}, inserting in RIGHT subtree`
+        });
+      } else {
+        this.animationSteps.push({
+          type: 'insert',
+          currentNode: node.value,
+          value: value,
+          path: [...path],
+          line: 52, // "} else if (value > root->data) {"
+          description: `${value} == ${node.value}, duplicate value - skipping insertion`
+        });
+        return node; // Don't insert duplicates
+      }
     }
-    
-    return nodeCopy;
-  };
-  
-  const newRoot = insertNode(root, value);
-  
-  currentStep = "Insert operation complete";
-  results.push({ 
-    tree: JSON.parse(JSON.stringify(newRoot)), 
-    step: currentStep,
-    line: 24
-  });
-  
-  return { tree: newRoot, results };
-};
 
-// Binary Search Tree Search
-const bstSearch = (root, value) => {
-  const results = [];
-  let currentStep = "";
-  
-  const searchNode = (node, value) => {
-    if (!node) {
-      currentStep = `Value ${value} not found in the tree`;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 4
+    if (node === null) {
+      return new TreeNode(value);
+    }
+
+    if (value < node.value) {
+      node.left = this.insertNodeWithAnimation(node.left, value, [...path, 'left']);
+    } else if (value > node.value) {
+      node.right = this.insertNodeWithAnimation(node.right, value, [...path, 'right']);
+    }
+
+    return node;
+  }
+
+  search(value) {
+    this.animationSteps = [];
+    const result = this.searchNodeWithAnimation(this.root, value, []);
+    return { found: result, steps: this.animationSteps };
+  }
+
+  searchNodeWithAnimation(node, value, path) {
+    // Enhanced search highlighting with detailed step tracking
+    if (node === null) {
+      this.animationSteps.push({
+        type: 'search',
+        currentNode: null,
+        value: value,
+        path: [...path],
+        line: 60, // Line 60: "if (root == NULL) {"
+        description: `Checking: if (root == NULL) - condition is TRUE, reached end without finding ${value}`
+      });
+      this.animationSteps.push({
+        type: 'search',
+        currentNode: null,
+        value: value,
+        path: [...path],
+        line: 61, // Line 61: "return 0; // Not found"
+        description: `Returning 0: ${value} NOT FOUND in tree`
       });
       return false;
     }
+
+    // First show we're examining this node
+    this.animationSteps.push({
+      type: 'search',
+      currentNode: node.value,
+      value: value,
+      path: [...path],
+      line: 60, // Line 60: "if (root == NULL) {" - check fails, node exists
+      description: `Checking: if (${node.value} == NULL) - condition is FALSE, examining node ${node.value}`
+    });
     
-    const nodeValue = parseInt(node.name);
-    
-    if (value === nodeValue) {
-      currentStep = `Found ${value} at current node`;
-      node.highlight = true;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 9
+    if (value === node.value) {
+      this.animationSteps.push({
+        type: 'search',
+        currentNode: node.value,
+        value: value,
+        path: [...path],
+        line: 64, // Line 64: "if (value == root->data) {"
+        description: `Checking: if (${value} == ${node.value}) - condition is TRUE! FOUND!`
+      });
+      this.animationSteps.push({
+        type: 'search',
+        currentNode: node.value,
+        value: value,
+        path: [...path],
+        line: 65, // Line 65: "return 1; // Found"
+        description: `Returning 1: ${value} FOUND at this node!`
       });
       return true;
-      
-    } else if (value < nodeValue) {
-      currentStep = `${value} < ${nodeValue}, searching left subtree`;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 14
-      });
-      return node.children && node.children[0] ? 
-        searchNode(node.children[0], value) : 
-        (() => {
-          currentStep = `Left subtree is empty, ${value} not found`;
-          results.push({ 
-            tree: JSON.parse(JSON.stringify(root)), 
-            step: currentStep,
-            line: 17
-          });
-          return false;
-        })();
-      
-    } else {
-      currentStep = `${value} > ${nodeValue}, searching right subtree`;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 23
-      });
-      return node.children && node.children[1] ? 
-        searchNode(node.children[1], value) : 
-        (() => {
-          currentStep = `Right subtree is empty, ${value} not found`;
-          results.push({ 
-            tree: JSON.parse(JSON.stringify(root)), 
-            step: currentStep,
-            line: 26
-          });
-          return false;
-        })();
     }
-  };
-  
-  const found = searchNode(JSON.parse(JSON.stringify(root)), value);
-  
-  if (found) {
-    currentStep = `Successfully found ${value} in the tree`;
-  } else {
-    currentStep = `Value ${value} is not present in the tree`;
-  }
-  
-  results.push({ 
-    tree: results[results.length-1].tree, 
-    step: currentStep,
-    line: found ? 9 : 29
-  });
-  
-  return { results };
-};
 
-// Binary Search Tree Delete
-const bstDelete = (root, value) => {
-  const results = [];
-  let currentStep = "";
-  
-  const findMinValue = (node) => {
-    let current = node;
-    while (current.children && current.children[0]) {
-      current = current.children[0];
-    }
-    return current.name;
-  };
-  
-  const deleteNode = (node, value) => {
-    if (!node) {
-      currentStep = `Value ${value} not found for deletion`;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 4
-      });
-      return null;
-    }
+    // Show the comparison being made
+    this.animationSteps.push({
+      type: 'search',
+      currentNode: node.value,
+      value: value,
+      path: [...path],
+      line: 64, // Line 64: "if (value == root->data) {"
+      description: `Checking: if (${value} == ${node.value}) - condition is FALSE, need to search deeper`
+    });
     
-    const nodeValue = parseInt(node.name);
-    
-    if (value < nodeValue) {
-      currentStep = `${value} < ${nodeValue}, going left to delete`;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 9
+    if (value < node.value) {
+      this.animationSteps.push({
+        type: 'search',
+        currentNode: node.value,
+        value: value,
+        path: [...path],
+        line: 68, // Line 68: "if (value < root->data) {"
+        description: `Checking: if (${value} < ${node.value}) - condition is TRUE, search LEFT`
       });
-      
-      if (node.children && node.children[0]) {
-        node.children[0] = deleteNode(node.children[0], value);
-      }
-      return node;
-      
-    } else if (value > nodeValue) {
-      currentStep = `${value} > ${nodeValue}, going right to delete`;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 14
+      this.animationSteps.push({
+        type: 'search',
+        currentNode: node.value,
+        value: value,
+        path: [...path],
+        line: 69, // Line 69: "return search(root->left, value);"
+        description: `Moving to LEFT child to continue search for ${value}`
       });
-      
-      if (node.children && node.children[1]) {
-        node.children[1] = deleteNode(node.children[1], value);
-      }
-      return node;
-      
+      return this.searchNodeWithAnimation(node.left, value, [...path, 'left']);
     } else {
-      // Node to delete found
-      currentStep = `Found node with value ${value} to delete`;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 20
+      this.animationSteps.push({
+        type: 'search',
+        currentNode: node.value,
+        value: value,
+        path: [...path],
+        line: 68, // Line 68: "if (value < root->data) {" - condition is false
+        description: `Checking: if (${value} < ${node.value}) - condition is FALSE`
       });
-      
-      // Case 1: No children
-      if (!node.children || (node.children.length === 0)) {
-        currentStep = `Node ${value} has no children, removing it`;
-        results.push({ 
-          tree: JSON.parse(JSON.stringify(root)),
-          step: currentStep,
-          line: 23
-        });
-        return null;
-      }
-      
-      // Case 2: One child
-      if (!node.children[0]) {
-        currentStep = `Node ${value} has only right child, replacing with right child`;
-        results.push({ 
-          tree: JSON.parse(JSON.stringify(root)), 
-          step: currentStep,
-          line: 28
-        });
-        return node.children[1];
-      }
-      
-      if (!node.children[1]) {
-        currentStep = `Node ${value} has only left child, replacing with left child`;
-        results.push({ 
-          tree: JSON.parse(JSON.stringify(root)), 
-          step: currentStep,
-          line: 33
-        });
-        return node.children[0];
-      }
-      
-      // Case 3: Two children
-      currentStep = `Node ${value} has two children, finding successor`;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 39
+      this.animationSteps.push({
+        type: 'search',
+        currentNode: node.value,
+        value: value,
+        path: [...path],
+        line: 71, // Line 71: "return search(root->right, value);"
+        description: `Moving to RIGHT child to continue search for ${value}`
       });
-      
-      const successor = findMinValue(node.children[1]);
-      currentStep = `Found successor ${successor} for node ${value}`;
-      results.push({ 
-        tree: JSON.parse(JSON.stringify(root)), 
-        step: currentStep,
-        line: 41
-      });
-      
-      node.name = successor;
-      node.children[1] = deleteNode(node.children[1], parseInt(successor));
-      return node;
+      return this.searchNodeWithAnimation(node.right, value, [...path, 'right']);
     }
-  };
-  
-  const newRoot = deleteNode(JSON.parse(JSON.stringify(root)), value);
-  
-  if (!newRoot) {
-    currentStep = "Tree is now empty";
-  } else {
-    currentStep = "Delete operation complete";
   }
-  
-  results.push({ 
-    tree: newRoot || { name: "", children: [] }, 
-    step: currentStep,
-    line: 50
-  });
-  
-  return { tree: newRoot || null, results };
-};
 
-// Algorithm explanations
-const algorithmInfo = {
-  "Insert": {
-    timeComplexity: "O(log n) average, O(n) worst case",
-    spaceComplexity: "O(log n)",
-    description: "Binary Search Tree insertion places a new node in the correct position based on the BST property: left child < parent < right child.",
-    pseudocode: `function insert(root, value):
-  if root is null:
-    return new Node(value)
-    
-  if value < root.value:
-    root.left = insert(root.left, value)
-  else if value > root.value:
-    root.right = insert(root.right, value)
-  
-  // Value already exists
-  return root`
-  },
-  "Search": {
-    timeComplexity: "O(log n) average, O(n) worst case",
-    spaceComplexity: "O(log n) for recursive, O(1) for iterative",
-    description: "Binary Search Tree search traverses the tree comparing the target value with each node to locate a value.",
-    pseudocode: `function search(root, value):
-  if root is null:
-    return false
-    
-  if value equals root.value:
-    return true
-  else if value < root.value:
-    return search(root.left, value)
-  else:
-    return search(root.right, value)
-`
-  },
-  "Delete": {
-    timeComplexity: "O(log n) average, O(n) worst case",
-    spaceComplexity: "O(log n)",
-    description: "Binary Search Tree deletion handles three cases: deleting a leaf node, a node with one child, or a node with two children.",
-    pseudocode: `function delete(root, value):
-  if root is null:
-    return null
-    
-  if value < root.value:
-    root.left = delete(root.left, value)
-  else if value > root.value:
-    root.right = delete(root.right, value)
-  else:
-    // Case 1: No children
-    if root has no children:
-      return null
-      
-    // Case 2: One child
-    if root has only one child:
-      return that child
-      
-    // Case 3: Two children
-    successor = findMin(root.right)
-    root.value = successor
-    root.right = delete(root.right, successor)
-  
-  return root`
-  },
-  "In-Order": {
-    timeComplexity: "O(n)",
-    spaceComplexity: "O(h) where h is height of the tree",
-    description: "In-order traversal visits the left subtree, then the current node, then the right subtree. For a BST, this produces elements in sorted order.",
-    pseudocode: `function inOrder(node):
-  if node is null:
-    return
-    
-  inOrder(node.left)
-  visit(node)
-  inOrder(node.right)`
-  },
-  "Pre-Order": {
-    timeComplexity: "O(n)",
-    spaceComplexity: "O(h) where h is height of the tree",
-    description: "Pre-order traversal visits the current node, then the left subtree, then the right subtree. Useful for creating a copy of the tree.",
-    pseudocode: `function preOrder(node):
-  if node is null:
-    return
-    
-  visit(node)
-  preOrder(node.left)
-  preOrder(node.right)`
-  },
-  "Post-Order": {
-    timeComplexity: "O(n)",
-    spaceComplexity: "O(h) where h is height of the tree",
-    description: "Post-order traversal visits the left subtree, then the right subtree, then the current node. Useful for deleting the tree.",
-    pseudocode: `function postOrder(node):
-  if node is null:
-    return
-    
-  postOrder(node.left)
-  postOrder(node.right)
-  visit(node)`
-  },
-  "Level-Order": {
-    timeComplexity: "O(n)",
-    spaceComplexity: "O(n)",
-    description: "Level-order traversal visits all nodes level by level from top to bottom. Uses a queue to track nodes to visit.",
-    pseudocode: `function levelOrder(root):
-  if root is null:
-    return
-    
-  queue = new Queue()
-  queue.enqueue(root)
-  
-  while queue is not empty:
-    node = queue.dequeue()
-    visit(node)
-    
-    if node.left is not null:
-      queue.enqueue(node.left)
-    if node.right is not null:
-      queue.enqueue(node.right)`
+  clear() {
+    this.root = null;
+    this.animationSteps = [];
+    this.nodeCount = 0;
   }
+
+  getTreeDimensions() {
+    if (!this.root) return { width: 500, height: 300 };
+    
+    const getDepth = (node) => {
+      if (!node) return 0;
+      return 1 + Math.max(getDepth(node.left), getDepth(node.right));
+    };
+    
+    const maxDepth = getDepth(this.root);
+    
+    return {
+      width: Math.max(maxDepth * 140, 500),
+      height: Math.max(maxDepth * 90, 300),
+      maxDepth
+    };
+  }
+
+  // Tree traversal methods with animation support
+  inorderTraversal() {
+    this.animationSteps = [];
+    const result = [];
+    this.inorderHelper(this.root, result);
+    return { result, steps: this.animationSteps };
+  }
+
+  inorderHelper(node, result) {
+    if (node !== null) {
+      // Step 1: Highlight entering the function
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Entering inorder function with node ${node.value}`,
+        line: 76 // Line 76: "void inorder(struct TreeNode* root) {"
+      });
+      
+      // Step 2: Highlight the null check
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Checking: if (${node.value} != NULL) - condition is TRUE`,
+        line: 77 // Line 77: "if (root != NULL) {"
+      });
+      
+      // Step 3: About to process left subtree
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `At node ${node.value}: First, process left subtree (L in L-Root-R)`,
+        line: 78 // Line 78: "inorder(root->left);    // Left"
+      });
+      
+      // Recursively process left subtree
+      this.inorderHelper(node.left, result);
+      
+      // Step 4: Back from left subtree, now process current node
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Back at node ${node.value}: Left subtree done, now process ROOT`,
+        line: 79 // Line 79: "printf("%d ", root->data); // Root"
+      });
+      
+      // Step 5: Actually visit/print the current node
+      result.push(node.value);
+      this.animationSteps.push({
+        type: 'visit',
+        currentNode: node.value,
+        description: `VISITING node ${node.value}: Printing value (Root step of L-Root-R)`,
+        line: 79 // Line 79: "printf("%d ", root->data); // Root"
+      });
+      
+      // Step 6: About to process right subtree
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `At node ${node.value}: Finally, process right subtree (R in L-Root-R)`,
+        line: 80 // Line 80: "inorder(root->right);   // Right"
+      });
+      
+      // Recursively process right subtree
+      this.inorderHelper(node.right, result);
+      
+      // Step 7: Returning from this node
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Completed processing node ${node.value}: L-Root-R all done, returning`,
+        line: 81 // Line 81: "}" closing brace of inorder function
+      });
+    } else {
+      // Handle null case
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: null,
+        description: `Reached NULL node - base case, returning immediately`,
+        line: 77 // Line 77: "if (root != NULL) {" - condition is false
+      });
+    }
+  }
+
+  preorderTraversal() {
+    this.animationSteps = [];
+    const result = [];
+    this.preorderHelper(this.root, result);
+    return { result, steps: this.animationSteps };
+  }
+
+  preorderHelper(node, result) {
+    if (node !== null) {
+      // Step 1: Highlight entering the function
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Entering preorder function with node ${node.value}`,
+        line: 84 // Line 84: "void preorder(struct TreeNode* root) {"
+      });
+      
+      // Step 2: Highlight the null check
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Checking: if (${node.value} != NULL) - condition is TRUE`,
+        line: 85 // Line 85: "if (root != NULL) {"
+      });
+      
+      // Step 3: Process root FIRST (preorder: Root-L-R)
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `At node ${node.value}: FIRST, process ROOT (Root in Root-L-R)`,
+        line: 86 // Line 86: "printf("%d ", root->data); // Root"
+      });
+      
+      // Step 4: Actually visit/print the current node
+      result.push(node.value);
+      this.animationSteps.push({
+        type: 'visit',
+        currentNode: node.value,
+        description: `VISITING node ${node.value}: Printing value (Root step of Root-L-R)`,
+        line: 86 // Line 86: "printf("%d ", root->data); // Root"
+      });
+      
+      // Step 5: About to process left subtree
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `At node ${node.value}: Next, process left subtree (L in Root-L-R)`,
+        line: 87 // Line 87: "preorder(root->left);   // Left"
+      });
+      
+      // Recursively process left subtree
+      this.preorderHelper(node.left, result);
+      
+      // Step 6: Back from left, about to process right subtree
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Back at node ${node.value}: Left done, now process right subtree (R in Root-L-R)`,
+        line: 88 // Line 88: "preorder(root->right);  // Right"
+      });
+      
+      // Recursively process right subtree
+      this.preorderHelper(node.right, result);
+      
+      // Step 7: Returning from this node
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Completed processing node ${node.value}: Root-L-R all done, returning`,
+        line: 89 // Line 89: "}" closing brace of preorder function
+      });
+    } else {
+      // Handle null case
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: null,
+        description: `Reached NULL node - base case, returning immediately`,
+        line: 85 // Line 85: "if (root != NULL) {" - condition is false
+      });
+    }
+  }
+
+  postorderTraversal() {
+    this.animationSteps = [];
+    const result = [];
+    this.postorderHelper(this.root, result);
+    return { result, steps: this.animationSteps };
+  }
+
+  postorderHelper(node, result) {
+    if (node !== null) {
+      // Step 1: Highlight entering the function
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Entering postorder function with node ${node.value}`,
+        line: 92 // Line 92: "void postorder(struct TreeNode* root) {"
+      });
+      
+      // Step 2: Highlight the null check
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Checking: if (${node.value} != NULL) - condition is TRUE`,
+        line: 93 // Line 93: "if (root != NULL) {"
+      });
+      
+      // Step 3: About to process left subtree FIRST
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `At node ${node.value}: FIRST, process left subtree (L in L-R-Root)`,
+        line: 94 // Line 94: "postorder(root->left);  // Left"
+      });
+      
+      // Recursively process left subtree
+      this.postorderHelper(node.left, result);
+      
+      // Step 4: Back from left, about to process right subtree
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Back at node ${node.value}: Left done, now process right subtree (R in L-R-Root)`,
+        line: 95 // Line 95: "postorder(root->right); // Right"
+      });
+      
+      // Recursively process right subtree
+      this.postorderHelper(node.right, result);
+      
+      // Step 5: Back from right, about to process root LAST
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Back at node ${node.value}: Both children done, FINALLY process ROOT (Root in L-R-Root)`,
+        line: 96 // Line 96: "printf("%d ", root->data); // Root"
+      });
+      
+      // Step 6: Actually visit/print the current node LAST
+      result.push(node.value);
+      this.animationSteps.push({
+        type: 'visit',
+        currentNode: node.value,
+        description: `VISITING node ${node.value}: Printing value LAST (Root step of L-R-Root)`,
+        line: 96 // Line 96: "printf("%d ", root->data); // Root"
+      });
+      
+      // Step 7: Returning from this node
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: node.value,
+        description: `Completed processing node ${node.value}: L-R-Root all done, returning`,
+        line: 97 // Line 97: "}" closing brace of postorder function
+      });
+    } else {
+      // Handle null case
+      this.animationSteps.push({
+        type: 'traverse',
+        currentNode: null,
+        description: `Reached NULL node - base case, returning immediately`,
+        line: 93 // Line 93: "if (root != NULL) {" - condition is false
+      });
+    }
+  }
+}
+
+// Tree Visualization Component - Improved Layout Algorithm
+const TreeDisplay = ({ tree, highlightedNode, currentStep }) => {
+  const svgRef = useRef(null);
+  
+  if (!tree.root) {
+    return (
+      <div className="tree-display">
+        <div className="empty-tree">
+          <p>No tree to display</p>
+          <p>Insert some values to get started</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Advanced tree layout calculation to prevent overlaps
+  const calculateNodePositions = (node, level = 0, leftBound = 0, rightBound = 800) => {
+    if (!node) return null;
+
+    const nodeRadius = 22;
+    const minSpacing = 60; // Minimum distance between any two nodes
+    const levelHeight = 70;
+
+    // Calculate subtree widths to determine proper positioning
+    const getSubtreeWidth = (n) => {
+      if (!n) return 0;
+      if (!n.left && !n.right) return minSpacing;
+      return getSubtreeWidth(n.left) + getSubtreeWidth(n.right) + minSpacing;
+    };
+
+    const leftSubtreeWidth = getSubtreeWidth(node.left);
+    const rightSubtreeWidth = getSubtreeWidth(node.right);
+    const totalWidth = rightBound - leftBound;
+
+    // Position node in center of available space
+    const x = leftBound + totalWidth / 2;
+    const y = 50 + level * levelHeight;
+
+    // Calculate bounds for children with better spacing
+    const leftChildRightBound = x - minSpacing / 2;
+    const rightChildLeftBound = x + minSpacing / 2;
+
+    // Recursively calculate child positions with adjusted bounds
+    const leftChild = node.left ? 
+      calculateNodePositions(node.left, level + 1, leftBound, leftChildRightBound) : null;
+    const rightChild = node.right ? 
+      calculateNodePositions(node.right, level + 1, rightChildLeftBound, rightBound) : null;
+
+    return {
+      node,
+      x,
+      y,
+      level,
+      leftChild,
+      rightChild
+    };
+  };
+
+  // Calculate tree dimensions
+  const getTreeHeight = (node) => {
+    if (!node) return 0;
+    return 1 + Math.max(getTreeHeight(node.left), getTreeHeight(node.right));
+  };
+
+  const treeHeight = getTreeHeight(tree.root);
+  const svgWidth = 760; // Fit within panel
+  const svgHeight = Math.min(460, Math.max(treeHeight * 70 + 100, 300));
+  
+  // Calculate positions using improved algorithm
+  const treeLayout = calculateNodePositions(tree.root, 0, 50, svgWidth - 50);
+
+  const renderTreeFromLayout = (layout) => {
+    if (!layout) return [];
+
+    const { node, x, y, leftChild, rightChild } = layout;
+    const elements = [];
+    const nodeRadius = 22;
+    
+    const isHighlighted = highlightedNode === node.value;
+    const isCurrentNode = currentStep && currentStep.currentNode === node.value;
+    const isVisiting = currentStep && currentStep.type === 'visit' && currentStep.currentNode === node.value;
+
+    // Draw edges to children with proper positioning
+    if (leftChild) {
+      elements.push(
+        <line
+          key={`edge-left-${node.value}`}
+          x1={x} y1={y + nodeRadius} 
+          x2={leftChild.x} y2={leftChild.y - nodeRadius}
+          stroke={isCurrentNode ? "#58a6ff" : "#666"}
+          strokeWidth={isCurrentNode ? "3" : "2"}
+          className={`tree-edge ${isCurrentNode ? 'highlighted' : ''}`}
+          strokeLinecap="round"
+        />
+      );
+    }
+
+    if (rightChild) {
+      elements.push(
+        <line
+          key={`edge-right-${node.value}`}
+          x1={x} y1={y + nodeRadius} 
+          x2={rightChild.x} y2={rightChild.y - nodeRadius}
+          stroke={isCurrentNode ? "#58a6ff" : "#666"}
+          strokeWidth={isCurrentNode ? "3" : "2"}
+          className={`tree-edge ${isCurrentNode ? 'highlighted' : ''}`}
+          strokeLinecap="round"
+        />
+      );
+    }
+
+    // Node colors based on state
+    let nodeColor;
+    if (isVisiting) {
+      nodeColor = "#f39c12"; // Orange for traversal visit
+    } else if (isCurrentNode) {
+      nodeColor = "#58a6ff"; // Blue for current operation
+    } else if (isHighlighted) {
+      nodeColor = "#f85149"; // Red for highlighted/error
+    } else {
+      nodeColor = "#238636"; // Green for normal nodes
+    }
+    
+    // Render the node
+    elements.push(
+      <g key={`node-${node.value}`} className="tree-node">
+        <circle
+          cx={x} cy={y} r={nodeRadius}
+          fill={nodeColor}
+          stroke="#fff"
+          strokeWidth="2"
+          className="node-circle"
+        />
+        <text
+          x={x} y={y} textAnchor="middle" dominantBaseline="middle"
+          fill="white" fontSize="16" fontWeight="700"
+          className="node-text"
+        >
+          {node.value}
+        </text>
+      </g>
+    );
+
+    // Render children
+    if (leftChild) {
+      elements.push(...renderTreeFromLayout(leftChild));
+    }
+    if (rightChild) {
+      elements.push(...renderTreeFromLayout(rightChild));
+    }
+
+    return elements;
+  };
+
+  return (
+    <div className="tree-display">
+      <svg 
+        ref={svgRef}
+        width={svgWidth}
+        height={svgHeight}
+        className="tree-svg"
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        preserveAspectRatio="xMidYMid meet"
+      >
+        {renderTreeFromLayout(treeLayout)}
+      </svg>
+    </div>
+  );
 };
 
 const TreeVisualizer = () => {
-  // Tree state
-  const [tree, setTree] = useState(new BinaryTree());
-  const [value, setValue] = useState("");
+  // Core state
+  const [tree] = useState(new BST());
+  const [inputValue, setInputValue] = useState('');
+  const [message, setMessage] = useState('Ready for operations');
+  const [treeVersion, setTreeVersion] = useState(0);
   
   // Animation state
   const [animationSteps, setAnimationSteps] = useState([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(1000);
-  const [currentTraversal, setCurrentTraversal] = useState(null);
-  const [currentOperation, setCurrentOperation] = useState('insert');
-  
-  // Layout state
-  const [isCodeViewExpanded, setIsCodeViewExpanded] = useState(false);
-  const [showAlgorithmInfo, setShowAlgorithmInfo] = useState(true);
-  const [activePanel, setActivePanel] = useState('tree'); // 'tree', 'code', 'info'
+  const [highlightedNode, setHighlightedNode] = useState(null);
+  const [currentLine, setCurrentLine] = useState(0);
+  const [currentStep, setCurrentStep] = useState(null);
   
   const timeoutRef = useRef(null);
+  const codeViewerRef = useRef(null);
 
-  // Animation control functions
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleStepBack = () => {
-    if (currentStepIndex > 0) {
-      setCurrentStepIndex(currentStepIndex - 1);
+  // Auto-scroll to highlighted line
+  useEffect(() => {
+    if (currentLine && codeViewerRef.current) {
+      const lineElement = codeViewerRef.current.querySelector(`[data-line-number="${currentLine}"]`);
+      if (lineElement) {
+        lineElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
     }
-  };
+  }, [currentLine]);
 
-  const handleStepForward = () => {
-    if (currentStepIndex < animationSteps.length - 1) {
-      setCurrentStepIndex(currentStepIndex + 1);
-    } else {
-      setIsPlaying(false);
-    }
-  };
-
-  // Operation handlers
-  const handleInsert = () => {
-    const key = parseInt(value);
-    if (isNaN(key) || key <= 0) {
-      alert("Please enter a positive integer");
-      return;
-    }
-
-    setCurrentOperation('insert');
-    const clonedTree = tree.clone();
-    const steps = clonedTree.insert(key);
-    setTree(clonedTree);
-    setAnimationSteps(steps);
-    setCurrentStepIndex(0);
-    setIsPlaying(true);
-    setValue("");
-  };
-
-  const handleFind = () => {
-    const key = parseInt(value);
-    if (isNaN(key) || key <= 0) {
-      alert("Please enter a positive integer");
-      return;
-    }
-
-    setCurrentOperation('search');
-    const clonedTree = tree.clone();
-    const steps = clonedTree.find(key);
-    setTree(clonedTree);
-    setAnimationSteps(steps);
-    setCurrentStepIndex(0);
-    setIsPlaying(true);
-    setValue("");
-  };
-
-  const handleDelete = () => {
-    const key = parseInt(value);
-    if (isNaN(key) || key <= 0) {
-      alert("Please enter a positive integer");
-      return;
-    }
-
-    setCurrentOperation('delete');
-    const clonedTree = tree.clone();
-    const steps = clonedTree.delete(key);
-    setTree(clonedTree);
-    setAnimationSteps(steps);
-    setCurrentStepIndex(0);
-    setIsPlaying(true);
-    setValue("");
-  };
-
-  const handleGenerateRandom = () => {
-    const size = Math.floor(Math.random() * 7) + 3; // Between 3 and 10 nodes
-    const randomTree = BinaryTree.random(size);
-    setTree(randomTree);
-    setAnimationSteps([
-      {
-        tree: randomTree.cloneNode(randomTree.root),
-        description: `Generated random tree with ${size} nodes`,
-        cursor: null,
-      },
-    ]);
-    setCurrentStepIndex(0);
-  };
-
-  const handleClear = () => {
-    setTree(new BinaryTree());
-    setAnimationSteps([
-      {
-        tree: null,
-        cursor: null,
-        description: "Tree cleared",
-      },
-    ]);
-    setCurrentStepIndex(0);
-  };
-
-  // Traversal handlers
-  const handleInOrderTraversal = () => {
-    if (!tree || !tree.root) {
-      alert("Tree is empty. Please insert some values first.");
-      return;
-    }
-    
-    const treeData = toHierarchyData(tree.cloneNode(tree.root));
-    const { results } = inOrderTraversal(treeData);
-    setAnimationSteps(results);
-    setCurrentStepIndex(0);
-    setIsPlaying(true);
-    setCurrentTraversal("In-Order");
-  };
-  
-  const handlePreOrderTraversal = () => {
-    if (!tree || !tree.root) {
-      alert("Tree is empty. Please insert some values first.");
-      return;
-    }
-    
-    const treeData = toHierarchyData(tree.cloneNode(tree.root));
-    const { results } = preOrderTraversal(treeData);
-    setAnimationSteps(results);
-    setCurrentStepIndex(0);
-    setIsPlaying(true);
-    setCurrentTraversal("Pre-Order");
-  };
-  
-  const handlePostOrderTraversal = () => {
-    if (!tree || !tree.root) {
-      alert("Tree is empty. Please insert some values first.");
-      return;
-    }
-    
-    const treeData = toHierarchyData(tree.cloneNode(tree.root));
-    const { results } = postOrderTraversal(treeData);
-    setAnimationSteps(results);
-    setCurrentStepIndex(0);
-    setIsPlaying(true);
-    setCurrentTraversal("Post-Order");
-  };
-
-  // Animation timer effect
+  // Animation control
   useEffect(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
     }
 
-    if (isPlaying && currentStepIndex < animationSteps.length - 1) {
+    if (isAnimating && currentStepIndex < animationSteps.length - 1) {
       timeoutRef.current = setTimeout(() => {
-        setCurrentStepIndex(currentStepIndex + 1);
+        setCurrentStepIndex(prev => prev + 1);
       }, animationSpeed);
     } else if (currentStepIndex >= animationSteps.length - 1) {
-      setIsPlaying(false);
+      setIsAnimating(false);
     }
 
     return () => {
@@ -671,313 +766,442 @@ const TreeVisualizer = () => {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [isPlaying, currentStepIndex, animationSteps, animationSpeed]);
+  }, [isAnimating, currentStepIndex, animationSteps.length, animationSpeed]);
 
-  // Current tree data based on animation step
-  const currentTreeData =
-    animationSteps.length > 0
-      ? animationSteps[currentStepIndex].tree
-      : tree.root;
+  // Update highlights based on current step
+  useEffect(() => {
+    if (animationSteps.length > 0 && currentStepIndex < animationSteps.length) {
+      const step = animationSteps[currentStepIndex];
+      setHighlightedNode(step.currentNode);
+      setCurrentLine(step.line);
+      setMessage(step.description);
+      setCurrentStep(step); // Set the current step for TreeDisplay
+    } else {
+      setCurrentStep(null);
+    }
+  }, [animationSteps, currentStepIndex]);
 
-  const currentCursor =
-    animationSteps.length > 0
-      ? (animationSteps[currentStepIndex].cursor?.key || 0)
-      : 0;
+  const forceUpdate = () => {
+    setTreeVersion(prev => prev + 1);
+  };
 
-  const currentDescription =
-    animationSteps.length > 0
-      ? animationSteps[currentStepIndex].description
-      : "No operations performed yet";
+  const resetAnimation = () => {
+    // Stop current animation
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsAnimating(false);
+    
+    // Clear all animation state
+    setAnimationSteps([]);
+    setCurrentStepIndex(0);
+    setHighlightedNode(null);
+    setCurrentLine(0);
+    setCurrentStep(null);
+    
+    // Clear animation steps from the tree object itself
+    if (tree) {
+      tree.animationSteps = [];
+    }
+  };
+
+  const handleInsert = () => {
+    const value = parseInt(inputValue);
+    if (isNaN(value)) {
+      setMessage('Please enter a valid number');
+      return;
+    }
+
+    // Ensure complete state reset
+    resetAnimation();
+    
+    // Force a brief delay to ensure state is completely reset
+    setTimeout(() => {
+      const steps = tree.insert(value);
+      
+      // Check if we got an error step for depth limit
+      if (steps.length > 0 && steps[0].error) {
+        setAnimationSteps(steps);
+        setCurrentStepIndex(0);
+        setMessage(steps[0].description);
+        setInputValue('');
+        setIsAnimating(true);
+        return;
+      }
+      
+      if (steps.length === 0) {
+        setMessage(`Cannot insert ${value} - unexpected error`);
+        return;
+      }
+      
+      setAnimationSteps(steps);
+      setCurrentStepIndex(0);
+      setMessage(`Inserting ${value}...`);
+      setInputValue('');
+      forceUpdate();
+      
+      if (steps.length > 0) {
+        setIsAnimating(true);
+      }
+    }, 50); // Small delay to ensure state reset
+  };
+
+  const handleSearch = () => {
+    const value = parseInt(inputValue);
+    if (isNaN(value)) {
+      setMessage('Please enter a valid number');
+      return;
+    }
+
+    // Ensure complete state reset
+    resetAnimation();
+    
+    // Force a brief delay to ensure state is completely reset
+    setTimeout(() => {
+      const { found, steps } = tree.search(value);
+      setAnimationSteps(steps);
+      setCurrentStepIndex(0);
+      setMessage(`Searching for ${value}...`);
+      
+      if (steps.length > 0) {
+        setIsAnimating(true);
+      } else {
+        setMessage(found ? `Found ${value}!` : `${value} not found`);
+      }
+    }, 50); // Small delay to ensure state reset
+  };
+
+  const handleRandom = () => {
+    resetAnimation();
+    tree.clear();
+    const values = [];
+    for (let i = 0; i < 7; i++) {
+      values.push(Math.floor(Math.random() * 100) + 1);
+    }
+    values.forEach(val => tree.insert(val));
+    setMessage(`Generated random tree: ${values.join(', ')}`);
+    forceUpdate();
+  };
+
+  const handleClear = () => {
+    resetAnimation();
+    tree.clear();
+    setMessage('Tree cleared');
+    forceUpdate();
+  };
+
+  const handlePlay = () => {
+    if (animationSteps.length > 0) {
+      setIsAnimating(!isAnimating);
+    }
+  };
+
+  const handleStepForward = () => {
+    if (currentStepIndex < animationSteps.length - 1) {
+      setCurrentStepIndex(prev => prev + 1);
+    }
+  };
+
+  const handleStepBackward = () => {
+    if (currentStepIndex > 0) {
+      setCurrentStepIndex(prev => prev - 1);
+    }
+  };
+
+  const handleTraversal = (type) => {
+    if (!tree.root) {
+      setMessage('Tree is empty - add some nodes first');
+      return;
+    }
+
+    // Ensure complete state reset
+    resetAnimation();
+    
+    // Force a brief delay to ensure state is completely reset
+    setTimeout(() => {
+      let result, steps;
+      
+      switch(type) {
+        case 'inorder':
+          ({ result, steps } = tree.inorderTraversal());
+          setMessage(`Inorder traversal: ${result.join(' → ')}`);
+          break;
+        case 'preorder':
+          ({ result, steps } = tree.preorderTraversal());
+          setMessage(`Preorder traversal: ${result.join(' → ')}`);
+          break;
+        case 'postorder':
+          ({ result, steps } = tree.postorderTraversal());
+          setMessage(`Postorder traversal: ${result.join(' → ')}`);
+          break;
+        default:
+          return;
+      }
+      
+      setAnimationSteps(steps);
+      setCurrentStepIndex(0);
+      
+      if (steps.length > 0) {
+        setIsAnimating(true);
+      }
+    }, 50); // Small delay to ensure state reset
+  };
+
+  const getCode = () => {
+    return `#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_DEPTH 4  // Maximum tree depth allowed
+
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+struct TreeNode* createNode(int value) {
+    struct TreeNode* newNode = malloc(sizeof(struct TreeNode));
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+int getDepth(struct TreeNode* root) {
+    if (root == NULL) return 0;
+    int leftDepth = getDepth(root->left);
+    int rightDepth = getDepth(root->right);
+    return 1 + (leftDepth > rightDepth ? leftDepth : rightDepth);
+}
+
+int wouldExceedDepth(struct TreeNode* root, int value, int currentDepth) {
+    if (currentDepth >= MAX_DEPTH) return 1;  // Would exceed limit
+    if (root == NULL) return 0;
+    
+    if (value < root->data) {
+        return wouldExceedDepth(root->left, value, currentDepth + 1);
+    } else if (value > root->data) {
+        return wouldExceedDepth(root->right, value, currentDepth + 1);
+    }
+    return 0; // Duplicate value
+}
+
+struct TreeNode* insert(struct TreeNode* root, int value) {
+    // Check depth limit before insertion
+    if (root != NULL && wouldExceedDepth(root, value, 0)) {
+        printf("Error: Cannot insert %d - would exceed max depth\\n", value);
+        return root;
+    }
+    
+    if (root == NULL) {
+        return createNode(value);
+    }
+    
+    if (value < root->data) {
+        root->left = insert(root->left, value);
+    } else if (value > root->data) {
+        root->right = insert(root->right, value);
+    }
+    
+    return root;
+}
+
+int search(struct TreeNode* root, int value) {
+    if (root == NULL) {
+        return 0; // Not found
+    }
+    
+    if (value == root->data) {
+        return 1; // Found
+    }
+    
+    if (value < root->data) {
+        return search(root->left, value);
+    } else {
+        return search(root->right, value);
+    }
+}
+
+// Tree Traversal Functions
+void inorder(struct TreeNode* root) {
+    if (root != NULL) {
+        inorder(root->left);    // Left
+        printf("%d ", root->data); // Root
+        inorder(root->right);   // Right
+    }
+}
+
+void preorder(struct TreeNode* root) {
+    if (root != NULL) {
+        printf("%d ", root->data); // Root
+        preorder(root->left);   // Left
+        preorder(root->right);  // Right
+    }
+}
+
+void postorder(struct TreeNode* root) {
+    if (root != NULL) {
+        postorder(root->left);  // Left
+        postorder(root->right); // Right
+        printf("%d ", root->data); // Root
+    }
+}`;
+  };
 
   return (
-    <div className="modern-tree-visualizer">
-      {/* Header Section */}
-      <motion.header 
-        className="visualizer-header"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="header-content">
-          <Link to="/" className="home-button">
-            <FaHome />
-            <span>Home</span>
-          </Link>
+    <div className="tree-app">
+      {/* Header */}
+      <header className="header">
+        <Link to="/" className="home-btn">
+          <FaHome />
+          <span>Home</span>
+        </Link>
+        <h1>Binary Search Tree Visualizer</h1>
+      </header>
+
+      {/* Main Content */}
+      <main className="split-view">
+        {/* Code Panel */}
+        <section className="panel code-panel">
+          <h2>C Implementation</h2>
+          <div className="code-viewer" ref={codeViewerRef}>
+            <SyntaxHighlighter
+              language="c"
+              style={vs2015}
+              wrapLines={true}
+              showLineNumbers={true}
+              lineNumberStyle={{ color: '#6a737d' }}
+              wrapLongLines={true}
+              codeTagProps={{
+                style: {
+                  fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                  fontSize: '0.9rem'
+                }
+              }}
+              customStyle={{
+                margin: 0,
+                padding: '1rem',
+                fontSize: '0.9rem',
+                lineHeight: '1.6',
+                height: '100%',
+                overflow: 'auto',
+                background: '#1e1e1e'
+              }}
+              lineProps={lineNumber => {
+                const isCurrentLine = lineNumber === currentLine;
+                const isErrorLine = currentStep && currentStep.error && isCurrentLine;
+                return {
+                  'data-line-number': lineNumber,
+                  style: { 
+                    backgroundColor: isErrorLine 
+                      ? 'rgba(248, 81, 73, 0.4)' // Red for errors
+                      : isCurrentLine 
+                        ? 'rgba(88, 166, 255, 0.3)' // Blue for normal highlighting
+                        : 'transparent',
+                    display: 'block',
+                    color: isCurrentLine ? '#fff' : undefined,
+                    fontWeight: isCurrentLine ? 'bold' : 'normal',
+                    borderLeft: isErrorLine ? '4px solid #f85149' : isCurrentLine ? '4px solid #58a6ff' : 'none',
+                    paddingLeft: isCurrentLine ? '8px' : '12px'
+                  }
+                };
+              }}
+            >
+              {getCode()}
+            </SyntaxHighlighter>
+          </div>
+        </section>
+
+        {/* Visualization Panel */}
+        <section className="panel viz-panel">
+          <h2>Interactive Visualization</h2>
           
-          <div className="header-title">
-            <FaTree className="title-icon" />
-            <h1>Binary Search Tree Visualizer</h1>
-          </div>
-
-          <div className="layout-controls">
-            <button 
-              className={`layout-btn ${activePanel === 'tree' ? 'active' : ''}`}
-              onClick={() => setActivePanel('tree')}
-              title="Tree View"
-            >
-              <FaTree />
-            </button>
-            <button 
-              className={`layout-btn ${activePanel === 'code' ? 'active' : ''}`}
-              onClick={() => setActivePanel('code')}
-              title="Code View"
-            >
-              <FaCode />
-            </button>
-            <button 
-              className={`layout-btn ${activePanel === 'info' ? 'active' : ''}`}
-              onClick={() => setActivePanel('info')}
-              title="Algorithm Info"
-            >
-              <FaInfoCircle />
-            </button>
-            <button 
-              className="expand-btn"
-              onClick={() => setIsCodeViewExpanded(!isCodeViewExpanded)}
-              title={isCodeViewExpanded ? "Collapse" : "Expand"}
-            >
-              {isCodeViewExpanded ? <FaCompressArrowsAlt /> : <FaExpandArrowsAlt />}
-            </button>
-          </div>
-        </div>
-      </motion.header>
-
-      {/* Main Content Grid */}
-      <div className={`main-grid ${isCodeViewExpanded ? 'expanded' : ''}`}>
-        
-        {/* Controls Panel */}
-        <motion.section 
-          className="controls-section"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          <div className="controls-header">
-            <h2>Operations</h2>
-            <div className="operation-indicator">
-              Current: <span className="current-op">{currentOperation}</span>
+          <div className="controls">
+            <div className="input-group">
+              <input
+                type="number"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Enter number"
+                className="number-input"
+                disabled={isAnimating}
+              />
+              <button onClick={handleInsert} className="btn btn-primary" disabled={isAnimating}>
+                <FaPlus /> Insert
+              </button>
+              <button onClick={handleSearch} className="btn btn-secondary" disabled={isAnimating}>
+                <FaSearch /> Search
+              </button>
             </div>
-          </div>
-          
-          <VisualizerControls
-            value={value}
-            setValue={setValue}
-            handleGenerateRandom={handleGenerateRandom}
-            animationSpeed={animationSpeed}
-            setAnimationSpeed={setAnimationSpeed}
-            currentStepIndex={currentStepIndex}
-            isPlaying={isPlaying}
-            handleStepForward={handleStepForward}
-            handlePlayPause={handlePlayPause}
-            handleStepBack={handleStepBack}
-            handleClear={handleClear}
-            animationSteps={animationSteps}
-            handleInsert={handleInsert}
-            handleFind={handleFind}
-            handleDelete={handleDelete}
-            handleInOrderTraversal={handleInOrderTraversal}
-            handlePreOrderTraversal={handlePreOrderTraversal}
-            handlePostOrderTraversal={handlePostOrderTraversal}
-          />
-        </motion.section>
+            
+            <div className="action-group">
+              <button onClick={handleRandom} className="btn btn-info" disabled={isAnimating}>
+                <FaRandom /> Random Tree
+              </button>
+              <button onClick={handleClear} className="btn btn-warning" disabled={isAnimating}>
+                <FaTrash /> Clear
+              </button>
+            </div>
 
-        {/* Tree Visualization Panel */}
-        <motion.section 
-          className={`tree-section ${activePanel === 'tree' ? 'active' : ''}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="tree-header">
-            <h2>Binary Search Tree</h2>
-            <div className="tree-stats">
-              {animationSteps.length > 0 && (
-                <div className="animation-progress">
-                  <span>Step {currentStepIndex + 1} of {animationSteps.length}</span>
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill"
-                      style={{ width: `${((currentStepIndex + 1) / animationSteps.length) * 100}%` }}
-                    />
-                  </div>
+            <div className="traversal-group">
+              <button onClick={() => handleTraversal('inorder')} className="btn btn-secondary" disabled={isAnimating}>
+                Inorder
+              </button>
+              <button onClick={() => handleTraversal('preorder')} className="btn btn-secondary" disabled={isAnimating}>
+                Preorder
+              </button>
+              <button onClick={() => handleTraversal('postorder')} className="btn btn-secondary" disabled={isAnimating}>
+                Postorder
+              </button>
+            </div>
+
+            {animationSteps.length > 0 && (
+              <div className="animation-controls">
+                <div className="playback-controls">
+                  <button onClick={handleStepBackward} className="btn btn-control" disabled={currentStepIndex === 0}>
+                    <FaStepBackward />
+                  </button>
+                  <button onClick={handlePlay} className="btn btn-control">
+                    {isAnimating ? <FaPause /> : <FaPlay />}
+                  </button>
+                  <button onClick={handleStepForward} className="btn btn-control" disabled={currentStepIndex >= animationSteps.length - 1}>
+                    <FaStepForward />
+                  </button>
                 </div>
-              )}
-            </div>
-          </div>
-
-          <div className="tree-display-container">
-            {currentTreeData ? (
-              <div className="tree-visualization">
-                <SvgTree tree={currentTreeData} cursor={currentCursor} />
                 
-                {/* Status Display */}
-                <div className="tree-status">
-                  <div className="status-indicator">
-                    {isPlaying ? (
-                      <div className="status-running">
-                        <div className="dot"></div>
-                        <div className="dot"></div>
-                        <div className="dot"></div>
-                      </div>
-                    ) : (
-                      <div className="status-ready">Ready</div>
-                    )}
-                  </div>
-                  <div className="status-text">{currentDescription}</div>
+                <div className="progress-info">
+                  Step {currentStepIndex + 1} of {animationSteps.length}
                 </div>
-              </div>
-            ) : (
-              <div className="empty-tree">
-                <FaTree className="empty-icon" />
-                <h3>Tree is Empty</h3>
-                <p>Insert some values or generate a random tree to begin</p>
-                <button onClick={handleGenerateRandom} className="generate-btn">
-                  Generate Random Tree
-                </button>
+                
+                <div className="speed-control">
+                  <label>Speed:</label>
+                  <input
+                    type="range"
+                    min="200"
+                    max="2000"
+                    step="200"
+                    value={animationSpeed}
+                    onChange={(e) => setAnimationSpeed(parseInt(e.target.value))}
+                    className="speed-slider"
+                  />
+                  <span>{animationSpeed}ms</span>
+                </div>
               </div>
             )}
           </div>
-        </motion.section>
 
-        {/* Code Viewer Panel */}
-        <AnimatePresence>
-          {(activePanel === 'code' || isCodeViewExpanded) && (
-            <motion.section 
-              className="code-section"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.4 }}
-            >
-              <div className="code-header">
-                <h2>Algorithm Code</h2>
-                <div className="code-language-info">
-                  Multiple languages supported
-                </div>
-              </div>
+          <div className="message">
+            {message}
+          </div>
 
-              <CodeViewer
-                operation={currentOperation}
-                currentLine={animationSteps[currentStepIndex]?.line || 0}
-                isAnimating={isPlaying}
-                className="main-code-viewer"
-              />
-
-              {/* Traversal Results */}
-              {currentTraversal && animationSteps[currentStepIndex]?.traversalResult && (
-                <motion.div 
-                  className="traversal-results"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  <h3>{currentTraversal} Traversal Result</h3>
-                  <div className="result-sequence">
-                    {animationSteps[currentStepIndex].traversalResult.map((value, index) => (
-                      <motion.span 
-                        key={index}
-                        className="result-item"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        {value}
-                      </motion.span>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </motion.section>
-          )}
-        </AnimatePresence>
-
-        {/* Algorithm Info Panel */}
-        <AnimatePresence>
-          {(activePanel === 'info' || showAlgorithmInfo) && (
-            <motion.section 
-              className="info-section"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.4 }}
-            >
-              <div className="info-header">
-                <h2>Algorithm Information</h2>
-                <button 
-                  className="close-info"
-                  onClick={() => setShowAlgorithmInfo(false)}
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="algorithm-details">
-                <div className="complexity-info">
-                  <h3>Time Complexity</h3>
-                  <div className="complexity-grid">
-                    <div className="complexity-item">
-                      <span className="operation">Insert</span>
-                      <span className="value">O(log n)</span>
-                    </div>
-                    <div className="complexity-item">
-                      <span className="operation">Search</span>
-                      <span className="value">O(log n)</span>
-                    </div>
-                    <div className="complexity-item">
-                      <span className="operation">Delete</span>
-                      <span className="value">O(log n)</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="properties-info">
-                  <h3>BST Properties</h3>
-                  <ul className="properties-list">
-                    <li>Left subtree contains only nodes with values less than the parent</li>
-                    <li>Right subtree contains only nodes with values greater than the parent</li>
-                    <li>Both left and right subtrees are also binary search trees</li>
-                    <li>In-order traversal gives values in sorted order</li>
-                  </ul>
-                </div>
-
-                <div className="use-cases">
-                  <h3>Common Use Cases</h3>
-                  <div className="use-case-grid">
-                    <div className="use-case">Database Indexing</div>
-                    <div className="use-case">Search Operations</div>
-                    <div className="use-case">Expression Parsing</div>
-                    <div className="use-case">Priority Queues</div>
-                  </div>
-                </div>
-              </div>
-            </motion.section>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className="mobile-nav">
-        <button 
-          className={`nav-item ${activePanel === 'tree' ? 'active' : ''}`}
-          onClick={() => setActivePanel('tree')}
-        >
-          <FaTree />
-          <span>Tree</span>
-        </button>
-        <button 
-          className={`nav-item ${activePanel === 'code' ? 'active' : ''}`}
-          onClick={() => setActivePanel('code')}
-        >
-          <FaCode />
-          <span>Code</span>
-        </button>
-        <button 
-          className={`nav-item ${activePanel === 'info' ? 'active' : ''}`}
-          onClick={() => setActivePanel('info')}
-        >
-          <FaInfoCircle />
-          <span>Info</span>
-        </button>
-      </div>
+          <TreeDisplay 
+            key={treeVersion} 
+            tree={tree} 
+            highlightedNode={highlightedNode}
+            currentStep={currentStep}
+          />
+        </section>
+      </main>
     </div>
   );
 };

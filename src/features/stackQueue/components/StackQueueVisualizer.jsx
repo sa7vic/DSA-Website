@@ -57,8 +57,8 @@ const StackQueueVisualizer = () => {
 
   // Convert animation speed slider value to actual delay
   const getAnimationDelay = useCallback(() => {
-    // Ensure reasonable delay times - minimum 1000ms to see the steps clearly
-    return Math.max(1000, 2100 - animationSpeed); // Increased min delay to 1000ms for debugging
+    // Direct mapping: slider value is the delay in milliseconds
+    return animationSpeed;
   }, [animationSpeed]);
 
   // Auto-scroll to highlighted line in code viewer
@@ -122,23 +122,25 @@ const StackQueueVisualizer = () => {
     setCurrentLine(0); 
     await new Promise(r => setTimeout(r, delay));
 
-    await performAnimatedStep("Initializing stack object", 11);
-    await performAnimatedStep(`Calling push(${value})`, 32);
-    await performAnimatedStep("Checking current state with peek()", 34);
-    await performAnimatedStep("Inside peek() method", 24);
-    await performAnimatedStep("Checking if stack is empty", 25);
+    await performAnimatedStep("Initializing stack object", 13);
+    await performAnimatedStep(`Calling push(${value})`, 42);
+    await performAnimatedStep("Checking if stack is full", 43);
+    await performAnimatedStep("Checking current state with peek()", 49);
+    await performAnimatedStep("Inside peek() method", 33);
+    await performAnimatedStep("Checking if stack is empty", 34);
 
     if (elements.length === 0) {
-      await performAnimatedStep("Stack is empty (result of peek)", 26);
+      await performAnimatedStep("Stack is empty (result of peek)", 35);
     } else {
-      await performAnimatedStep(`Stack not empty, top is ${elements[elements.length - 1]} (result of peek)`, 28);
+      await performAnimatedStep(`Stack not empty, top is ${elements[elements.length - 1]} (result of peek)`, 50);
     }
 
-    await performAnimatedStep(`Adding ${value} to stack`, 37, () => {
+    await performAnimatedStep(`Incrementing top index`, 53, () => {
       setElements(prev => [...prev, value]);
     });
     
-    await performAnimatedStep(`Successfully pushed ${value}`, 38);
+    await performAnimatedStep(`Adding element to stack`, 54);
+    await performAnimatedStep(`Successfully pushed ${value}`, 55);
 
     setIsAnimating(false);
     setLoading(false);
@@ -187,22 +189,23 @@ const StackQueueVisualizer = () => {
     setCurrentLine(0);
     await new Promise(r => setTimeout(r, delay));
 
-    await performAnimatedStep("Initializing stack object", 11);
-    await performAnimatedStep("Calling pop()", 42);
-    await performAnimatedStep("Checking if stack is empty", 43);
-    await performAnimatedStep("Inside isEmpty() method", 14);
-    await performAnimatedStep("Checking if items vector is empty", 15);
+    await performAnimatedStep("Initializing stack object", 13);
+    await performAnimatedStep("Calling pop()", 58);
+    await performAnimatedStep("Checking if stack is empty", 59);
+    await performAnimatedStep("Inside isEmpty() method", 18);
+    await performAnimatedStep("Checking if top == -1", 19);
 
-    await performAnimatedStep("Stack has elements, proceeding with pop", 46);
+    await performAnimatedStep("Stack has elements, proceeding with pop", 62);
     
     const poppedValue = elements[elements.length - 1];
-    await performAnimatedStep(`Getting top element: ${poppedValue}`, 46);
+    await performAnimatedStep(`Getting top element: ${poppedValue}`, 64);
 
-    await performAnimatedStep("Removing top element", 47, () => {
+    await performAnimatedStep("Decrementing top index", 65, () => {
       setElements(prev => prev.slice(0, -1));
     });
     
-    await performAnimatedStep("Pop operation complete", 48);
+    await performAnimatedStep("Pop operation complete", 66);
+    await performAnimatedStep("Returning popped element", 67);
 
     setIsAnimating(false);
     setLoading(false);
@@ -250,23 +253,23 @@ const StackQueueVisualizer = () => {
     setCurrentLine(0);
     await new Promise(r => setTimeout(r, delay));
 
-    await performAnimatedStep("Initializing queue object", 11);
-    await performAnimatedStep(`Calling enqueue(${value})`, 32);
-    await performAnimatedStep("Checking current state with peek()", 34);
-    await performAnimatedStep("Inside peek() method", 24);
-    await performAnimatedStep("Checking if queue is empty", 25);
+    await performAnimatedStep("Initializing queue object", 12);
+    await performAnimatedStep(`Calling enqueue(${value})`, 40);
+    await performAnimatedStep("Checking current state with peek()", 44);
+    await performAnimatedStep("Inside peek() method", 29);
+    await performAnimatedStep("Checking if queue is empty", 30);
 
     if (elements.length === 0) {
-      await performAnimatedStep("Queue is empty (result of peek)", 26);
+      await performAnimatedStep("Queue is empty (result of peek)", 31);
     } else {
-      await performAnimatedStep(`Current front element: ${elements[0]} (result of peek)`, 28);
+      await performAnimatedStep(`Current front element: ${elements[0]} (result of peek)`, 34);
     }
     
     await performAnimatedStep(`Adding ${value} to queue`, 37, () => {
       setElements(prev => [...prev, value]);
     });
     
-    await performAnimatedStep(`Successfully enqueued ${value}`, 38);
+    await performAnimatedStep(`Successfully enqueued ${value}`, 39);
 
     setIsAnimating(false);
     setLoading(false);
@@ -314,11 +317,11 @@ const StackQueueVisualizer = () => {
     setCurrentLine(0);
     await new Promise(r => setTimeout(r, delay));
 
-    await performAnimatedStep("Initializing queue object", 11);
+    await performAnimatedStep("Initializing queue object", 12);
     await performAnimatedStep("Calling dequeue()", 42);
     await performAnimatedStep("Checking if queue is empty", 43);
-    await performAnimatedStep("Inside isEmpty() method", 14);
-    await performAnimatedStep("Checking if items vector is empty", 15);
+    await performAnimatedStep("Inside isEmpty() method", 18);
+    await performAnimatedStep("Checking if queue count is zero", 19);
 
     await performAnimatedStep("Queue has elements, proceeding with dequeue", 46);
     
@@ -329,7 +332,7 @@ const StackQueueVisualizer = () => {
       setElements(prev => prev.slice(1));
     });
     
-    await performAnimatedStep("Dequeue operation complete", 48);
+    await performAnimatedStep("Dequeue operation complete", 49);
 
     setIsAnimating(false);
     setLoading(false);
@@ -367,16 +370,16 @@ const StackQueueVisualizer = () => {
     setCurrentLine(0);
     await new Promise(r => setTimeout(r, delay));
 
-    await performAnimatedStep("Initializing stack object", 11);
-    await performAnimatedStep("Inside peek() method", 24);
-    await performAnimatedStep("Checking if stack is empty", 25);
-    await performAnimatedStep("Inside isEmpty() method", 14);
-    await performAnimatedStep("Checking if items vector is empty", 15);
+    await performAnimatedStep("Initializing stack object", 13);
+    await performAnimatedStep("Inside peek() method", 33);
+    await performAnimatedStep("Checking if stack is empty", 34);
+    await performAnimatedStep("Inside isEmpty() method", 18);
+    await performAnimatedStep("Checking if top == -1", 19);
 
     if (elements.length === 0) {
-      await performAnimatedStep("Stack is empty - nothing to peek", 26);
+      await performAnimatedStep("Stack is empty - nothing to peek", 35);
     } else {
-      await performAnimatedStep(`Current top element: ${elements[elements.length - 1]}`, 28);
+      await performAnimatedStep(`Current top element: ${elements[elements.length - 1]}`, 38);
     }
 
     setIsAnimating(false);
@@ -412,16 +415,16 @@ const StackQueueVisualizer = () => {
     setCurrentLine(0);
     await new Promise(r => setTimeout(r, delay));
     
-    await performAnimatedStep("Initializing queue object", 11);
-    await performAnimatedStep("Inside peek() method", 24);
-    await performAnimatedStep("Checking if queue is empty", 25);
-    await performAnimatedStep("Inside isEmpty() method", 14);
-    await performAnimatedStep("Checking if items vector is empty", 15);
+    await performAnimatedStep("Initializing queue object", 12);
+    await performAnimatedStep("Inside peek() method", 29);
+    await performAnimatedStep("Checking if queue is empty", 30);
+    await performAnimatedStep("Inside isEmpty() method", 18);
+    await performAnimatedStep("Checking if queue count is zero", 19);
 
     if (elements.length === 0) {
-      await performAnimatedStep("Queue is empty - nothing to peek", 26);
+      await performAnimatedStep("Queue is empty - nothing to peek", 31);
     } else {
-      await performAnimatedStep(`Current front element: ${elements[0]}`, 28);
+      await performAnimatedStep(`Current front element: ${elements[0]}`, 34);
     }
 
     setIsAnimating(false);
@@ -439,154 +442,202 @@ const StackQueueVisualizer = () => {
     setLoading
   ]);
 
-  // Get C++ code with optimized formatting and good commenting
+  // Get C code with optimized formatting and good commenting
   const getCode = () => {
     if (dataStructure === 'stack') {
-      return `#include <iostream>
-#include <vector>
-#include <stdexcept>
+      return `#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
-class Stack {
-private:
-    std::vector<int> items;  // Dynamic array to store stack elements
-    
-public:
-    // Constructor: Initialize empty stack
-    Stack() {}
-    
-    // Check if stack is empty
-    bool isEmpty() const {
-        return items.empty();
+#define MAX_SIZE 100
+
+typedef struct {
+    int items[MAX_SIZE];  // Array to store stack elements
+    int top;              // Index of top element
+} Stack;
+
+// Initialize empty stack
+void initStack(Stack* s) {
+    s->top = -1;
+}
+
+// Check if stack is empty
+bool isEmpty(Stack* s) {
+    return s->top == -1;
+}
+
+// Check if stack is full
+bool isFull(Stack* s) {
+    return s->top == MAX_SIZE - 1;
+}
+
+// Get size of stack
+int size(Stack* s) {
+    return s->top + 1;
+}
+
+// View top element without removing it
+int peek(Stack* s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty\\n");
+        return -1;  // Error value
+    }
+    return s->items[s->top];  // Get top element
+}
+
+// Add element to top of stack
+void push(Stack* s, int element) {
+    if (isFull(s)) {
+        printf("Stack Overflow: Cannot push to full stack\\n");
+        return;
     }
     
-    // Get size of stack
-    size_t size() const {
-        return items.size();
+    // Check current state for visualization
+    if (!isEmpty(s)) {
+        printf("Current top: %d\\n", peek(s));
     }
     
-    // View top element without removing it
-    int peek() const {
-        if (isEmpty()) {
-            throw std::runtime_error("Stack is empty");
-        }
-        return items.back();  // Get last element
+    s->top++;                    // Increment top index
+    s->items[s->top] = element; // Add element
+    printf("Pushed %d to stack\\n", element);
+}
+
+// Remove and return top element
+int pop(Stack* s) {
+    if (isEmpty(s)) {
+        printf("Stack Underflow: Cannot pop from empty stack\\n");
+        return -1;  // Error value
     }
     
-    // Add element to top of stack
-    void push(int element) {
-        // Check current state for visualization
-        if (!isEmpty()) {
-            std::cout << "Current top: " << peek() << std::endl;
-        }
-        items.push_back(element);  // Add to end of vector
-        std::cout << "Pushed " << element << " to stack" << std::endl;
+    int topElement = s->items[s->top];  // Get top element
+    s->top--;                           // Decrement top index
+    printf("Popped %d from stack\\n", topElement);
+    return topElement;
+}
+
+// Display all stack elements (top to bottom)
+void display(Stack* s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty\\n");
+        return;
     }
     
-    // Remove and return top element
-    int pop() {
-        if (isEmpty()) {
-            throw std::runtime_error("Stack Underflow: Cannot pop from empty stack");
-        }
-        int topElement = items.back();  // Get top element
-        items.pop_back();               // Remove top element
-        std::cout << "Popped " << topElement << " from stack" << std::endl;
-        return topElement;
+    printf("Stack (top to bottom): ");
+    for (int i = s->top; i >= 0; i--) {
+        printf("%d ", s->items[i]);
     }
-    
-    // Display all stack elements (top to bottom)
-    void display() const {
-        if (isEmpty()) {
-            std::cout << "Stack is empty" << std::endl;
-            return;
-        }
-        std::cout << "Stack (top to bottom): ";
-        for (int i = items.size() - 1; i >= 0; i--) {
-            std::cout << items[i] << " ";
-        }
-        std::cout << std::endl;
-    }
-};
+    printf("\\n");
+}
 
 // Example usage
 int main() {
     Stack myStack;
-    myStack.push(10);
-    myStack.push(20);
-    myStack.display();
+    initStack(&myStack);
+    push(&myStack, 10);
+    push(&myStack, 20);
+    display(&myStack);
     return 0;
 }`;
     } else {
-      return `#include <iostream>
-#include <vector>
-#include <stdexcept>
+      return `#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
-class Queue {
-private:
-    std::vector<int> items;  // Dynamic array to store queue elements
-    
-public:
-    // Constructor: Initialize empty queue
-    Queue() {}
-    
-    // Check if queue is empty
-    bool isEmpty() const {
-        return items.empty();
+#define MAX_SIZE 100
+
+typedef struct {
+    int items[MAX_SIZE];  // Array to store queue elements
+    int front;            // Index of front element
+    int rear;             // Index of rear element
+    int count;            // Number of elements in queue
+} Queue;
+
+// Initialize empty queue
+void initQueue(Queue* q) {
+    q->front = 0;
+    q->rear = -1;
+    q->count = 0;
+}
+
+// Check if queue is empty
+bool isEmpty(Queue* q) {
+    return q->count == 0;
+}
+
+// Check if queue is full
+bool isFull(Queue* q) {
+    return q->count == MAX_SIZE;
+}
+
+// Get size of queue
+int size(Queue* q) {
+    return q->count;
+}
+
+// View front element without removing it
+int peek(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty\\n");
+        return -1;  // Error value
+    }
+    return q->items[q->front];  // Get front element
+}
+
+// Add element to rear of queue
+void enqueue(Queue* q, int element) {
+    if (isFull(q)) {
+        printf("Queue Overflow: Cannot enqueue to full queue\\n");
+        return;
     }
     
-    // Get size of queue
-    size_t size() const {
-        return items.size();
+    // Check current state for visualization
+    if (!isEmpty(q)) {
+        printf("Current front: %d\\n", peek(q));
     }
     
-    // View front element without removing it
-    int peek() const {
-        if (isEmpty()) {
-            throw std::runtime_error("Queue is empty");
-        }
-        return items.front();  // Get first element
+    q->rear = (q->rear + 1) % MAX_SIZE;  // Circular increment
+    q->items[q->rear] = element;         // Add element
+    q->count++;                          // Increment count
+    printf("Enqueued %d to queue\\n", element);
+}
+
+// Remove and return front element
+int dequeue(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty: Cannot dequeue from empty queue\\n");
+        return -1;  // Error value
     }
     
-    // Add element to rear of queue
-    void enqueue(int element) {
-        // Check current state for visualization
-        if (!isEmpty()) {
-            std::cout << "Current front: " << peek() << std::endl;
-        }
-        items.push_back(element);  // Add to end of vector
-        std::cout << "Enqueued " << element << " to queue" << std::endl;
+    int frontElement = q->items[q->front];  // Get front element
+    q->front = (q->front + 1) % MAX_SIZE;   // Circular increment
+    q->count--;                             // Decrement count
+    printf("Dequeued %d from queue\\n", frontElement);
+    return frontElement;
+}
+
+// Display all queue elements (front to rear)
+void display(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty\\n");
+        return;
     }
     
-    // Remove and return front element
-    int dequeue() {
-        if (isEmpty()) {
-            throw std::runtime_error("Queue is empty: Cannot dequeue from empty queue");
-        }
-        int frontElement = items.front();  // Get front element
-        items.erase(items.begin());        // Remove first element
-        std::cout << "Dequeued " << frontElement << " from queue" << std::endl;
-        return frontElement;
+    printf("Queue (front to rear): ");
+    int index = q->front;
+    for (int i = 0; i < q->count; i++) {
+        printf("%d ", q->items[index]);
+        index = (index + 1) % MAX_SIZE;  // Circular increment
     }
-    
-    // Display all queue elements (front to rear)
-    void display() const {
-        if (isEmpty()) {
-            std::cout << "Queue is empty" << std::endl;
-            return;
-        }
-        std::cout << "Queue (front to rear): ";
-        for (const int& element : items) {
-            std::cout << element << " ";
-        }
-        std::cout << std::endl;
-    }
-};
+    printf("\\n");
+}
 
 // Example usage
 int main() {
     Queue myQueue;
-    myQueue.enqueue(10);
-    myQueue.enqueue(20);
-    myQueue.display();
+    initQueue(&myQueue);
+    enqueue(&myQueue, 10);
+    enqueue(&myQueue, 20);
+    display(&myQueue);
     return 0;
 }`;
     }
@@ -622,10 +673,10 @@ int main() {
           animate={{ x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <h2>{dataStructure === 'stack' ? 'C++ Stack' : 'C++ Queue'} Implementation</h2>
+          <h2>{dataStructure === 'stack' ? 'C Stack' : 'C Queue'} Implementation</h2>
           <div className="code-viewer" ref={codeViewerRef}>
             <SyntaxHighlighter
-              language="cpp"
+              language="c"
               style={vs2015}
               wrapLines={true}
               showLineNumbers={true}
@@ -754,8 +805,9 @@ int main() {
               <label>Animation Speed</label>
               <input
                 type="range"
-                min="100"
-                max="1000"
+                min="10"
+                max="2000"
+                step="10"
                 value={animationSpeed}
                 onChange={(e) => setAnimationSpeed(parseInt(e.target.value))}
                 disabled={isAnimating}

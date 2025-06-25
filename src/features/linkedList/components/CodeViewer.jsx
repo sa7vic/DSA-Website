@@ -8,181 +8,189 @@ const CodeViewer = ({ code, onChange, nodes, onStepChange, currentLine = 0, isAn
   const [showInteractiveCode, setShowInteractiveCode] = useState(true);
   const [animationSpeed, setAnimationSpeed] = useState(500);
 
-  // Enhanced C++ code with detailed comments for line highlighting
+  // Enhanced C code with detailed comments for line highlighting
   const getEnhancedCode = () => {
-    return `#include <iostream>
-#include <memory>
-#include <stdexcept>
+    return `#include <stdio.h>
+#include <stdlib.h>
 
 // Node structure for doubly linked list
 struct Node {
     int data;                      // Data stored in the node
-    std::shared_ptr<Node> next;    // Pointer to next node
-    std::shared_ptr<Node> prev;    // Pointer to previous node
-    
-    Node(int value) : data(value), next(nullptr), prev(nullptr) {}
+    struct Node* next;             // Pointer to next node
+    struct Node* prev;             // Pointer to previous node
 };
 
-class DoublyLinkedList {
-private:
-    std::shared_ptr<Node> head;    // Pointer to first node
-    std::shared_ptr<Node> tail;    // Pointer to last node
+// Create a new node
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = NULL;
+    newNode->prev = NULL;
+    return newNode;
+}
 
-public:
-    // Constructor: Initialize empty list
-    DoublyLinkedList() : head(nullptr), tail(nullptr) {}
-    
-    // Insert element at beginning of list
-    void insertAtBeginning(int value) {
-        auto newNode = std::make_shared<Node>(value);  // Allocate memory
-        newNode->data = value;                         // Set data
-        newNode->prev = nullptr;                       // Set prev to null
-        if (head == nullptr) {                         // Check if empty
-            head = tail = newNode;                     // Node becomes head
-        } else {                                       // List has nodes
-            newNode->next = head;                      // Link to current head
-            head->prev = newNode;                      // Update head's prev
-        }
-        head = newNode;                                // Update head pointer
-        std::cout << "Inserted " << value << std::endl;
+// Doubly Linked List structure
+struct DoublyLinkedList {
+    struct Node* head;             // Pointer to first node
+    struct Node* tail;             // Pointer to last node
+};
+
+// Initialize empty list
+struct DoublyLinkedList* createList() {
+    struct DoublyLinkedList* list = (struct DoublyLinkedList*)malloc(sizeof(struct DoublyLinkedList));
+    list->head = NULL;
+    list->tail = NULL;
+    return list;
+}
+
+// Insert element at beginning of list
+void insertAtBeginning(struct DoublyLinkedList* list, int value) {
+    struct Node* newNode = createNode(value);  // Allocate memory
+    newNode->data = value;                     // Set data
+    newNode->prev = NULL;                      // Set prev to null
+    if (list->head == NULL) {                  // Check if empty
+        list->head = list->tail = newNode;     // Node becomes head and tail
+    } else {                                   // List has nodes
+        newNode->next = list->head;            // Link to current head
+        list->head->prev = newNode;            // Update head's prev
+    }
+    list->head = newNode;                      // Update head pointer
+    printf("Inserted %d\\n", value);
+}
+
+// Insert element at end of list
+void insertAtEnd(struct DoublyLinkedList* list, int value) {
+    struct Node* newNode = createNode(value);  // Allocate memory
+    newNode->data = value;                     // Set data
+    newNode->next = NULL;                      // Set next to null
+    if (list->tail == NULL) {                  // Check if empty
+        list->head = list->tail = newNode;     // Node becomes head/tail
+    } else {                                   // List has nodes
+        list->tail->next = newNode;            // Link tail to new node
+        newNode->prev = list->tail;            // Link new node to tail
+    }
+    list->tail = newNode;                      // Update tail pointer
+    printf("Inserted %d\\n", value);
+}
+
+// Insert element at specific position
+void insertAtPosition(struct DoublyLinkedList* list, int value, int position) {
+    if (position < 0) {                        // Validate position
+        printf("Position cannot be negative\\n");
+        return;
     }
     
-    // Insert element at end of list
-    void insertAtEnd(int value) {
-        auto newNode = std::make_shared<Node>(value);  // Allocate memory
-        newNode->data = value;                         // Set data
-        newNode->next = nullptr;                       // Set next to null
-        if (tail == nullptr) {                         // Check if empty
-            head = tail = newNode;                     // Node becomes head/tail
-        } else {                                       // List has nodes
-            tail->next = newNode;                      // Link tail to new node
-            newNode->prev = tail;                      // Link new node to tail
-        }
-        tail = newNode;                                // Update tail pointer
-        std::cout << "Inserted " << value << std::endl;
+    if (position == 0) {                       // Insert at beginning
+        insertAtBeginning(list, value);
+        return;
     }
     
-    // Insert element at specific position
-    void insertAtPosition(int value, int position) {
-        if (position < 0) {                            // Validate position
-            throw std::invalid_argument("Position cannot be negative");
-        }
-        
-        if (position == 0) {                           // Insert at beginning
-            insertAtBeginning(value);
-            return;
-        }
-        
-        auto newNode = std::make_shared<Node>(value);  // Allocate memory
-        newNode->data = value;                         // Set data
-        
-        auto current = head;                           // Start from head
-        for (int i = 0; i < position - 1 && current != nullptr; i++) {
-            current = current->next;                   // Traverse to position
-        }
-        
-        if (current == nullptr) {                      // Position beyond list
-            insertAtEnd(value);                        // Insert at end
-            return;
-        }
-        
-        newNode->next = current->next;                 // Link new node's next
-        newNode->prev = current;                       // Link new node's prev
-        
-        if (current->next != nullptr) {                // Update next node's prev
-            current->next->prev = newNode;
-        } else {                                       // New node is tail
-            tail = newNode;
-        }
-        
-        current->next = newNode;                       // Update current's next
-        std::cout << "Inserted " << value << " at position " << position << std::endl;
+    struct Node* newNode = createNode(value);  // Allocate memory
+    newNode->data = value;                     // Set data
+    
+    struct Node* current = list->head;         // Start from head
+    for (int i = 0; i < position - 1 && current != NULL; i++) {
+        current = current->next;               // Traverse to position
     }
     
-    // Delete element from beginning
-    void deleteFromBeginning() {
-        if (head == nullptr) {                         // Check if empty
-            throw std::runtime_error("List is empty");
-        }
-        
-        auto nodeToDelete = head;                      // Store reference
-        head = head->next;                             // Move head pointer
-        if (head != nullptr) {                         // If new head exists
-            head->prev = nullptr;                      // Set prev to null
-        } else {                                       // List becomes empty
-            tail = nullptr;                            // Update tail
-        }
-        // Memory automatically freed by shared_ptr     // Free memory
-        std::cout << "Deleted from beginning" << std::endl;
+    if (current == NULL) {                     // Position beyond list
+        insertAtEnd(list, value);              // Insert at end
+        return;
     }
     
-    // Delete element from end
-    void deleteFromEnd() {
-        if (head == nullptr) {                         // Check if empty
-            throw std::runtime_error("List is empty");
-        }
-        
-        if (head == tail) {                            // Only one node
-            head = tail = nullptr;                     // List becomes empty
-            std::cout << "Deleted from end" << std::endl;
-            return;
-        }
-        
-        auto nodeToDelete = tail;                      // Store reference
-        tail = tail->prev;                             // Move tail backward
-        tail->next = nullptr;                          // Set next to null
-        // Memory automatically freed by shared_ptr     // Free memory
-        std::cout << "Deleted from end" << std::endl;
+    current->next = newNode;                   // Update current's next
+    printf("Inserted %d at position %d\\n", value, position);
+}
+
+// Delete element from beginning
+void deleteFromBeginning(struct DoublyLinkedList* list) {
+    if (list->head == NULL) {                  // Check if empty
+        printf("List is empty\\n");
+        return;
     }
     
-    // Delete element from specific position
-    void deleteFromPosition(int position) {
-        if (head == nullptr) {                         // Check if empty
-            throw std::runtime_error("List is empty");
-        }
-        
-        if (position < 0) {                            // Validate position
-            throw std::invalid_argument("Position cannot be negative");
-        }
-        
-        if (position == 0) {                           // Delete from beginning
-            deleteFromBeginning();
-            return;
-        }
-        
-        auto current = head;                           // Start from head
-        for (int i = 0; i < position && current != nullptr; i++) {
-            current = current->next;                   // Traverse to position
-        }
-        
-        if (current == nullptr) {                      // Position beyond list
-            throw std::out_of_range("Position out of range");
-        }
-        
-        if (current->prev != nullptr) {                // Update prev node's next
-            current->prev->next = current->next;
-        }
-        
-        if (current->next != nullptr) {                // Update next node's prev
-            current->next->prev = current->prev;
-        } else {                                       // Deleting tail
-            tail = current->prev;
-        }
-        
-        // Memory automatically freed by shared_ptr     // Free memory
-        std::cout << "Deleted from position " << position << std::endl;
+    struct Node* nodeToDelete = list->head;    // Store reference
+    list->head = list->head->next;             // Move head pointer
+    if (list->head != NULL) {                  // If new head exists
+        list->head->prev = NULL;               // Set prev to null
+    } else {                                   // List becomes empty
+        list->tail = NULL;                     // Update tail
+    }
+    free(nodeToDelete);                        // Free memory
+    printf("Deleted from beginning\\n");
+}
+
+// Delete element from end
+void deleteFromEnd(struct DoublyLinkedList* list) {
+    if (list->head == NULL) {                  // Check if empty
+        printf("List is empty\\n");
+        return;
     }
     
-    // Display the list
-    void display() {
-        auto current = head;
-        while (current != nullptr) {
-            std::cout << current->data << " <-> ";
-            current = current->next;
-        }
-        std::cout << "nullptr" << std::endl;
+    if (list->head == list->tail) {            // Only one node
+        free(list->head);                      // Free memory
+        list->head = list->tail = NULL;        // List becomes empty
+        printf("Deleted from end\\n");
+        return;
     }
-};`;
+    
+    struct Node* nodeToDelete = list->tail;    // Store reference
+    list->tail = list->tail->prev;             // Move tail backward
+    list->tail->next = NULL;                   // Set next to null
+    free(nodeToDelete);                        // Free memory
+    printf("Deleted from end\\n");
+}
+
+// Delete element from specific position
+void deleteFromPosition(struct DoublyLinkedList* list, int position) {
+    if (list->head == NULL) {                  // Check if empty
+        printf("List is empty\\n");
+        return;
+    }
+    
+    if (position < 0) {                        // Validate position
+        printf("Position cannot be negative\\n");
+        return;
+    }
+    
+    if (position == 0) {                       // Delete from beginning
+        deleteFromBeginning(list);
+        return;
+    }
+    
+    struct Node* current = list->head;         // Start from head
+    for (int i = 0; i < position && current != NULL; i++) {
+        current = current->next;               // Traverse to position
+    }
+    
+    if (current == NULL) {                     // Position beyond list
+        printf("Position out of range\\n");
+        return;
+    }
+    
+    if (current->prev != NULL) {               // Update prev node's next
+        current->prev->next = current->next;
+    }
+    
+    if (current->next != NULL) {               // Update next node's prev
+        current->next->prev = current->prev;
+    } else {                                   // Deleting tail
+        list->tail = current->prev;
+    }
+    
+    free(current);                             // Free memory
+    printf("Deleted from position %d\\n", position);
+}
+
+// Display the list
+void display(struct DoublyLinkedList* list) {
+    struct Node* current = list->head;
+    while (current != NULL) {
+        printf("%d <-> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\\n");
+}`;
   };
 
   // Watch for changes in nodes to trigger animations
@@ -246,7 +254,7 @@ public:
           {/* Highlighted Code Display with Live Animation */}
           <div className="highlighted-code-display">
             <SyntaxHighlighter
-              language="cpp"
+              language="c"
               style={vs2015}
               wrapLines={true}
               showLineNumbers={true}
@@ -276,7 +284,7 @@ public:
         <div className="editable-code-section">
           <Editor
             height="70vh"
-            defaultLanguage="cpp"
+            defaultLanguage="c"
             defaultValue={code}
             theme="vs-dark"
             options={{

@@ -72,7 +72,7 @@ const CodeHighlighter = ({ code, currentLine }) => {
       }}
     >
       <SyntaxHighlighter
-        language="javascript"
+        language="c"
         style={atomDark}
         wrapLines={true}
         showLineNumbers={true}
@@ -521,127 +521,423 @@ const algorithmInfo = {
     timeComplexity: "O(n²)",
     spaceComplexity: "O(1)",
     description: "Bubble sort repeatedly compares adjacent elements and swaps them if they are in the wrong order.",
-    pseudocode: `function bubbleSort(arr):
-  n = length(arr)
-  for i from 0 to n-2:
-    for j from 0 to n-i-2:
-      if arr[j] > arr[j+1]:
-        swap arr[j] and arr[j+1]
-  return arr`
+    pseudocode: `#include <stdio.h>
+
+// Function to perform bubble sort
+void bubbleSort(int arr[], int n) {
+  // Outer loop for passes
+  for (int i = 0; i < n - 1; i++) {
+    // Flag to track if any swap occurred
+    int swapped = 0;
+    
+    // Inner loop for comparisons
+    for (int j = 0; j < n - i - 1; j++) {
+      // Compare adjacent elements
+      if (arr[j] > arr[j + 1]) {
+        // Swap if in wrong order
+        int temp = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = temp;
+        swapped = 1;
+      }
+    }
+    
+    // If no swapping, array is sorted
+    if (swapped == 0) {
+      break;
+    }
+  }
+}
+
+// Function to print array
+void printArray(int arr[], int size) {
+  for (int i = 0; i < size; i++) {
+    printf("%d ", arr[i]);
+  }
+  printf("\\n");
+}
+
+int main() {
+  int arr[] = {64, 34, 25, 12, 22, 11, 90};
+  int n = sizeof(arr) / sizeof(arr[0]);
+  
+  printf("Original array: ");
+  printArray(arr, n);
+  
+  bubbleSort(arr, n);
+  
+  printf("Sorted array: ");
+  printArray(arr, n);
+  
+  return 0;
+}`
   },
   "Insertion Sort": {
     timeComplexity: "O(n²)",
     spaceComplexity: "O(1)",
     description: "Insertion sort builds the final sorted array one item at a time by repeatedly inserting a new element into the sorted portion of the array.",
-    pseudocode: `function insertionSort(arr):
-  n = length(arr)
-  for i from 1 to n-1:
-    key = arr[i]
-    j = i - 1
-    while j >= 0 and arr[j] > key:
-      arr[j+1] = arr[j]
-      j = j - 1
-    arr[j+1] = key
-  return arr`
+    pseudocode: `#include <stdio.h>
+
+// Function to perform insertion sort
+void insertionSort(int arr[], int n) {
+  // Start from second element
+  for (int i = 1; i < n; i++) {
+    int key = arr[i];  // Current element to insert
+    int j = i - 1;     // Index of sorted portion
+    
+    // Move elements greater than key one position ahead
+    while (j >= 0 && arr[j] > key) {
+      arr[j + 1] = arr[j];
+      j = j - 1;
+    }
+    
+    // Insert key at correct position
+    arr[j + 1] = key;
+  }
+}
+
+// Function to print array
+void printArray(int arr[], int size) {
+  for (int i = 0; i < size; i++) {
+    printf("%d ", arr[i]);
+  }
+  printf("\\n");
+}
+
+int main() {
+  int arr[] = {12, 11, 13, 5, 6};
+  int n = sizeof(arr) / sizeof(arr[0]);
+  
+  printf("Original array: ");
+  printArray(arr, n);
+  
+  insertionSort(arr, n);
+  
+  printf("Sorted array: ");
+  printArray(arr, n);
+  
+  return 0;
+}`
   },
   "Heap Sort": {
     timeComplexity: "O(n log n)",
     spaceComplexity: "O(1)",
     description: "Heap sort converts the array into a heap data structure, then repeatedly extracts the maximum element to build the sorted array.",
-    pseudocode: `function heapSort(arr):
-  n = length(arr)
-  buildMaxHeap(arr)
-  for i from n-1 down to 1:
-    swap arr[0] with arr[i]
-    heapify(arr, 0, i)
-  return arr`
+    pseudocode: `#include <stdio.h>
+
+// Function to swap two elements
+void swap(int* a, int* b) {
+  int temp = *a;
+  *a = *b;
+  *b = temp;
+}
+
+// To heapify a subtree rooted with node i
+void heapify(int arr[], int n, int i) {
+  int largest = i;    // Initialize largest as root
+  int left = 2 * i + 1;   // Left child
+  int right = 2 * i + 2;  // Right child
+  
+  // If left child is larger than root
+  if (left < n && arr[left] > arr[largest])
+    largest = left;
+  
+  // If right child is larger than largest so far
+  if (right < n && arr[right] > arr[largest])
+    largest = right;
+  
+  // If largest is not root
+  if (largest != i) {
+    swap(&arr[i], &arr[largest]);
+    
+    // Recursively heapify the affected sub-tree
+    heapify(arr, n, largest);
+  }
+}
+
+// Main function to do heap sort
+void heapSort(int arr[], int n) {
+  // Build heap (rearrange array)
+  for (int i = n / 2 - 1; i >= 0; i--)
+    heapify(arr, n, i);
+  
+  // Extract elements from heap one by one
+  for (int i = n - 1; i >= 0; i--) {
+    // Move current root to end
+    swap(&arr[0], &arr[i]);
+    
+    // Call heapify on the reduced heap
+    heapify(arr, i, 0);
+  }
+}
+
+int main() {
+  int arr[] = {12, 11, 13, 5, 6, 7};
+  int n = sizeof(arr) / sizeof(arr[0]);
+  
+  heapSort(arr, n);
+  
+  return 0;
+}`
   },
   "Counting Sort": {
     timeComplexity: "O(n + k)",
     spaceComplexity: "O(k)",
     description: "Counting sort works by counting the occurrences of each element, then reconstructing the sorted array using the counts.",
-    pseudocode: `function countingSort(arr):
-  max = maximum value in arr
-  count = new array of size max+1
-  for num in arr:
-    count[num]++
-  index = 0
-  for i from 0 to max:
-    while count[i] > 0:
-      arr[index] = i
-      index++
-      count[i]--
-  return arr`
+    pseudocode: `#include <stdio.h>
+#include <stdlib.h>
+
+// Function to find the maximum element in array
+int getMax(int arr[], int n) {
+  int max = arr[0];
+  for (int i = 1; i < n; i++) {
+    if (arr[i] > max)
+      max = arr[i];
+  }
+  return max;
+}
+
+// Counting sort function
+void countingSort(int arr[], int n) {
+  // Find the maximum element to know range of count array
+  int max = getMax(arr, n);
+  
+  // Create count array and initialize with 0
+  int* count = (int*)calloc(max + 1, sizeof(int));
+  int* output = (int*)malloc(n * sizeof(int));
+  
+  // Store count of each element
+  for (int i = 0; i < n; i++)
+    count[arr[i]]++;
+  
+  // Change count[i] to actual position in output array
+  for (int i = 1; i <= max; i++)
+    count[i] += count[i - 1];
+  
+  // Build output array
+  for (int i = n - 1; i >= 0; i--) {
+    output[count[arr[i]] - 1] = arr[i];
+    count[arr[i]]--;
+  }
+  
+  // Copy output array to original array
+  for (int i = 0; i < n; i++)
+    arr[i] = output[i];
+  
+  free(count);
+  free(output);
+}
+
+// Function to print array
+void printArray(int arr[], int size) {
+  for (int i = 0; i < size; i++) {
+    printf("%d ", arr[i]);
+  }
+  printf("\\n");
+}
+
+int main() {
+  int arr[] = {4, 2, 2, 8, 3, 3, 1};
+  int n = sizeof(arr) / sizeof(arr[0]);
+  
+  printf("Original array: ");
+  printArray(arr, n);
+  
+  countingSort(arr, n);
+  
+  printf("Sorted array: ");
+  printArray(arr, n);
+  
+  return 0;
+}`
   },
   "Selection Sort": {
     timeComplexity: "O(n²)",
     spaceComplexity: "O(1)",
     description: "Selection sort works by repeatedly finding the minimum element from the unsorted part and putting it at the beginning.",
-    pseudocode: `function selectionSort(arr):
-  n = length(arr)
+    pseudocode: `#include <stdio.h>
+
+// Function to perform selection sort
+void selectionSort(int arr[], int n) {
+  // Traverse through all array elements
+  for (int i = 0; i < n - 1; i++) {
+    // Find minimum element in remaining array
+    int min_idx = i;
+    
+    for (int j = i + 1; j < n; j++) {
+      if (arr[j] < arr[min_idx]) {
+        min_idx = j;
+      }
+    }
+    
+    // Swap found minimum with first element
+    if (min_idx != i) {
+      int temp = arr[min_idx];
+      arr[min_idx] = arr[i];
+      arr[i] = temp;
+    }
+  }
+}
+
+// Function to print array
+void printArray(int arr[], int size) {
+  for (int i = 0; i < size; i++) {
+    printf("%d ", arr[i]);
+  }
+  printf("\\n");
+}
+
+int main() {
+  int arr[] = {64, 25, 12, 22, 11};
+  int n = sizeof(arr) / sizeof(arr[0]);
   
-  for i from 0 to n-1:
-    min_idx = i
-    
-    for j from i+1 to n-1:
-      if arr[j] < arr[min_idx]:
-        min_idx = j
-    
-    swap arr[i] with arr[min_idx]
-    
-  return arr`
+  printf("Original array: ");
+  printArray(arr, n);
+  
+  selectionSort(arr, n);
+  
+  printf("Sorted array: ");
+  printArray(arr, n);
+  
+  return 0;
+}`
   },
   "Merge Sort": {
     timeComplexity: "O(n log n)",
     spaceComplexity: "O(n)",
     description: "Merge sort is a divide and conquer algorithm that divides the input array into two halves, recursively sorts them, and then merges the sorted halves.",
-    pseudocode: `function mergeSort(arr):
-  if length(arr) <= 1:
-    return arr
+    pseudocode: `#include <stdio.h>
+#include <stdlib.h>
+
+// Function to merge two sorted subarrays
+void merge(int arr[], int left, int mid, int right) {
+  int i, j, k;
+  int n1 = mid - left + 1;  // Size of left subarray
+  int n2 = right - mid;     // Size of right subarray
+  
+  // Create temporary arrays
+  int* L = (int*)malloc(n1 * sizeof(int));
+  int* R = (int*)malloc(n2 * sizeof(int));
+  
+  // Copy data to temporary arrays
+  for (i = 0; i < n1; i++)
+    L[i] = arr[left + i];
+  for (j = 0; j < n2; j++)
+    R[j] = arr[mid + 1 + j];
+  
+  // Merge temporary arrays back into arr[]
+  i = 0; j = 0; k = left;
+  while (i < n1 && j < n2) {
+    if (L[i] <= R[j]) {
+      arr[k] = L[i];
+      i++;
+    } else {
+      arr[k] = R[j];
+      j++;
+    }
+    k++;
+  }
+  
+  // Copy remaining elements
+  while (i < n1) {
+    arr[k] = L[i];
+    i++; k++;
+  }
+  while (j < n2) {
+    arr[k] = R[j];
+    j++; k++;
+  }
+  
+  free(L);
+  free(R);
+}
+
+// Recursive merge sort function
+void mergeSort(int arr[], int left, int right) {
+  if (left < right) {
+    int mid = left + (right - left) / 2;
     
-  mid = length(arr) / 2
-  left = mergeSort(arr[0...mid-1])
-  right = mergeSort(arr[mid...n])
+    // Sort first and second halves
+    mergeSort(arr, left, mid);
+    mergeSort(arr, mid + 1, right);
+    
+    // Merge the sorted halves
+    merge(arr, left, mid, right);
+  }
+}
+
+int main() {
+  int arr[] = {12, 11, 13, 5, 6, 7};
+  int n = sizeof(arr) / sizeof(arr[0]);
   
-  return merge(left, right)
+  mergeSort(arr, 0, n - 1);
   
-function merge(left, right):
-  result = []
-  i = 0, j = 0
-  
-  while i < length(left) and j < length(right):
-    if left[i] <= right[j]:
-      append left[i] to result
-      i++
-    else:
-      append right[j] to result
-      j++
-      
-  append remaining elements from left and right
-  return result`
+  return 0;
+}`
   },
   "Quick Sort": {
     timeComplexity: "O(n log n) average, O(n²) worst case",
     spaceComplexity: "O(log n)",
     description: "Quick sort works by selecting a 'pivot' element and partitioning the array around the pivot, placing smaller elements before it and larger ones after it.",
-    pseudocode: `function quickSort(arr, low, high):
-  if low < high:
-    pivot_idx = partition(arr, low, high)
-    
-    quickSort(arr, low, pivot_idx - 1)
-    quickSort(arr, pivot_idx + 1, high)
-    
-function partition(arr, low, high):
-  pivot = arr[high]
-  i = low - 1
+    pseudocode: `#include <stdio.h>
+
+// Function to swap two elements
+void swap(int* a, int* b) {
+  int temp = *a;
+  *a = *b;
+  *b = temp;
+}
+
+// Partition function
+int partition(int arr[], int low, int high) {
+  int pivot = arr[high];  // Choose rightmost element as pivot
+  int i = (low - 1);      // Index of smaller element
   
-  for j from low to high-1:
-    if arr[j] <= pivot:
-      i++
-      swap arr[i] with arr[j]
-      
-  swap arr[i+1] with arr[high]
-  return i+1`
+  for (int j = low; j <= high - 1; j++) {
+    // If current element is smaller than or equal to pivot
+    if (arr[j] <= pivot) {
+      i++;  // Increment index of smaller element
+      swap(&arr[i], &arr[j]);
+    }
+  }
+  swap(&arr[i + 1], &arr[high]);
+  return (i + 1);
+}
+
+// Quick sort function
+void quickSort(int arr[], int low, int high) {
+  if (low < high) {
+    // Partition index
+    int pi = partition(arr, low, high);
+    
+    // Recursively sort elements before and after partition
+    quickSort(arr, low, pi - 1);
+    quickSort(arr, pi + 1, high);
+  }
+}
+
+// Function to print array
+void printArray(int arr[], int size) {
+  for (int i = 0; i < size; i++) {
+    printf("%d ", arr[i]);
+  }
+  printf("\\n");
+}
+
+int main() {
+  int arr[] = {10, 7, 8, 9, 1, 5};
+  int n = sizeof(arr) / sizeof(arr[0]);
+  
+  printf("Original array: ");
+  printArray(arr, n);
+  
+  quickSort(arr, 0, n - 1);
+  
+  printf("Sorted array: ");
+  printArray(arr, n);
+  
+  return 0;
+}`
   }
 };
 
@@ -700,7 +996,7 @@ const SortingVisualizer = () => {
 
   // Optimized speed change handler
   const handleSpeedChange = useCallback((e) => {
-    setSpeed(1100 - e.target.value);
+    setSpeed(parseInt(e.target.value));
   }, []);
 
   // Optimized size change handler
@@ -777,53 +1073,107 @@ const SortingVisualizer = () => {
       setArray(results[index].array);
       setCurrentStep(results[index].step);
       
-      // Update line highlighting based on current step
+      // Enhanced line highlighting with better pattern matching
+      const step = results[index].step.toLowerCase();
+      
       switch (method) {
         case "Bubble Sort":
-          if (results[index].step.includes("Comparing")) setCurrentLine(4);
-          else if (results[index].step.includes("Swapping")) setCurrentLine(5);
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+          if (step.includes("comparing")) {
+            setCurrentLine(12); // if (arr[j] > arr[j + 1])
+          } else if (step.includes("swapping")) {
+            setCurrentLine(14); // int temp = arr[j]
+          } else if (step.includes("sorted successfully")) {
+            setCurrentLine(null);
+          } else {
+            setCurrentLine(10); // Default to outer loop
+          }
           break;
         case "Selection Sort":
-          if (results[index].step.includes("Finding minimum")) setCurrentLine(4);
-          else if (results[index].step.includes("Found new minimum")) setCurrentLine(7);
-          else if (results[index].step.includes("Swapping")) setCurrentLine(9);
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+          if (step.includes("finding minimum")) {
+            setCurrentLine(5); // for (int i = 0; i < n - 1; i++)
+          } else if (step.includes("found new minimum") || step.includes("minimum at")) {
+            setCurrentLine(9); // if (arr[j] < arr[min_idx])
+          } else if (step.includes("swapping")) {
+            setCurrentLine(15); // int temp = arr[min_idx]
+          } else if (step.includes("sorted successfully")) {
+            setCurrentLine(null);
+          } else {
+            setCurrentLine(5); // Default to outer loop
+          }
           break;
         case "Insertion Sort":
-          if (results[index].step.includes("Inserting")) setCurrentLine(5);
-          else if (results[index].step.includes("Shifting")) setCurrentLine(8);
-          else if (results[index].step.includes("Placed")) setCurrentLine(10);
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+          if (step.includes("inserting")) {
+            setCurrentLine(5); // int key = arr[i]
+          } else if (step.includes("shifting")) {
+            setCurrentLine(9); // arr[j + 1] = arr[j]
+          } else if (step.includes("placed") || step.includes("into sorted")) {
+            setCurrentLine(13); // arr[j + 1] = key
+          } else if (step.includes("sorted successfully")) {
+            setCurrentLine(null);
+          } else {
+            setCurrentLine(4); // Default to outer loop
+          }
           break;
         case "Merge Sort":
-          if (results[index].step.includes("Dividing array")) setCurrentLine(5);
-          else if (results[index].step.includes("Merging subarrays")) setCurrentLine(8);
-          else if (results[index].step.includes("Comparing and merging")) setCurrentLine(16);
-          else if (results[index].step.includes("Adding remaining")) setCurrentLine(19);
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+          if (step.includes("dividing") || step.includes("divide")) {
+            setCurrentLine(45); // int mid = left + (right - left) / 2
+          } else if (step.includes("merging")) {
+            setCurrentLine(50); // merge(arr, left, mid, right)
+          } else if (step.includes("comparing")) {
+            setCurrentLine(18); // if (L[i] <= R[j])
+          } else if (step.includes("sorted successfully")) {
+            setCurrentLine(null);
+          } else {
+            setCurrentLine(43); // Default to function start
+          }
           break;
         case "Quick Sort":
-          if (results[index].step.includes("Selecting pivot")) setCurrentLine(3);
-          else if (results[index].step.includes("Partitioning")) setCurrentLine(9);
-          else if (results[index].step.includes("Comparing")) setCurrentLine(13);
-          else if (results[index].step.includes("less than pivot")) setCurrentLine(15);
-          else if (results[index].step.includes("Placing pivot")) setCurrentLine(17);
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+          if (step.includes("selecting pivot") || step.includes("pivot")) {
+            setCurrentLine(10); // int pivot = arr[high]
+          } else if (step.includes("partitioning")) {
+            setCurrentLine(13); // for (int j = low; j <= high - 1; j++)
+          } else if (step.includes("comparing")) {
+            setCurrentLine(15); // if (arr[j] <= pivot)
+          } else if (step.includes("less than pivot") || step.includes("swapping")) {
+            setCurrentLine(17); // swap(&arr[i], &arr[j])
+          } else if (step.includes("placing pivot")) {
+            setCurrentLine(20); // swap(&arr[i + 1], &arr[high])
+          } else if (step.includes("sorted successfully")) {
+            setCurrentLine(null);
+          } else {
+            setCurrentLine(8); // Default to function start
+          }
           break;
         case "Heap Sort":
-          if (results[index].step.includes("Building max heap")) setCurrentLine(4);
-          else if (results[index].step.includes("Heapifying")) setCurrentLine(16);
-          else if (results[index].step.includes("Moving largest")) setCurrentLine(9);
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+          if (step.includes("building max heap") || step.includes("building heap")) {
+            setCurrentLine(32); // for (int i = n / 2 - 1; i >= 0; i--)
+          } else if (step.includes("heapifying")) {
+            setCurrentLine(22); // if (largest != i)
+          } else if (step.includes("moving largest") || step.includes("extracting")) {
+            setCurrentLine(38); // swap(&arr[0], &arr[i])
+          } else if (step.includes("sorted successfully")) {
+            setCurrentLine(null);
+          } else {
+            setCurrentLine(30); // Default to function start
+          }
           break;
         case "Counting Sort":
-          if (results[index].step.includes("Counting occurrence")) setCurrentLine(4);
-          else if (results[index].step.includes("calculating cumulative")) setCurrentLine(9);
-          else if (results[index].step.includes("Placing")) setCurrentLine(13);
-          else if (results[index].step.includes("Copying sorted")) setCurrentLine(15);
-          else if (results[index].step.includes("sorted successfully")) setCurrentLine(null);
+          if (step.includes("counting occurrence") || step.includes("counting")) {
+            setCurrentLine(19); // count[arr[i]]++
+          } else if (step.includes("calculating cumulative") || step.includes("cumulative")) {
+            setCurrentLine(24); // count[i] += count[i - 1]
+          } else if (step.includes("placing")) {
+            setCurrentLine(29); // output[count[arr[i]] - 1] = arr[i]
+          } else if (step.includes("copying sorted") || step.includes("copying")) {
+            setCurrentLine(35); // arr[i] = output[i]
+          } else if (step.includes("sorted successfully")) {
+            setCurrentLine(null);
+          } else {
+            setCurrentLine(17); // Default to function start
+          }
           break;
+        default:
+          setCurrentLine(null);
       }
 
       animationState.current.index = index + 1;
@@ -1140,7 +1490,7 @@ const SortingVisualizer = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                   >
-                    {["Bubble Sort", "Selection Sort", "Merge Sort", "Quick Sort", "Heap Sort"].map(algo => (
+                    {["Bubble Sort", "Selection Sort", "Insertion Sort", "Merge Sort", "Quick Sort", "Heap Sort", "Counting Sort"].map(algo => (
                       <button 
                         key={algo}
                         className={method === algo ? 'active' : ''}
@@ -1195,8 +1545,9 @@ const SortingVisualizer = () => {
                 <label>Animation Speed</label>
                 <input 
                   type="range" 
-                  min="100" 
-                  max="1000" 
+                  min="10" 
+                  max="2000" 
+                  step="10"
                   defaultValue="500" 
                   onChange={handleSpeedChange}
                   disabled={isAnimating}

@@ -3,18 +3,20 @@ export const MEMORY_POOL_SIZE = 10;
 
 // Animation settings
 export const ANIMATION_SPEEDS = {
-  SLOW: 1000,
-  MEDIUM: 500,
-  FAST: 200,
-  INSTANT: 50
+  SLOW: 2000,
+  MEDIUM: 800,
+  FAST: 300,
+  VERY_FAST: 100,
+  ULTRA_FAST: 50,
+  INSTANT: 10
 };
 
 // Create a consolidated APP_CONSTANTS object for backward compatibility
 export const APP_CONSTANTS = {
   ANIMATION: {
-    DEFAULT_SPEED: 500,
-    MIN_SPEED: 100,
-    MAX_SPEED: 1000,
+    DEFAULT_SPEED: 800,
+    MIN_SPEED: 10,
+    MAX_SPEED: 2000,
     SPEED_STEP: 10
   },
   UI: {

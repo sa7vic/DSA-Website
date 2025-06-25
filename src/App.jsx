@@ -6,7 +6,7 @@ import './App.css'
 import './features/common/styles/common.css'
 import './features/linkedList/styles/LinkedList.css'
 import './features/sorting/styles/Sorting.css'
-import './features/tree/styles/EnhancedTreeVisualizer.css'
+import './features/tree/styles/TreeVisualizer.css'
 import './features/pathfinding/styles/Pathfinding.css'
 import ErrorBoundary from './features/common/components/ErrorBoundary'
 import CodeViewer from './features/common/components/CodeViewer'
@@ -17,7 +17,7 @@ import HomePage from './features/home/components/HomePage'
 import AboutUs from './features/about/components/AboutUs'
 import SortingVisualizer from './features/sorting/components/SortingVisualizer'
 import StackQueueVisualizer from './features/stackQueue/components/StackQueueVisualizer'
-import TreeVisualizer from './features/tree/components/EnhancedTreeVisualizer'
+import TreeVisualizer from './features/tree/components/TreeVisualizer'
 import PathfindingVisualizer from './features/pathfinding/components/PathfindingVisualizer'
 import { generateCppCode } from './utils/codeGenerator'
 import { setStorageItem, getStorageItem } from './utils/helpers'
@@ -67,7 +67,7 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
           animate={{ x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <h2>C++ Implementation</h2>
+          <h2>C Implementation</h2>
           <CodeViewer 
             code={code} 
             onChange={handleCodeChange}
@@ -96,6 +96,16 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
       </motion.div>
     </div>
   );
+}
+
+// Redirection component for the pathfinding visualizer
+function PathfindingRedirect() {
+  useEffect(() => {
+    // Redirect to the standalone pathfinding visualizer HTML file
+    window.location.href = '/pathfinding.html';
+  }, []);
+  
+  return <div>Redirecting to Pathfinding Visualizer...</div>;
 }
 
 function App() {
@@ -193,23 +203,13 @@ function App() {
           />
           <Route path="/sorting" element={<ErrorBoundary><SortingVisualizer /></ErrorBoundary>} />
           <Route path="/stacks-queues" element={<ErrorBoundary><StackQueueVisualizer /></ErrorBoundary>} />
-          <Route path="/trees" element={<ErrorBoundary><TreeVisualizer /></ErrorBoundary>} />
-          <Route path="/pathfinding-visualizer" element={
-            <div style={{ width: '100vw', height: '100vh' }}>
-              <iframe 
-                src="/pathfinding.html"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  border: 'none'
-                }}
-                title="Pathfinding Visualizer"
-              />
-            </div>
-          } />
-          <Route path="/graphs" element={<ErrorBoundary><PathfindingVisualizer /></ErrorBoundary>} />
+          <Route path="/tree" element={<ErrorBoundary><TreeVisualizer /></ErrorBoundary>} />
+          <Route path="/pathfinding" element={<ErrorBoundary><PathfindingRedirect /></ErrorBoundary>} />
           <Route path="/about" element={<AboutUs />} />
-          <Route path="/index.html" element={<Navigate replace to="/" />} />
+          {/* Redirect old routes */}
+          <Route path="/trees" element={<Navigate replace to="/tree" />} />
+          <Route path="/graphs" element={<Navigate replace to="/pathfinding" />} />
+          <Route path="/pathfinding-visualizer" element={<Navigate replace to="/pathfinding" />} />
         </Routes>
       </Router>
     </ErrorBoundary>
