@@ -71,8 +71,6 @@ class PathfindingVisualizer extends Component {
     let row_size = 15;  // Back to 15 rows for better cell size
     let col_size = 28;  // Reduced from 35 to 28 columns for better proportions
     
-    console.log(`Creating grid of size ${row_size} x ${col_size}`);
-    
     let arr = [];
     
     // First create the grid data structure
@@ -121,11 +119,9 @@ class PathfindingVisualizer extends Component {
   };
   
   componentDidMount() {
-    console.log("PathfindingVisualizer mounted");
     // Create the initial grid with a small delay to ensure DOM is ready
     setTimeout(() => {
       this.makeGrid();
-      console.log("Grid created:", this.state.grid.length > 0 ? `${this.state.grid.length}x${this.state.grid[0].length}` : "No grid");
     }, 300);
     
     // Handle window resize with debounce to avoid excessive re-renders

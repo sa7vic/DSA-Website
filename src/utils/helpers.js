@@ -1,8 +1,22 @@
 /**
- * Utility functions for the DSA website
+ * Utility Functions for DSA Website
+ * =================================
+ * 
+ * This file contains reusable helper functions used across multiple visualizers.
+ * These functions handle common operations like:
+ * - ⚡ Performance optimization (debounce, throttle)
+ * - 🔀 Data manipulation (shuffling, cloning)
+ * - 🧠 Memory address generation for linked list visualization
+ * - ✅ Input validation and error handling
+ * - 💾 Local storage management
+ * - 📊 Performance monitoring
+ * - ♿ Accessibility utilities
+ * 
+ * Import specific functions as needed:
+ * import { debounce, shuffleArray, isValidInput } from '../../../utils/helpers';
  */
 
-// Memory address generation
+// Memory address generation for linked list visualization
 export const generateMemoryAddresses = (size) => {
   return Array(size).fill().map((_, i) => 
     `0x${(i * 100).toString(16).toUpperCase().padStart(3, '0')}`
@@ -14,7 +28,12 @@ export const generateMemoryAddress = (index = 0) => {
   return `0x${(index * 100).toString(16).toUpperCase().padStart(3, '0')}`;
 };
 
+/**
+ * Performance optimization functions
+ */
+
 // Debounce function for performance optimization
+// Prevents rapid successive calls by delaying execution
 export const debounce = (func, wait) => {
   let timeout;
   return function executedFunction(...args) {
@@ -27,7 +46,7 @@ export const debounce = (func, wait) => {
   };
 };
 
-// Throttle function for scroll events
+// Throttle function for scroll events and rapid user interactions
 export const throttle = (func, limit) => {
   let inThrottle;
   return function() {
@@ -49,7 +68,7 @@ export const deepClone = (obj) => {
   if (typeof obj === 'object') {
     const clonedObj = {};
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         clonedObj[key] = deepClone(obj[key]);
       }
     }
@@ -181,26 +200,155 @@ export const validators = {
   }
 };
 
-// Performance monitoring utilities
-export const performance = {
-  measure: (name, fn) => {
-    const start = window.performance.now();
-    const result = fn();
-    const end = window.performance.now();
-    console.log(`${name} took ${end - start} milliseconds`);
-    return result;
-  },
-  
-  measureAsync: async (name, fn) => {
-    const start = window.performance.now();
-    const result = await fn();
-    const end = window.performance.now();
-    console.log(`${name} took ${end - start} milliseconds`);
-    return result;
+/**
+ * Performance Monitoring Utilities
+ * ================================
+ */
+
+/**
+ * Creates a performance observer to monitor component render times
+ * Useful for identifying performance bottlenecks in visualizations
+ * 
+ * @param {Function} callback - Called with performance entries
+ * @returns {PerformanceObserver} The observer instance
+ */
+export const createPerformanceObserver = (callback) => {
+  if (!window.PerformanceObserver) {
+    console.warn('PerformanceObserver not supported in this browser');
+    return null;
+  }
+
+  try {
+    const observer = new PerformanceObserver((list) => {
+      const entries = list.getEntries();
+      callback(entries);
+    });
+    
+    observer.observe({ entryTypes: ['measure', 'navigation', 'paint'] });
+    return observer;
+  } catch (error) {
+    console.error('Error creating performance observer:', error);
+    return null;
   }
 };
 
-// Storage helpers for direct import
+/**
+ * Measures the time taken for a specific operation
+ * 
+ * @param {string} name - Unique name for the measurement
+ * @param {Function} operation - Function to measure
+ * @returns {Promise<any>} Result of the operation
+ */
+export const measureAsync = async (name, operation) => {
+  const startMark = `${name}-start`;
+  const endMark = `${name}-end`;
+  
+  performance.mark(startMark);
+  try {
+    const result = await operation();
+    performance.mark(endMark);
+    performance.measure(name, startMark, endMark);
+    return result;
+  } catch (error) {
+    performance.mark(endMark);
+    performance.measure(`${name}-error`, startMark, endMark);
+    throw error;
+  }
+};
+
+/**
+ * Accessibility Utilities
+ * =======================
+ */
+
+/**
+ * Checks if user prefers reduced motion for animations
+ * 
+ * @returns {boolean} True if user prefers reduced motion
+ */
+export const prefersReducedMotion = () => {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+/**
+ * Announces text to screen readers
+ * 
+ * @param {string} message - Message to announce
+ * @param {string} priority - 'polite' or 'assertive'
+ */
+export const announceToScreenReader = (message, priority = 'polite') => {
+  const announcer = document.createElement('div');
+  announcer.setAttribute('aria-live', priority);
+  announcer.setAttribute('aria-atomic', 'true');
+  announcer.style.position = 'absolute';
+  announcer.style.left = '-10000px';
+  announcer.style.width = '1px';
+  announcer.style.height = '1px';
+  announcer.style.overflow = 'hidden';
+  
+  document.body.appendChild(announcer);
+  announcer.textContent = message;
+  
+  setTimeout(() => {
+    document.body.removeChild(announcer);
+  }, 1000);
+};
+
+/**
+ * Animation Utilities
+ * ===================
+ */
+
+/**
+ * Creates optimized animation frame loop
+ * 
+ * @param {Function} callback - Function to call each frame
+ * @returns {Function} Cleanup function to stop the animation
+ */
+export const createAnimationLoop = (callback) => {
+  let isRunning = true;
+  let rafId;
+  
+  const loop = () => {
+    if (isRunning) {
+      callback();
+      rafId = requestAnimationFrame(loop);
+    }
+  };
+  
+  rafId = requestAnimationFrame(loop);
+  
+  return () => {
+    isRunning = false;
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+    }
+  };
+};
+
+/**
+ * Throttles animation updates to prevent overwhelming the browser
+ * 
+ * @param {Function} callback - Function to throttle
+ * @param {number} fps - Target frames per second (default: 60)
+ * @returns {Function} Throttled function
+ */
+export const throttleAnimation = (callback, fps = 60) => {
+  const interval = 1000 / fps;
+  let lastTime = 0;
+  
+  return (...args) => {
+    const now = performance.now();
+    if (now - lastTime >= interval) {
+      lastTime = now;
+      callback(...args);
+    }
+  };
+};
+
+/**
+ * Storage helpers for direct import
+ */
 export const getStorageItem = (key, type = 'local') => {
   try {
     const storage = type === 'session' ? sessionStorage : localStorage;

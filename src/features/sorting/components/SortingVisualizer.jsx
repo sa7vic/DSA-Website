@@ -1,122 +1,16 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { FaHome, FaRandom, FaSortAmountDown, FaSlidersH } from 'react-icons/fa';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import '../styles/Sorting.css';
 import { ANIMATION_SPEEDS, COLORS } from '../../../constants';
-import { debounce, shuffleArray } from '../../../utils/helpers';
+import { debounce } from '../../../utils/helpers';
 
-// Enhanced CodeHighlighter component with fixed highlighting
-const CodeHighlighter = ({ code, currentLine }) => {
-  const codeContainerRef = useRef(null);
-  
-  if (!code) return null;
-  
-  // Custom renderer to add line highlighting - fixed line numbering
-  const lineProps = (lineNumber) => {
-    const style = {
-      display: 'block',
-      padding: '0 0.5rem',
-      width: '100%',
-    };
-    
-    // Highlight the specified line (adjusting for 0-indexed lineNumber)
-    if (currentLine === lineNumber) {
-      return {
-        style: {
-          ...style,
-          backgroundColor: 'rgba(88, 166, 255, 0.3)', // More visible highlight
-          borderLeft: '4px solid #58a6ff', // Thicker indicator
-          paddingLeft: '1rem',
-          fontWeight: 'bold', // Make text bolder
-          color: '#ffffff', // Brighter text color
-        },
-        className: 'highlight-line',
-      };
-    }
-    
-    return { style };
-  };
-  
-  // Effect to scroll to the highlighted line with a delay to ensure rendering
-  useEffect(() => {
-    if (!currentLine || !codeContainerRef.current) return;
-    
-    // Use setTimeout to ensure the component has rendered
-    const scrollTimeout = setTimeout(() => {
-      const highlightedLine = codeContainerRef.current.querySelector('.highlight-line');
-      
-      if (highlightedLine) {
-        highlightedLine.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-      }
-    }, 100); // Small delay to ensure rendering
-    
-    return () => clearTimeout(scrollTimeout);
-  }, [currentLine, code]);
-  
-  return (
-    <div 
-      className="algorithm-code"
-      ref={codeContainerRef}
-      style={{ 
-        height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        flex: 1,
-        position: 'relative' // Needed for absolute positioned elements
-      }}
-    >
-      <SyntaxHighlighter
-        language="c"
-        style={atomDark}
-        wrapLines={true}
-        showLineNumbers={true}
-        lineProps={lineNumber => lineProps(lineNumber)}
-        customStyle={{
-          margin: 0,
-          padding: '0.75rem',
-          borderRadius: '6px',
-          backgroundColor: '#0d1117',
-          fontSize: '0.85rem',
-          lineHeight: '1.8', // Increased line height for better readability
-          height: 'auto', 
-          overflow: 'auto',
-          flex: 1,
-          minHeight: '300px'
-        }}
-        lineNumberStyle={{
-          minWidth: '2.5em',
-          paddingRight: '1em',
-          color: '#6e7681',
-          textAlign: 'right'
-        }}
-      >
-        {code}
-      </SyntaxHighlighter>
-      
-      {/* Debug overlay to show current line */}
-      {currentLine && (
-        <div style={{
-          position: 'absolute',
-          top: '4px',
-          right: '8px',
-          background: 'rgba(0,0,0,0.5)',
-          color: 'white',
-          padding: '2px 6px',
-          borderRadius: '4px',
-          fontSize: '12px'
-        }}>
-          Line: {currentLine}
-        </div>
-      )}
-    </div>
-  );
-};
+// Constants for array generation and animation control
+
+
 
 // Spring animation configuration for smooth transitions
 const springAnim = {
@@ -1589,10 +1483,39 @@ const SortingVisualizer = () => {
                 borderRadius: '6px'
               }}>
                 <div style={{ width: '100%', overflow: 'auto' }}>
-                  <CodeHighlighter 
-                    code={algorithmInfo[method]?.pseudocode || 'No code available'} 
-                    currentLine={currentLine}
-                  />
+                  <SyntaxHighlighter
+                    language="c"
+                    style={vs2015}
+                    wrapLines={true}
+                    showLineNumbers={true}
+                    lineNumberStyle={{ color: '#6a737d' }}
+                    wrapLongLines={true}
+                    codeTagProps={{
+                      style: {
+                        fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                        fontSize: '0.9rem'
+                      }
+                    }}
+                    customStyle={{
+                      margin: 0,
+                      padding: '1rem',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.6',
+                      height: '100%',
+                      overflow: 'auto',
+                      background: '#1e1e1e'
+                    }}
+                    lineProps={lineNumber => ({
+                      style: { 
+                        backgroundColor: lineNumber === currentLine ? 'rgba(88, 166, 255, 0.3)' : 'transparent',
+                        display: 'block',
+                        color: lineNumber === currentLine ? '#fff' : undefined,
+                        fontWeight: lineNumber === currentLine ? 'bold' : 'normal'
+                      }
+                    })}
+                  >
+                    {algorithmInfo[method]?.pseudocode || 'No code available'}
+                  </SyntaxHighlighter>
                 </div>
               </div>
             </motion.div>

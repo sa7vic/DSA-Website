@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import '../styles/CurrentOperationDisplay.css';
 
 /**
- * Component to display the current operation for Stack/Queue Visualizer
+ * CurrentOperationDisplay Component - Stack/Queue Operations
+ * 
+ * Displays real-time information about current stack/queue operations.
+ * Optimized with React.memo to prevent unnecessary re-renders during animations.
  * 
  * @param {Object} props
  * @param {string} props.currentStep - The current step description
  * @param {boolean} props.isAnimating - Whether an animation is currently running
  * @param {boolean} props.loading - Whether the component is in loading state
  */
-const CurrentOperationDisplay = ({ currentStep, isAnimating, loading }) => {
+const CurrentOperationDisplay = memo(({ currentStep, isAnimating, loading }) => {
   return (
     <div className="current-operation-display">
       <h4>Current Operation</h4>
@@ -35,6 +38,9 @@ const CurrentOperationDisplay = ({ currentStep, isAnimating, loading }) => {
       </div>
     </div>
   );
-};
+});
+
+// Set display name for better debugging
+CurrentOperationDisplay.displayName = 'CurrentOperationDisplay';
 
 export default CurrentOperationDisplay;

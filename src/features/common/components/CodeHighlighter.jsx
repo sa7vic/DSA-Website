@@ -1,111 +1,172 @@
-import React, { useRef, useEffect } from 'react';
+/**
+ * Enhanced CodeHighlighter Component
+ * 
+ * A unified, optimized syntax highlighter component used across all visualizers.
+ * Provides consistent styling, line highlighting, and performance optimizations.
+ * 
+ * Features:
+ * - Syntax highlighting for multiple languages
+ * - Current line highlighting during animations
+ * - Auto-scrolling to highlighted lines
+ * - Performance optimized with React.memo
+ * - Consistent theming across the application
+ * 
+ * Usage:
+ * import { CodeHighlighter } from '../../../features/common/components/CodeHighlighter';
+ */
+
+import React, { useRef, useEffect, memo } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import '../styles/common.css';
 
-// Enhanced CodeHighlighter component with fixed highlighting
-const CodeHighlighter = ({ code, currentLine, title }) => {
+/**
+ * Enhanced CodeHighlighter component with line highlighting and auto-scroll
+ * @param {string} code - The code to highlight
+ * @param {number} currentLine - The currently executing line (1-indexed)
+ * @param {string} language - Programming language for syntax highlighting
+ * @param {boolean} showLineNumbers - Whether to show line numbers
+ * @param {object} customStyle - Additional custom styles
+ */
+const CodeHighlighter = memo(({ 
+  code, 
+  currentLine = null, 
+  language = 'cpp',
+  showLineNumbers = true,
+  customStyle = {} 
+}) => {
   const codeContainerRef = useRef(null);
   
+  // Return null if no code provided
   if (!code) return null;
   
-  // Custom renderer to add line highlighting
-  const lineProps = (lineNumber) => {
-    const style = { display: 'block' };
+  /**
+   * Custom line renderer for highlighting current line
+   * @param {number} lineNumber - Line number (1-indexed)
+   * @returns {object} Line props with conditional highlighting
+   */
+  const getLineProps = (lineNumber) => {
+    const baseStyle = {
+      display: 'block',
+      padding: '0 0.5rem',
+      width: '100%',
+      transition: 'all 0.2s ease-in-out', // Smooth transition for highlighting
+    };
+    
+    // Highlight the currently executing line
     if (currentLine === lineNumber) {
-      style.backgroundColor = 'rgba(88, 166, 255, 0.3)';
-      style.borderLeft = '3px solid #58a6ff';
-      style.paddingLeft = '1em';
-      style.marginLeft = '-1em';
-      return { style, className: 'highlight-line' };
+      return {
+        style: {
+          ...baseStyle,
+          backgroundColor: 'rgba(0, 212, 170, 0.25)', // Using theme primary color
+          borderLeft: '4px solid var(--color-primary, #00D4AA)',
+          paddingLeft: '1rem',
+          fontWeight: 'bold',
+          color: '#ffffff',
+          boxShadow: 'inset 0 0 10px rgba(0, 212, 170, 0.1)',
+        },
+        className: 'highlight-line',
+      };
     }
-    return { style };
+    
+    return { style: baseStyle };
   };
   
-  // Effect to scroll to the highlighted line with a delay to ensure rendering
+  /**
+   * Auto-scroll to highlighted line with smooth animation
+   */
   useEffect(() => {
-    if (currentLine && codeContainerRef.current) {
-      setTimeout(() => {
-        const highlightedLine = codeContainerRef.current.querySelector('.highlight-line');
-        if (highlightedLine) {
-          highlightedLine.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
+    if (!currentLine || !codeContainerRef.current) return;
+    
+    // Use requestAnimationFrame for smooth scrolling
+    const scrollToLine = () => {
+      const highlightedLine = codeContainerRef.current?.querySelector('.highlight-line');
+      
+      if (highlightedLine) {
+        const container = codeContainerRef.current.querySelector('pre');
+        if (container) {
+          const lineTop = highlightedLine.offsetTop;
+          const containerHeight = container.clientHeight;
+          const scrollTop = lineTop - (containerHeight / 2);
+          
+          // Smooth scroll to center the highlighted line
+          container.scrollTo({
+            top: Math.max(0, scrollTop),
+            behavior: 'smooth'
           });
         }
-      }, 100);
-    }
-  }, [currentLine, code]);
+      }
+    };
+    
+    // Small delay to ensure DOM is updated
+    const timeoutId = setTimeout(scrollToLine, 100);
+    return () => clearTimeout(timeoutId);
+  }, [currentLine]);
+  
+  // Custom theme based on our application's color scheme
+  const customTheme = {
+    ...atomDark,
+    'pre[class*="language-"]': {
+      ...atomDark['pre[class*="language-"]'],
+      background: 'var(--color-card-bg, #1A1A2E)',
+      border: '1px solid var(--color-border, #333)',
+      borderRadius: '8px',
+      margin: 0,
+      padding: '1rem',
+      maxHeight: '400px',
+      overflow: 'auto',
+      fontSize: '0.9rem',
+      lineHeight: '1.5',
+      scrollbarWidth: 'thin',
+      scrollbarColor: 'var(--color-primary, #00D4AA) transparent',
+    },
+    'code[class*="language-"]': {
+      ...atomDark['code[class*="language-"]'],
+      color: 'var(--color-text, #ffffff)',
+      fontFamily: '"Fira Code", "Monaco", "Consolas", monospace',
+    },
+  };
   
   return (
     <div 
-      className="algorithm-code"
       ref={codeContainerRef}
-      style={{ 
-        height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        flex: 1,
-        position: 'relative'
+      className="code-highlighter-container"
+      style={{
+        borderRadius: '8px',
+        overflow: 'hidden',
+        border: '1px solid var(--color-border, #333)',
+        ...customStyle
       }}
     >
-      {title && (
-        <div style={{
-          padding: '8px 12px',
-          borderBottom: '1px solid #30363d',
-          backgroundColor: '#161b22',
-          color: '#c9d1d9',
-          fontWeight: '600',
-          fontSize: '14px'
-        }}>
-          {title}
-        </div>
-      )}
-      
       <SyntaxHighlighter
-        language="javascript"
-        style={atomDark}
-        wrapLines={true}
-        showLineNumbers={true}
-        lineProps={lineNumber => lineProps(lineNumber)}
+        language={language}
+        style={customTheme}
+        showLineNumbers={showLineNumbers}
+        lineNumberStyle={{
+          color: 'var(--color-text-secondary, #888)',
+          fontSize: '0.8rem',
+          paddingRight: '1rem',
+          minWidth: '3rem',
+          textAlign: 'right',
+        }}
+        lineProps={getLineProps}
         customStyle={{
           margin: 0,
-          padding: '0.75rem',
-          borderRadius: '0 0 6px 6px',
-          backgroundColor: '#0d1117',
-          fontSize: '0.85rem',
-          lineHeight: '1.8',
-          height: 'auto', 
-          overflow: 'auto',
-          flex: 1,
-          minHeight: '300px'
+          borderRadius: 0,
+          border: 'none',
         }}
-        lineNumberStyle={{
-          minWidth: '2.5em',
-          paddingRight: '1em',
-          color: '#6e7681',
-          textAlign: 'right'
+        codeTagProps={{
+          style: {
+            fontFamily: '"Fira Code", "Monaco", "Consolas", monospace',
+          }
         }}
       >
         {code}
       </SyntaxHighlighter>
-      
-      {currentLine && (
-        <div style={{
-          position: 'absolute',
-          top: title ? '38px' : '4px',
-          right: '8px',
-          background: 'rgba(0,0,0,0.5)',
-          color: 'white',
-          padding: '2px 6px',
-          borderRadius: '4px',
-          fontSize: '12px'
-        }}>
-          Line: {currentLine}
-        </div>
-      )}
     </div>
   );
-};
+});
+
+// Set display name for better debugging
+CodeHighlighter.displayName = 'CodeHighlighter';
 
 export default CodeHighlighter;

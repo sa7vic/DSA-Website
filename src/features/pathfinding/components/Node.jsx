@@ -1,10 +1,19 @@
-import React from "react";
+import React, { memo } from "react";
 import ydgImage from "../../../assets/ydg.png";
 import baviImage from "../../../assets/bavi.png";
 import blockImage from "../../../assets/block.jpg"; // Add this import
 
-const Node = ({ 
-  value,
+/**
+ * Pathfinding Grid Node Component
+ * 
+ * Represents a single cell in the pathfinding visualization grid.
+ * Optimized with React.memo to prevent unnecessary re-renders
+ * since grids can contain hundreds of nodes.
+ * 
+ * @param {Object} props - Node properties and event handlers
+ * @returns {JSX.Element} Rendered node with appropriate styling and behavior
+ */
+const Node = memo(({ 
   isWall,
   isStart,
   isEnd,
@@ -74,6 +83,9 @@ const Node = ({
       )}
     </td>
   );
-};
+});
+
+// Set display name for better debugging
+Node.displayName = 'Node';
 
 export default Node;

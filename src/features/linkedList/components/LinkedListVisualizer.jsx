@@ -97,20 +97,23 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit, onA
       return null;
     }
 
-    // Update memory pool immediately
-    setMemoryPool(prevPool => {
-      const newPool = [...prevPool];
-      newPool[availableSlot].inUse = true;
-      return newPool;
-    });
-
-    return {
+    // Create the new node first
+    const newNode = {
       data: data.toString().trim(),
       address: MEMORY_ADDRESSES[availableSlot],
       memoryIndex: availableSlot,
       prev: null,
       next: null
     };
+
+    // Update memory pool synchronously to prevent timing issues
+    setMemoryPool(prevPool => {
+      const newPool = [...prevPool];
+      newPool[availableSlot].inUse = true;
+      return newPool;
+    });
+
+    return newNode;
   }, [getNextAvailableIndex, showError]);
 
   // Function to free memory with validation
@@ -202,7 +205,7 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit, onA
             if (!newNode) return;
 
             if (nodes.length > 0) {
-              newNode.next = 0;
+              newNode.next = nodes[0].memoryIndex;  // Fix: Use memory index instead of array index
               const updatedNodes = [...nodes];
               updatedNodes[0].prev = newNode.memoryIndex;
               onNodesChange([newNode, ...updatedNodes]);
@@ -832,32 +835,110 @@ const LinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolInit, onA
               <small>Use Insert at Beginning or Insert at End to add nodes</small>
             </div>
           ) : (
-            nodes.map((node, index) => (
-              <div key={`${node.address}-${index}`} className="node-container">
-                {index > 0 && (
-                  <div className="pointer-left">
-                    <FaArrowLeft />
+            (() => {
+              // Build the actual linked list order based on pointers, starting from head
+              const renderLinkedList = () => {
+                if (nodes.length === 0) return null;
+                
+                // Find the head node (node with prev === null)
+                const headNode = nodes.find(node => node.prev === null);
+                if (!headNode) {
+                  // Fallback: if no clear head, use first node
+                  return nodes.map((node, index) => renderNode(node, index, index > 0, index < nodes.length - 1));
+                }
+                
+                // Traverse the linked list from head to tail
+                const orderedNodes = [];
+                let currentNode = headNode;
+                const visited = new Set(); // Prevent infinite loops
+                
+                while (currentNode && !visited.has(currentNode.memoryIndex)) {
+                  visited.add(currentNode.memoryIndex);
+                  orderedNodes.push(currentNode);
+                  
+                  // Find next node
+                  if (currentNode.next !== null && currentNode.next !== undefined) {
+                    currentNode = nodes.find(node => node.memoryIndex === currentNode.next);
+                  } else {
+                    currentNode = null;
+                  }
+                }
+                
+                return orderedNodes.map((node, index) => 
+                  renderNode(node, index, index > 0, index < orderedNodes.length - 1)
+                );
+              };
+              
+              const renderNode = (node, index, showLeftArrow, showRightArrow) => (
+                <div key={`${node.address}-${index}`} className="node-container">
+                  {showLeftArrow && (
+                    <div className="pointer-left">
+                      <FaArrowLeft />
+                    </div>
+                  )}
+                  <div className="node node-active">
+                    <div className="node-address">Address: {node.address}</div>
+                    <div className="node-data">Data: {node.data}</div>
+                    <div className="node-pointers">
+                      <div>prev: {node.prev !== null && node.prev !== undefined ? 
+                        MEMORY_ADDRESSES[node.prev] || `Index[${node.prev}]` : 'nullptr'}</div>
+                      <div>next: {node.next !== null && node.next !== undefined ? 
+                        MEMORY_ADDRESSES[node.next] || `Index[${node.next}]` : 'nullptr'}</div>
+                    </div>
                   </div>
-                )}
-                <div className="node node-active">
-                  <div className="node-address">Address: {node.address}</div>
-                  <div className="node-data">Data: {node.data}</div>
-                  <div className="node-pointers">
-                    <div>prev: {node.prev !== null ? 
-                      (memoryPool[node.prev]?.address || 'nullptr') : 'nullptr'}</div>
-                    <div>next: {node.next !== null ? 
-                      (memoryPool[node.next]?.address || 'nullptr') : 'nullptr'}</div>
-                  </div>
+                  {showRightArrow && (
+                    <div className="pointer-right">
+                      <FaArrowRight />
+                    </div>
+                  )}
                 </div>
-                {index < nodes.length - 1 && (
-                  <div className="pointer-right">
-                    <FaArrowRight />
-                  </div>
-                )}
-              </div>
-            ))
+              );
+              
+              return renderLinkedList();
+            })()
           )}
         </div>
+        
+        {/* Debug Section - Remove in production */}
+        {nodes.length > 0 && (
+          <div className="debug-section" style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '5px' }}>
+            <h4>Debug Information:</h4>
+            <div style={{ fontSize: '12px', fontFamily: 'monospace' }}>
+              <div style={{ marginBottom: '10px' }}>
+                <strong>Array Storage Order:</strong>
+                {nodes.map((node, index) => (
+                  <div key={index} style={{ marginLeft: '10px' }}>
+                    [{index}] data={node.data}, memoryIndex={node.memoryIndex}, prev={node.prev}, next={node.next}
+                  </div>
+                ))}
+              </div>
+              <div>
+                <strong>Linked List Traversal Order (following next pointers):</strong>
+                {(() => {
+                  const headNode = nodes.find(node => node.prev === null);
+                  if (!headNode) return <div style={{ marginLeft: '10px' }}>No clear head node found!</div>;
+                  
+                  const traversal = [];
+                  let currentNode = headNode;
+                  const visited = new Set();
+                  
+                  while (currentNode && !visited.has(currentNode.memoryIndex)) {
+                    visited.add(currentNode.memoryIndex);
+                    traversal.push(currentNode.data);
+                    
+                    if (currentNode.next !== null && currentNode.next !== undefined) {
+                      currentNode = nodes.find(node => node.memoryIndex === currentNode.next);
+                    } else {
+                      currentNode = null;
+                    }
+                  }
+                  
+                  return <div style={{ marginLeft: '10px' }}>{traversal.join(' → ')}</div>;
+                })()}
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* Memory Pool Display */}
         <div className="memory-section">

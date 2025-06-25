@@ -1,15 +1,37 @@
+/**
+ * Main Application Component - DSA Website
+ * 
+ * This is the root component that handles routing between different visualizers.
+ * Each route corresponds to a different data structure or algorithm visualization.
+ * 
+ * Structure:
+ * - Home: Landing page with feature cards
+ * - Linked List: Doubly linked list with code generation
+ * - Stack/Queue: Stack and queue operations
+ * - Tree: Binary search tree with traversals
+ * - Sorting: Various sorting algorithm animations
+ * - Pathfinding: Grid-based pathfinding algorithms
+ * - About: Team information
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FaHome } from 'react-icons/fa'
+
+// Global styles - imported in order of specificity
 import './App.css'
 import './features/common/styles/common.css'
 import './features/linkedList/styles/LinkedList.css'
 import './features/sorting/styles/Sorting.css'
 import './features/tree/styles/TreeVisualizer.css'
 import './features/pathfinding/styles/Pathfinding.css'
+
+// Shared components
 import ErrorBoundary from './features/common/components/ErrorBoundary'
 import CodeViewer from './features/common/components/CodeViewer'
+
+// Feature components - each handles its own visualization
 import LinkedListVisualizer from './features/linkedList/components/LinkedListVisualizer'
 import DiySection from './features/linkedList/components/DiySection'
 import DoublyLinkedListExplanation from './features/linkedList/components/DoublyLinkedListExplanation'
@@ -19,10 +41,17 @@ import SortingVisualizer from './features/sorting/components/SortingVisualizer'
 import StackQueueVisualizer from './features/stackQueue/components/StackQueueVisualizer'
 import TreeVisualizer from './features/tree/components/TreeVisualizer'
 import PathfindingVisualizer from './features/pathfinding/components/PathfindingVisualizer'
+
+// Utility functions
 import { generateCppCode } from './utils/codeGenerator'
 import { setStorageItem, getStorageItem } from './utils/helpers'
+import { MEMORY_POOL_SIZE } from './constants'
 
-// Create a wrapper component to handle LinkedList page state
+/**
+ * LinkedListPage wrapper component
+ * Handles state coordination between code viewer and visualizer
+ * Manages animation synchronization and memory pool
+ */
 function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, handleMemoryPoolInit, handleCodeChange, updateNodesAndCode }) {
   // State for animation coordination between CodeViewer and LinkedListVisualizer
   const [currentLine, setCurrentLine] = useState(0);

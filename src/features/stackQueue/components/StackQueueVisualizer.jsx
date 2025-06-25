@@ -10,7 +10,7 @@ import DiySection from './DiySection';
 import '../styles/StackQueueVisualizer.css';
 import '../styles/CurrentOperationDisplay.css';
 import { ANIMATION_SPEEDS, COLORS } from '../../../constants';
-import { debounce, isValidInput, showErrorMessage as showErrorHelper } from '../../../utils/helpers';
+import { isValidInput } from '../../../utils/helpers';
 
 const StackQueueVisualizer = () => {
   // Optimized state management

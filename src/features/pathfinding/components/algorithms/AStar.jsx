@@ -2,11 +2,6 @@
 import React from 'react'; // Adding React import for JSX file
 
 const AStar = (grid, start_node, end_node) => {
-  console.log("Running A* Search algorithm");
-  console.log("Grid dimensions:", grid.length, "x", grid[0].length);
-  console.log("Start node:", start_node);
-  console.log("End node:", end_node);
-  
   const visited_nodes = [];
   const shortestPathNodes = [];
   

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { FaHome, FaPlus, FaSearch, FaTrash, FaRandom, FaPlay, FaPause, FaStepForward, FaStepBackward } from 'react-icons/fa';
+import TreeExplanation from './TreeExplanation';
+import TreeDiySection from './TreeDiySection';
 import '../styles/TreeVisualizer.css';
 
 // BST Node class
@@ -1200,6 +1202,12 @@ void postorder(struct TreeNode* root) {
             highlightedNode={highlightedNode}
             currentStep={currentStep}
           />
+          
+          {/* Explanation Section */}
+          <TreeExplanation />
+          
+          {/* DIY Section */}
+          <TreeDiySection />
         </section>
       </main>
     </div>
