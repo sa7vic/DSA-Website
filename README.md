@@ -1,4 +1,4 @@
-# 🧮 DSA Visualizer
+#  DSA Visualizer
 
 **Interactive Data Structures & Algorithms Learning Platform** - Making computer science concepts accessible through beautiful, step-by-step visualizations.
 
@@ -11,11 +11,12 @@
 
 ---
 
-## ✨ Overview
+## Overview
 
-DSA Visualizer is an interactive educational platform designed to help students and developers understand data structures and algorithms through visual learning. Each visualizer provides step-by-step animations synchronized with actual code execution, making complex concepts easy to grasp.
+DSA Visualizer is an interactive educational platform designed to help students and developers understand data structures and algorithms through visual learning. Each visualizer provides step-by-step animations synchronized with actual code execution, making complex concepts easy to grasp. It is brought to you by Openverse, the open source club of IIIT Kottayam, if you wish to contribute, check out contributing.md 
+We use C for code since, the visualizer is specifically tailored for the Datastructure 121 Course at IIIT Kottayam 
 
-## 🎯 Features
+## Features
 
 ### 📊 **Available Visualizations**
 - **🔗 Linked Lists** - Doubly linked lists with memory address visualization and dynamic code generation
@@ -31,15 +32,14 @@ DSA Visualizer is an interactive educational platform designed to help students 
 - **📱 Responsive Design** - Seamless experience across desktop, tablet, and mobile devices
 - **📚 Educational Content** - Comprehensive explanations, complexity analysis, and best practices
 
-### 🛠️ **Technical Features**
-- **⚡ High Performance** - Optimized animations with 60fps smooth transitions
+### **Technical Features**
 - **🎨 Modern UI** - Dark theme with consistent design system and accessibility features
 - **🧪 Educational Focus** - Code examples in C with detailed comments and explanations
 - **🔄 Real-time Updates** - Dynamic visualization updates based on user interactions
 
 ---
 
-## 🚀 Quick Start
+Quick Start
 
 ### Prerequisites
 - **Node.js** 18+ 
@@ -203,8 +203,6 @@ We actively welcome contributions! Whether you're a student, educator, or develo
 
 ---
 
-## 📸 Preview
-
 ### 🏠 Homepage
 ![Homepage featuring all available visualizers](https://github.com/user-attachments/assets/73a73d85-ccc3-445b-94c7-44701059311f)
 
@@ -216,49 +214,6 @@ We actively welcome contributions! Whether you're a student, educator, or develo
 
 ---
 
-## �️ Security & Maintenance
-
-### 🔒 Security Status
-- **Dependencies**: Regularly audited and updated
-- **Vulnerabilities**: Monitored and addressed promptly
-- **Best Practices**: Secure coding standards followed
-
-### 🔄 Maintenance Schedule
-- **Weekly**: Dependency vulnerability scans
-- **Monthly**: Performance optimization reviews
-- **Quarterly**: Major dependency updates and feature releases
-
----
-
-## �📜 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-### 📊 Usage Rights
-- ✅ Commercial use
-- ✅ Modification
-- ✅ Distribution
-- ✅ Private use
-
----
-
-## 🌟 Acknowledgments
-
-### 🎓 Educational Mission
-Built to democratize computer science education through interactive visualization, making complex algorithms accessible to learners worldwide.
-
-### 🤝 Community
-- **Contributors** - Developers who help improve the platform
-- **Educators** - Teachers who provide feedback and use cases
-- **Students** - Learners who inspire new features and improvements
-- **Open Source** - Built on amazing open-source technologies
-
-### 🔗 Connect With Us
-- **🐛 Issues**: [GitHub Issues](https://github.com/your-username/DSA-Website/issues)
-- **💬 Discussions**: [GitHub Discussions](https://github.com/your-username/DSA-Website/discussions)
-- **📧 Contact**: [Your Contact Information]
-
----
 
 **⭐ Star this repository if it helps you learn!** Your support motivates continued development and improvement.
 - **Modern Web Technologies:** Leveraging the latest in React and web development
@@ -267,6 +222,5 @@ Built to democratize computer science education through interactive visualizatio
 
 **Made with 💚 by the Openverse Team**
 
-*Empowering the next generation of computer scientists through interactive learning.*
 
 
