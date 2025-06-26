@@ -430,6 +430,7 @@
   filter: blur(60px);
   will-change: transform;
   contain: layout style paint;
+  z-index: -1;
 }
 
 .orb-1 {

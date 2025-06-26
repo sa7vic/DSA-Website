@@ -6,10 +6,9 @@ import '../styles/HomePage.css';
 import Robocats from '../../../assets/Robocats.svg';
 import logo from '../../../assets/openverse2.svg';
 
-const Card = ({ title, link, icon, type, enabled = true, color }) => {
-  // Apply card class and style with proper background color
-  const cardClasses = `homepage-card ${enabled ? '' : 'homepage-card-disabled'}`;
-  const cardStyle = color ? { backgroundColor: color } : {};
+const Card = ({ title, link, icon, type, enabled = true, gradientClass }) => {
+  // Apply card class with gradient class
+  const cardClasses = `homepage-card ${enabled ? '' : 'homepage-card-disabled'} ${gradientClass || ''}`;
   
   const content = (
     <>
@@ -28,58 +27,60 @@ const Card = ({ title, link, icon, type, enabled = true, color }) => {
   
   if (enabled && link) {
     return (
-      <Link to={link} className={cardClasses} style={cardStyle}>
+      <Link to={link} className={cardClasses}>
         {content}
       </Link>
     );
   }
   
   return (
-    <div className={cardClasses} style={cardStyle}>
+    <div className={cardClasses}>
       {content}
     </div>
   );
 };
 
 const HomePage = () => {
-  // Card data structure with proper titles and unique icons with distributed colors
+  // Card data structure with gradient classes cycling through the 3 gradient types
   const dataStructureCards = [
     {
       title: 'Linked Lists',
       link: '/linked-list', 
-      icon: <FaListUl size={40} color={getIconColor('#4A3F6E')} />,
-      color: '#4A3F6E', // Purple
-      enabled: true    },    {
+      icon: <FaListUl size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-1',
+      enabled: true
+    },
+    {
       title: 'Stacks & Queues',
       link: '/stacks-queues',
-      icon: <FaLayerGroup size={40} color={getIconColor('#4A3F6E')} />,
-      color: '#4A3F6E', // Purple
+      icon: <FaLayerGroup size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-2',
       enabled: true
     },
     {
       title: 'Trees',
       link: '/tree',
-      icon: <FaTree size={40} color={getIconColor('#2A623D')} />,
-      color: '#2A623D', // Green
+      icon: <FaTree size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-3',
       enabled: true
     },
     {
       title: 'Pathfinding',
       link: '/pathfinding',
-      icon: <FaProjectDiagram size={40} color={getIconColor('#4A3F6E')} />,
-      color: '#4A3F6E', // Purple
+      icon: <FaProjectDiagram size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-1',
       enabled: true
     },
     {
       title: 'Hash Tables',
-      icon: <FaSitemap size={40} color={getIconColor('#FFFFFF')} />,
-      color: '#FFFFFF', // White
+      icon: <FaSitemap size={40} color="#8E8CA7" />,
+      gradientClass: 'homepage-card-gradient-2',
       enabled: false
     },
     {
       title: 'Heaps',
-      icon: <FaLayerGroup size={40} color={getIconColor('#2A623D')} />,
-      color: '#2A623D', // Green
+      icon: <FaLayerGroup size={40} color="#8E8CA7" />,
+      gradientClass: 'homepage-card-gradient-3',
       enabled: false
     }
   ];
@@ -88,49 +89,41 @@ const HomePage = () => {
     {
       title: 'Sorting Algorithms',
       link: '/sorting',
-      icon: <FaSortNumericDown size={40} color={getIconColor('#4A3F6E')} />,
-      color: '#4A3F6E', // Purple
+      icon: <FaSortNumericDown size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-1',
       enabled: true
     },
     {
       title: 'Search Algorithms',
-      icon: <FaRegLightbulb size={40} color={getIconColor('#FFFFFF')} />,
-      color: '#FFFFFF', // White
+      icon: <FaRegLightbulb size={40} color="#8E8CA7" />,
+      gradientClass: 'homepage-card-gradient-2',
       enabled: false
     },
     {
       title: 'Dynamic Programming',
-      icon: <FaChartLine size={40} color={getIconColor('#2A623D')} />,
-      color: '#2A623D', // Green
+      icon: <FaChartLine size={40} color="#8E8CA7" />,
+      gradientClass: 'homepage-card-gradient-3',
       enabled: false
     },
     {
       title: 'Greedy Algorithms',
-      icon: <FaCode size={40} color={getIconColor('#4A3F6E')} />,
-      color: '#4A3F6E', // Purple
+      icon: <FaCode size={40} color="#8E8CA7" />,
+      gradientClass: 'homepage-card-gradient-1',
       enabled: false
     },
     {
       title: 'Randomized Algorithms',
-      icon: <FaRandom size={40} color={getIconColor('#FFFFFF')} />,
-      color: '#FFFFFF', // White
+      icon: <FaRandom size={40} color="#8E8CA7" />,
+      gradientClass: 'homepage-card-gradient-2',
       enabled: false
     },
     {
       title: 'Optimization Algorithms',
-      icon: <FaSlidersH size={40} color={getIconColor('#2A623D')} />,
-      color: '#2A623D', // Green
+      icon: <FaSlidersH size={40} color="#8E8CA7" />,
+      gradientClass: 'homepage-card-gradient-3',
       enabled: false
     }
   ];
-
-  // Function to determine icon color based on card background color
-  function getIconColor(bgColor) {
-    if (bgColor === '#FFFFFF') {
-      return '#100E1A'; // Dark color for icons on white cards
-    }
-    return '#FFFFFF'; // White icons for colored cards
-  }
 
   return (
     <div className="homepage">
@@ -176,7 +169,7 @@ const HomePage = () => {
                   title={card.title}
                   link={card.link}
                   icon={card.icon}
-                  color={card.color}
+                  gradientClass={card.gradientClass}
                   type="ds"
                   enabled={card.enabled}
                 />
@@ -195,7 +188,7 @@ const HomePage = () => {
                   title={card.title}
                   link={card.link}
                   icon={card.icon}
-                  color={card.color}
+                  gradientClass={card.gradientClass}
                   type="algo"
                   enabled={card.enabled}
                 />
