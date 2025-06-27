@@ -28,6 +28,8 @@ import './features/tree/styles/TreeVisualizer.css'
 import './features/pathfinding/styles/Pathfinding.css'
 import './features/quiz/styles/Quiz.css'
 import './features/quiz/styles/landingpage.css'
+import './features/archive/styles/landingpage.css'
+import './features/archive/styles/Archive.css'
 
 
 // Shared components
@@ -46,6 +48,9 @@ import TreeVisualizer from './features/tree/components/TreeVisualizer'
 import PathfindingVisualizer from './features/pathfinding/components/PathfindingVisualizer'
 import LandingPage from './features/quiz/components/landingpage';
 import Quiz from './features/quiz/components/Quiz';
+import ArchiveLanding from './features/archive/components/landingpage'
+import Archive from './features/archive/components/Archive'
+
 
 // Utility functions
 import { generateCppCode } from './utils/codeGenerator'
@@ -244,6 +249,9 @@ function App() {
           <Route path="/trees" element={<Navigate replace to="/tree" />} />
           <Route path="/graphs" element={<Navigate replace to="/pathfinding" />} />
           <Route path="/pathfinding-visualizer" element={<Navigate replace to="/pathfinding" />} />
+          <Route path="/archive" element={<ErrorBoundary><ArchiveLanding /></ErrorBoundary>} />
+          <Route path="/archive/:topic" element={<ErrorBoundary><Archive /></ErrorBoundary>} />
+          <Route path="/archive/pyq/:topic" element={<ErrorBoundary><Archive /></ErrorBoundary>} />
           
           <Route path="/quiz" element={<LandingPage />} />
           <Route path="/quiz/:topic" element={<ErrorBoundary><Quiz /></ErrorBoundary>} />

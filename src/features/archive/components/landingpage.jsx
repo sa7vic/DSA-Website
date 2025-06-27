@@ -1,8 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaGithub, FaRocket, FaBook  , FaRegLightbulb, FaListUl, FaLayerGroup, FaTree, FaProjectDiagram, FaSitemap, FaSortNumericDown, FaChartLine, FaCode, FaRandom, FaSlidersH } from 'react-icons/fa';
+import { 
+  FaGithub, FaBook, FaRocket, FaRegLightbulb, FaListUl, FaLayerGroup, 
+  FaTree, FaProjectDiagram, FaSitemap, FaSortNumericDown, FaChartLine, 
+  FaCode, FaRandom, FaSlidersH, FaSearch, FaCog, FaGamepad, FaBolt,
+  FaFilter, FaCubes, FaExchangeAlt, FaDigitalTachograph, FaNetworkWired
+} from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import '../styles/HomePage.css';
+import '../styles/landingpage.css';
 import Robocats from '../../../assets/Robocats.svg';
 import logo from '../../../assets/openverse2.svg';
 
@@ -45,83 +50,216 @@ const HomePage = () => {
   const dataStructureCards = [
     {
       title: 'Linked Lists',
-      link: '/linked-list', 
+      link: '/archive/pyq/linked-list', 
       icon: <FaListUl size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-1',
       enabled: true
     },
     {
       title: 'Stacks & Queues',
-      link: '/stacks-queues',
+      link: '/archive/pyq/stacks-queues',
       icon: <FaLayerGroup size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-2',
       enabled: true
     },
     {
       title: 'Trees',
-      link: '/tree',
+      link: '/archive/pyq/trees',
       icon: <FaTree size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-3',
       enabled: true
     },
     {
       title: 'Pathfinding',
-      link: '/pathfinding',
+      link: '/archive/pyq/pathfinding',
       icon: <FaProjectDiagram size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-1',
       enabled: true
     },
     {
       title: 'Hash Tables',
-      icon: <FaSitemap size={40} color="#8E8CA7" />,
+      link: '/archive/pyq/hash-tables',
+      icon: <FaSitemap size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-2',
-      enabled: false
+      enabled: true
     },
     {
       title: 'Heaps',
-      icon: <FaLayerGroup size={40} color="#8E8CA7" />,
+      link: '/archive/pyq/heaps',
+      icon: <FaLayerGroup size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-3',
-      enabled: false
-    }
-  ];
-  
-  const algorithmCards = [
+      enabled: true
+    },
     {
       title: 'Sorting Algorithms',
-      link: '/sorting',
+      link: '/archive/pyq/sorting',
       icon: <FaSortNumericDown size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-1',
       enabled: true
     },
     {
-      title: 'Search Algorithms',
-      icon: <FaRegLightbulb size={40} color="#8E8CA7" />,
+      title: 'Dynamic Programming',
+      link: '/archive/pyq/dynamic-programming',
+      icon: <FaChartLine size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-2',
-      enabled: false
+      enabled: true
     },
     {
-      title: 'Dynamic Programming',
-      icon: <FaChartLine size={40} color="#8E8CA7" />,
+      title: 'Backtracking',
+      link: '/archive/pyq/backtracking',
+      icon: <FaRandom size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-3',
-      enabled: false
+      enabled: true
     },
     {
       title: 'Greedy Algorithms',
-      icon: <FaCode size={40} color="#8E8CA7" />,
+      link: '/archive/pyq/greedy-algorithms',
+      icon: <FaCode size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-1',
-      enabled: false
+      enabled: true
     },
     {
-      title: 'Randomized Algorithms',
-      icon: <FaRandom size={40} color="#8E8CA7" />,
+      title: 'Binary Search',
+      link: '/archive/pyq/binary-search',
+      icon: <FaSearch size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-2',
-      enabled: false
+      enabled: true
     },
     {
-      title: 'Optimization Algorithms',
-      icon: <FaSlidersH size={40} color="#8E8CA7" />,
+      title: 'Bit Manipulation',
+      link: '/archive/pyq/bit-manipulation',
+      icon: <FaDigitalTachograph size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-3',
-      enabled: false
+      enabled: true
+    },
+    {
+      title: 'Trie',
+      link: '/archive/pyq/trie',
+      icon: <FaNetworkWired size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-1',
+      enabled: true
+    },
+    {
+      title: 'Sliding Window',
+      link: '/archive/pyq/sliding-window',
+      icon: <FaExchangeAlt size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-2',
+      enabled: true
+    },
+    {
+      title: 'Two Pointers',
+      link: '/archive/pyq/two-pointers',
+      icon: <FaExchangeAlt size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-3',
+      enabled: true
+    }
+  ];
+  
+  const algorithmCards = [
+    {
+      title: 'Linked Lists',
+      link: '/archive/linked-list',
+      icon: <FaListUl size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-1',
+      enabled: true
+    },
+    {
+      title: 'Stacks & Queues',
+      link: '/archive/stacks-queues',
+      icon: <FaLayerGroup size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-2',
+      enabled: true
+    },
+    {
+      title: 'Trees',
+      link: '/archive/trees',
+      icon: <FaTree size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-3',
+      enabled: true
+    },
+    {
+      title: 'Pathfinding',
+      link: '/archive/pathfinding',
+      icon: <FaProjectDiagram size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-1',
+      enabled: true
+    },
+    {
+      title: 'Hash Tables',
+      link: '/archive/hash-tables',
+      icon: <FaSitemap size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-2',
+      enabled: true
+    },
+    {
+      title: 'Heaps',
+      link: '/archive/heaps',
+      icon: <FaLayerGroup size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-3',
+      enabled: true
+    },
+    {
+      title: 'Sorting Algorithms',
+      link: '/archive/sorting',
+      icon: <FaSortNumericDown size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-1',
+      enabled: true
+    },
+    {
+      title: 'Dynamic Programming',
+      link: '/archive/dynamic-programming',
+      icon: <FaChartLine size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-2',
+      enabled: true
+    },
+    {
+      title: 'Backtracking',
+      link: '/archive/backtracking',
+      icon: <FaRandom size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-3',
+      enabled: true
+    },
+    {
+      title: 'Greedy Algorithms',
+      link: '/archive/greedy-algorithms',
+      icon: <FaCode size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-1',
+      enabled: true
+    },
+    {
+      title: 'Binary Search',
+      link: '/archive/binary-search',
+      icon: <FaSearch size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-2',
+      enabled: true
+    },
+    {
+      title: 'Bit Manipulation',
+      link: '/archive/bit-manipulation',
+      icon: <FaDigitalTachograph size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-3',
+      enabled: true
+    },
+    {
+      title: 'Trie',
+      link: '/archive/trie',
+      icon: <FaNetworkWired size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-1',
+      enabled: true
+    },
+    {
+      title: 'Sliding Window',
+      link: '/archive/sliding-window',
+      icon: <FaExchangeAlt size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-2',
+      enabled: true
+    },
+    {
+      title: 'Two Pointers',
+      link: '/archive/two-pointers',
+      icon: <FaExchangeAlt size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-3',
+      enabled: true
     }
   ];
 
@@ -161,29 +299,8 @@ const HomePage = () => {
             </Link>
             <span className="quiz-btn-glow"></span>
           </motion.div>
-          {/* --- End Cool Button --- */}
-            <motion.div
-                      whileHover={{
-                        scale: 1.12,
-                        rotate: [0, 2, -2, 0],
-                        boxShadow: "0 0 24px 8px #a78bfa, 0 0 60px 0px #8b5cf6"
-                      }}
-                      whileTap={{ scale: 0.97 }}
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0, transition: { delay: 0.5, type: "spring", stiffness: 200 } }}
-                      className="take-quiz-btn-wrapper"
-                    >
           
-                      <Link to="/archive" className="take-quiz-btn">
-                     
-                        <span className="quiz-btn-icon">
-                          <FaBook size={20} />
-                        </span>
-                        <span className="quiz-btn-text">Practice Questions</span>
-                        <span className="quiz-btn-emoji" role="img" aria-label="sparkles">✨</span>
-                      </Link>
-                      <span className="quiz-btn-glow"></span>
-                    </motion.div>
+          {/* --- End Cool Button --- */}
           <Link to="/about" className="homepage-nav-link">About us</Link>
           <a
             href="https://github.com/Openverse-iiitk/DSA-Website"
@@ -203,12 +320,12 @@ const HomePage = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
         >
-          Algorithima
+          Archiveima
         </motion.h1>
         
         <div className="homepage-columns">
           <div className="homepage-column">
-            <h2 className="homepage-column-title">Data Structures</h2>
+            <h2 className="homepage-column-title">IIITK PYQ's</h2>
             <div className="homepage-card-grid">
               {dataStructureCards.map((card, index) => (
                 <Card
@@ -227,7 +344,7 @@ const HomePage = () => {
           <div className="homepage-divider"></div>
           
           <div className="homepage-column">
-            <h2 className="homepage-column-title">Algorithms</h2>
+            <h2 className="homepage-column-title">LeetCode <sub> sorted by topic </sub> </h2> 
             <div className="homepage-card-grid">
               {algorithmCards.map((card, index) => (
                 <Card
