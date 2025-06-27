@@ -153,7 +153,7 @@ const HomePage = () => {
                       <span className="quiz-btn-icon">
                         <FaRocket size={20} />
                       </span>
-                      <span className="quiz-btn-text">Take a Quiz</span>
+                      <span className="quiz-btn-text">Practice Questions</span>
                       <span className="quiz-btn-emoji" role="img" aria-label="sparkles">✨</span>
                     </Link>
                     <span className="quiz-btn-glow"></span>
