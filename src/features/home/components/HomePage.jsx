@@ -222,33 +222,192 @@ const HomePage = () => {
           </div>
         </div>
         
-        {/* Enhanced floating particles throughout the page */}
-        <div className="floating-orb orb1"></div>
-        <div className="floating-orb orb2"></div>
-        <div className="floating-orb orb3"></div>
-        <div className="floating-orb orb4"></div>
-        <div className="floating-orb orb5"></div>
-        <div className="floating-orb orb6"></div>
-        <div className="floating-orb orb7"></div>
-        <div className="floating-orb orb8"></div>
+        {/* Enhanced 50 Stardust particles with size and color variations */}
+        <div className="stardust-particle stardust-small stardust-blue stardust-1"></div>
+        <div className="stardust-particle stardust-medium stardust-cyan stardust-2"></div>
+        <div className="stardust-particle stardust-large stardust-white stardust-3"></div>
+        <div className="stardust-particle stardust-small stardust-cyan stardust-4"></div>
+        <div className="stardust-particle stardust-medium stardust-blue stardust-5"></div>
+        <div className="stardust-particle stardust-large stardust-cyan stardust-6"></div>
+        <div className="stardust-particle stardust-small stardust-white stardust-7"></div>
+        <div className="stardust-particle stardust-medium stardust-blue stardust-8"></div>
+        <div className="stardust-particle stardust-large stardust-cyan stardust-9"></div>
+        <div className="stardust-particle stardust-small stardust-blue stardust-10"></div>
+        <div className="stardust-particle stardust-medium stardust-white stardust-11"></div>
+        <div className="stardust-particle stardust-large stardust-blue stardust-12"></div>
+        <div className="stardust-particle stardust-small stardust-cyan stardust-13"></div>
+        <div className="stardust-particle stardust-medium stardust-white stardust-14"></div>
+        <div className="stardust-particle stardust-large stardust-blue stardust-15"></div>
+        <div className="stardust-particle stardust-small stardust-cyan stardust-16"></div>
+        <div className="stardust-particle stardust-medium stardust-blue stardust-17"></div>
+        <div className="stardust-particle stardust-large stardust-white stardust-18"></div>
+        <div className="stardust-particle stardust-small stardust-blue stardust-19"></div>
+        <div className="stardust-particle stardust-medium stardust-cyan stardust-20"></div>
+        <div className="stardust-particle stardust-large stardust-blue stardust-21"></div>
+        <div className="stardust-particle stardust-small stardust-white stardust-22"></div>
+        <div className="stardust-particle stardust-medium stardust-cyan stardust-23"></div>
+        <div className="stardust-particle stardust-large stardust-blue stardust-24"></div>
+        <div className="stardust-particle stardust-small stardust-cyan stardust-25"></div>
+        <div className="stardust-particle stardust-medium stardust-white stardust-26"></div>
+        <div className="stardust-particle stardust-large stardust-blue stardust-27"></div>
+        <div className="stardust-particle stardust-small stardust-cyan stardust-28"></div>
+        <div className="stardust-particle stardust-medium stardust-blue stardust-29"></div>
+        <div className="stardust-particle stardust-large stardust-white stardust-30"></div>
+        <div className="stardust-particle stardust-small stardust-blue stardust-31"></div>
+        <div className="stardust-particle stardust-medium stardust-cyan stardust-32"></div>
+        <div className="stardust-particle stardust-large stardust-blue stardust-33"></div>
+        <div className="stardust-particle stardust-small stardust-white stardust-34"></div>
+        <div className="stardust-particle stardust-medium stardust-cyan stardust-35"></div>
+        <div className="stardust-particle stardust-large stardust-blue stardust-36"></div>
+        <div className="stardust-particle stardust-small stardust-cyan stardust-37"></div>
+        <div className="stardust-particle stardust-medium stardust-white stardust-38"></div>
+        <div className="stardust-particle stardust-large stardust-blue stardust-39"></div>
+        <div className="stardust-particle stardust-small stardust-cyan stardust-40"></div>
+        <div className="stardust-particle stardust-medium stardust-blue stardust-41"></div>
+        <div className="stardust-particle stardust-large stardust-white stardust-42"></div>
+        <div className="stardust-particle stardust-small stardust-blue stardust-43"></div>
+        <div className="stardust-particle stardust-medium stardust-cyan stardust-44"></div>
+        <div className="stardust-particle stardust-large stardust-blue stardust-45"></div>
+        <div className="stardust-particle stardust-small stardust-white stardust-46"></div>
+        <div className="stardust-particle stardust-medium stardust-cyan stardust-47"></div>
+        <div className="stardust-particle stardust-large stardust-blue stardust-48"></div>
+        <div className="stardust-particle stardust-small stardust-cyan stardust-49"></div>
+        <div className="stardust-particle stardust-medium stardust-white stardust-50"></div>
         
-        {/* Additional particles around cards */}
-        <div className="particle-container">
-          <div className="particle p1"></div>
-          <div className="particle p2"></div>
-          <div className="particle p3"></div>
-          <div className="particle p4"></div>
-          <div className="particle p5"></div>
-          <div className="particle p6"></div>
-          <div className="particle p7"></div>
-          <div className="particle p8"></div>
-          <div className="particle p9"></div>
-          <div className="particle p10"></div>
-          <div className="particle p11"></div>
-          <div className="particle p12"></div>
-          <div className="particle p13"></div>
-          <div className="particle p14"></div>
-          <div className="particle p15"></div>
+        {/* Enhanced Cosmic Clam centerpiece - positioned below cards */}
+        <div className="cosmic-clam-container">
+          <svg className="clam-shell" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              {/* Enhanced gradients for bottom shell with metallic texture */}
+              <linearGradient id="clamBottomGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#3A4B6C"/>
+                <stop offset="20%" stopColor="#2E3F5A"/>
+                <stop offset="40%" stopColor="#243248"/>
+                <stop offset="60%" stopColor="#1A2836"/>
+                <stop offset="80%" stopColor="#152030"/>
+                <stop offset="100%" stopColor="#0F1824"/>
+              </linearGradient>
+              
+              {/* Enhanced gradients for top shell with shimmer effect */}
+              <linearGradient id="clamTopGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#4A5B7E"/>
+                <stop offset="25%" stopColor="#3E4F6C"/>
+                <stop offset="50%" stopColor="#32435A"/>
+                <stop offset="75%" stopColor="#263748"/>
+                <stop offset="100%" stopColor="#1A2B36"/>
+              </linearGradient>
+              
+              {/* Shimmer effect for shells */}
+              <linearGradient id="shimmerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="rgba(255,255,255,0)" stopOpacity="0"/>
+                <stop offset="40%" stopColor="rgba(255,255,255,0.1)" stopOpacity="0.1"/>
+                <stop offset="50%" stopColor="rgba(255,255,255,0.3)" stopOpacity="0.3"/>
+                <stop offset="60%" stopColor="rgba(255,255,255,0.1)" stopOpacity="0.1"/>
+                <stop offset="100%" stopColor="rgba(255,255,255,0)" stopOpacity="0"/>
+              </linearGradient>
+              
+              {/* Pearl gradient with enhanced luminosity */}
+              <radialGradient id="pearlGradient" cx="30%" cy="30%">
+                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9"/>
+                <stop offset="20%" stopColor="#E8F4FD" stopOpacity="0.8"/>
+                <stop offset="40%" stopColor="#C7E7F7" stopOpacity="0.7"/>
+                <stop offset="60%" stopColor="#A7D8F0" stopOpacity="0.8"/>
+                <stop offset="80%" stopColor="#5BB4E8" stopOpacity="0.9"/>
+                <stop offset="100%" stopColor="#2E86AB" stopOpacity="1"/>
+              </radialGradient>
+              
+              {/* Glow filter for enhanced effects */}
+              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge> 
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              
+              {/* Shell texture pattern */}
+              <pattern id="shellTexture" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                <circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.05)"/>
+                <circle cx="5" cy="5" r="0.5" fill="rgba(255,255,255,0.03)"/>
+                <circle cx="15" cy="15" r="0.5" fill="rgba(255,255,255,0.03)"/>
+              </pattern>
+            </defs>
+            
+            {/* Bottom shell with enhanced details */}
+            <path 
+              className="clam-bottom"
+              d="M40 200 Q200 140 360 200 Q200 220 40 200"
+              fill="url(#clamBottomGradient)"
+              stroke="rgba(91, 180, 232, 0.2)"
+              strokeWidth="1"
+              filter="url(#glow)"
+            />
+            
+            {/* Bottom shell texture overlay */}
+            <path 
+              className="clam-bottom-texture"
+              d="M40 200 Q200 140 360 200 Q200 220 40 200"
+              fill="url(#shellTexture)"
+              opacity="0.6"
+            />
+            
+            {/* Top shell with enhanced details */}
+            <path 
+              className="clam-top"
+              d="M40 200 Q200 100 360 200 Q200 170 40 200"
+              fill="url(#clamTopGradient)"
+              stroke="rgba(91, 180, 232, 0.3)"
+              strokeWidth="1.5"
+              filter="url(#glow)"
+            />
+            
+            {/* Top shell texture overlay */}
+            <path 
+              className="clam-top-texture"
+              d="M40 200 Q200 100 360 200 Q200 170 40 200"
+              fill="url(#shellTexture)"
+              opacity="0.4"
+            />
+            
+            {/* Shimmer effect overlay on shells */}
+            <path 
+              className="clam-shimmer"
+              d="M40 200 Q200 100 360 200 Q200 170 40 200"
+              fill="url(#shimmerGradient)"
+              opacity="0.5"
+            />
+            
+            {/* Inner glow lines for shell detail */}
+            <path 
+              className="clam-detail-line-1"
+              d="M60 195 Q200 145 340 195"
+              stroke="rgba(91, 180, 232, 0.4)"
+              strokeWidth="0.5"
+              fill="none"
+            />
+            <path 
+              className="clam-detail-line-2"
+              d="M80 190 Q200 155 320 190"
+              stroke="rgba(91, 180, 232, 0.3)"
+              strokeWidth="0.5"
+              fill="none"
+            />
+          </svg>
+          
+          {/* Enhanced Luminous Pearl */}
+          <div className="pearl">
+            <div className="pearl-core"></div>
+            <div className="pearl-shine"></div>
+            <div className="pearl-glow-ring"></div>
+          </div>
+          
+          {/* Pearl light rays */}
+          <div className="pearl-rays">
+            <div className="ray ray-1"></div>
+            <div className="ray ray-2"></div>
+            <div className="ray ray-3"></div>
+            <div className="ray ray-4"></div>
+          </div>
         </div>
       </main>
 
