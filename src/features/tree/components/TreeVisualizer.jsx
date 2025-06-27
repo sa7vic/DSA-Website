@@ -27,16 +27,13 @@ class BST {
 
   insert(value) {
     this.animationSteps = [];
-    
-    // Check if inserting would exceed depth limit
     if (this.root && this.wouldExceedDepth(this.root, value, 0)) {
-      // Add animation steps showing the depth limit check process
       this.animationSteps.push({
         type: 'depth_limit',
         currentNode: null,
         value: value,
         path: [],
-        line: 41, // Line where we check "if (root != NULL && wouldExceedDepth(...))"
+        line: 41,
         description: `Checking if inserting ${value} would exceed maximum depth...`
       });
       this.animationSteps.push({
@@ -44,7 +41,7 @@ class BST {
         currentNode: null,
         value: value,
         path: [],
-        line: 28, // Line "if (currentDepth >= MAX_DEPTH) return 1;"
+        line: 28,
         description: `Depth limit check: currentDepth >= MAX_DEPTH (${this.maxDepth})`
       });
       this.animationSteps.push({
@@ -52,13 +49,12 @@ class BST {
         currentNode: null,
         value: value,
         path: [],
-        line: 42, // Error message line
+        line: 42,
         description: `❌ Cannot insert ${value}: Would exceed maximum tree depth of ${this.maxDepth + 1}`,
         error: true
       });
       return this.animationSteps;
     }
-    
     this.root = this.insertNodeWithAnimation(this.root, value, []);
     this.nodeCount++;
     return this.animationSteps;
@@ -67,24 +63,22 @@ class BST {
   wouldExceedDepth(node, value, currentDepth) {
     if (currentDepth >= this.maxDepth) return true;
     if (!node) return false;
-    
     if (value < node.value) {
       return this.wouldExceedDepth(node.left, value, currentDepth + 1);
     } else if (value > node.value) {
       return this.wouldExceedDepth(node.right, value, currentDepth + 1);
     }
-    return false; // Duplicate value
+    return false;
   }
 
   insertNodeWithAnimation(node, value, path) {
-    // More detailed line highlighting for insert operation
     if (node === null) {
       this.animationSteps.push({
         type: 'insert',
         currentNode: null,
         value: value,
         path: [...path],
-        line: 46, // "if (root == NULL)" check
+        line: 46,
         description: `Checking: if (root == NULL) - condition is TRUE, found insertion point`
       });
       this.animationSteps.push({
@@ -92,45 +86,41 @@ class BST {
         currentNode: null,
         value: value,
         path: [...path],
-        line: 47, // "return createNode(value)"
+        line: 47,
         description: `Creating and returning new node with value ${value}`
       });
       this.animationSteps.push({
         type: 'insert',
-        currentNode: value, // Show the newly created node
+        currentNode: value,
         value: value,
         path: [...path],
-        line: 12, // Show the createNode function being called
+        line: 12,
         description: `New node ${value} created successfully and linked to tree`
       });
     } else {
-      // First show we're at this node
       this.animationSteps.push({
         type: 'insert',
         currentNode: node.value,
         value: value,
         path: [...path],
-        line: 46, // "if (root == NULL)" check
+        line: 46,
         description: `Checking: if (${node.value} == NULL) - condition is FALSE, need to compare values`
       });
-      
-      // Show the comparison being made
       this.animationSteps.push({
         type: 'insert',
         currentNode: node.value,
         value: value,
         path: [...path],
-        line: 50, // Start of comparison "if (value < root->data)"
+        line: 50,
         description: `Comparing: ${value} vs ${node.value} to determine direction`
       });
-      
       if (value < node.value) {
         this.animationSteps.push({
           type: 'insert',
           currentNode: node.value,
           value: value,
           path: [...path],
-          line: 51, // "root->left = insert(root->left, value);"
+          line: 51,
           description: `${value} < ${node.value}, inserting in LEFT subtree`
         });
       } else if (value > node.value) {
@@ -139,7 +129,7 @@ class BST {
           currentNode: node.value,
           value: value,
           path: [...path],
-          line: 53, // "root->right = insert(root->right, value);"
+          line: 53,
           description: `${value} > ${node.value}, inserting in RIGHT subtree`
         });
       } else {
@@ -148,23 +138,20 @@ class BST {
           currentNode: node.value,
           value: value,
           path: [...path],
-          line: 52, // "} else if (value > root->data) {"
+          line: 52,
           description: `${value} == ${node.value}, duplicate value - skipping insertion`
         });
-        return node; // Don't insert duplicates
+        return node;
       }
     }
-
     if (node === null) {
       return new TreeNode(value);
     }
-
     if (value < node.value) {
       node.left = this.insertNodeWithAnimation(node.left, value, [...path, 'left']);
     } else if (value > node.value) {
       node.right = this.insertNodeWithAnimation(node.right, value, [...path, 'right']);
     }
-
     return node;
   }
 
@@ -175,14 +162,13 @@ class BST {
   }
 
   searchNodeWithAnimation(node, value, path) {
-    // Enhanced search highlighting with detailed step tracking
     if (node === null) {
       this.animationSteps.push({
         type: 'search',
         currentNode: null,
         value: value,
         path: [...path],
-        line: 60, // Line 60: "if (root == NULL) {"
+        line: 60,
         description: `Checking: if (root == NULL) - condition is TRUE, reached end without finding ${value}`
       });
       this.animationSteps.push({
@@ -190,29 +176,26 @@ class BST {
         currentNode: null,
         value: value,
         path: [...path],
-        line: 61, // Line 61: "return 0; // Not found"
+        line: 61,
         description: `Returning 0: ${value} NOT FOUND in tree`
       });
       return false;
     }
-
-    // First show we're examining this node
     this.animationSteps.push({
       type: 'search',
       currentNode: node.value,
       value: value,
       path: [...path],
-      line: 60, // Line 60: "if (root == NULL) {" - check fails, node exists
+      line: 60,
       description: `Checking: if (${node.value} == NULL) - condition is FALSE, examining node ${node.value}`
     });
-    
     if (value === node.value) {
       this.animationSteps.push({
         type: 'search',
         currentNode: node.value,
         value: value,
         path: [...path],
-        line: 64, // Line 64: "if (value == root->data) {"
+        line: 64,
         description: `Checking: if (${value} == ${node.value}) - condition is TRUE! FOUND!`
       });
       this.animationSteps.push({
@@ -220,29 +203,26 @@ class BST {
         currentNode: node.value,
         value: value,
         path: [...path],
-        line: 65, // Line 65: "return 1; // Found"
+        line: 65,
         description: `Returning 1: ${value} FOUND at this node!`
       });
       return true;
     }
-
-    // Show the comparison being made
     this.animationSteps.push({
       type: 'search',
       currentNode: node.value,
       value: value,
       path: [...path],
-      line: 64, // Line 64: "if (value == root->data) {"
+      line: 64,
       description: `Checking: if (${value} == ${node.value}) - condition is FALSE, need to search deeper`
     });
-    
     if (value < node.value) {
       this.animationSteps.push({
         type: 'search',
         currentNode: node.value,
         value: value,
         path: [...path],
-        line: 68, // Line 68: "if (value < root->data) {"
+        line: 68,
         description: `Checking: if (${value} < ${node.value}) - condition is TRUE, search LEFT`
       });
       this.animationSteps.push({
@@ -250,7 +230,7 @@ class BST {
         currentNode: node.value,
         value: value,
         path: [...path],
-        line: 69, // Line 69: "return search(root->left, value);"
+        line: 69,
         description: `Moving to LEFT child to continue search for ${value}`
       });
       return this.searchNodeWithAnimation(node.left, value, [...path, 'left']);
@@ -260,7 +240,7 @@ class BST {
         currentNode: node.value,
         value: value,
         path: [...path],
-        line: 68, // Line 68: "if (value < root->data) {" - condition is false
+        line: 68,
         description: `Checking: if (${value} < ${node.value}) - condition is FALSE`
       });
       this.animationSteps.push({
@@ -268,7 +248,7 @@ class BST {
         currentNode: node.value,
         value: value,
         path: [...path],
-        line: 71, // Line 71: "return search(root->right, value);"
+        line: 71,
         description: `Moving to RIGHT child to continue search for ${value}`
       });
       return this.searchNodeWithAnimation(node.right, value, [...path, 'right']);
@@ -283,14 +263,11 @@ class BST {
 
   getTreeDimensions() {
     if (!this.root) return { width: 500, height: 300 };
-    
     const getDepth = (node) => {
       if (!node) return 0;
       return 1 + Math.max(getDepth(node.left), getDepth(node.right));
     };
-    
     const maxDepth = getDepth(this.root);
-    
     return {
       width: Math.max(maxDepth * 140, 500),
       height: Math.max(maxDepth * 90, 300),
@@ -298,7 +275,6 @@ class BST {
     };
   }
 
-  // Tree traversal methods with animation support
   inorderTraversal() {
     this.animationSteps = [];
     const result = [];
@@ -308,75 +284,57 @@ class BST {
 
   inorderHelper(node, result) {
     if (node !== null) {
-      // Step 1: Highlight entering the function
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Entering inorder function with node ${node.value}`,
-        line: 76 // Line 76: "void inorder(struct TreeNode* root) {"
+        line: 76
       });
-      
-      // Step 2: Highlight the null check
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Checking: if (${node.value} != NULL) - condition is TRUE`,
-        line: 77 // Line 77: "if (root != NULL) {"
+        line: 77
       });
-      
-      // Step 3: About to process left subtree
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `At node ${node.value}: First, process left subtree (L in L-Root-R)`,
-        line: 78 // Line 78: "inorder(root->left);    // Left"
+        line: 78
       });
-      
-      // Recursively process left subtree
       this.inorderHelper(node.left, result);
-      
-      // Step 4: Back from left subtree, now process current node
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Back at node ${node.value}: Left subtree done, now process ROOT`,
-        line: 79 // Line 79: "printf("%d ", root->data); // Root"
+        line: 79
       });
-      
-      // Step 5: Actually visit/print the current node
       result.push(node.value);
       this.animationSteps.push({
         type: 'visit',
         currentNode: node.value,
         description: `VISITING node ${node.value}: Printing value (Root step of L-Root-R)`,
-        line: 79 // Line 79: "printf("%d ", root->data); // Root"
+        line: 79
       });
-      
-      // Step 6: About to process right subtree
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `At node ${node.value}: Finally, process right subtree (R in L-Root-R)`,
-        line: 80 // Line 80: "inorder(root->right);   // Right"
+        line: 80
       });
-      
-      // Recursively process right subtree
       this.inorderHelper(node.right, result);
-      
-      // Step 7: Returning from this node
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Completed processing node ${node.value}: L-Root-R all done, returning`,
-        line: 81 // Line 81: "}" closing brace of inorder function
+        line: 81
       });
     } else {
-      // Handle null case
       this.animationSteps.push({
         type: 'traverse',
         currentNode: null,
         description: `Reached NULL node - base case, returning immediately`,
-        line: 77 // Line 77: "if (root != NULL) {" - condition is false
+        line: 77
       });
     }
   }
@@ -390,75 +348,57 @@ class BST {
 
   preorderHelper(node, result) {
     if (node !== null) {
-      // Step 1: Highlight entering the function
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Entering preorder function with node ${node.value}`,
-        line: 84 // Line 84: "void preorder(struct TreeNode* root) {"
+        line: 84
       });
-      
-      // Step 2: Highlight the null check
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Checking: if (${node.value} != NULL) - condition is TRUE`,
-        line: 85 // Line 85: "if (root != NULL) {"
+        line: 85
       });
-      
-      // Step 3: Process root FIRST (preorder: Root-L-R)
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `At node ${node.value}: FIRST, process ROOT (Root in Root-L-R)`,
-        line: 86 // Line 86: "printf("%d ", root->data); // Root"
+        line: 86
       });
-      
-      // Step 4: Actually visit/print the current node
       result.push(node.value);
       this.animationSteps.push({
         type: 'visit',
         currentNode: node.value,
         description: `VISITING node ${node.value}: Printing value (Root step of Root-L-R)`,
-        line: 86 // Line 86: "printf("%d ", root->data); // Root"
+        line: 86
       });
-      
-      // Step 5: About to process left subtree
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `At node ${node.value}: Next, process left subtree (L in Root-L-R)`,
-        line: 87 // Line 87: "preorder(root->left);   // Left"
+        line: 87
       });
-      
-      // Recursively process left subtree
       this.preorderHelper(node.left, result);
-      
-      // Step 6: Back from left, about to process right subtree
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Back at node ${node.value}: Left done, now process right subtree (R in Root-L-R)`,
-        line: 88 // Line 88: "preorder(root->right);  // Right"
+        line: 88
       });
-      
-      // Recursively process right subtree
       this.preorderHelper(node.right, result);
-      
-      // Step 7: Returning from this node
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Completed processing node ${node.value}: Root-L-R all done, returning`,
-        line: 89 // Line 89: "}" closing brace of preorder function
+        line: 89
       });
     } else {
-      // Handle null case
       this.animationSteps.push({
         type: 'traverse',
         currentNode: null,
         description: `Reached NULL node - base case, returning immediately`,
-        line: 85 // Line 85: "if (root != NULL) {" - condition is false
+        line: 85
       });
     }
   }
@@ -472,84 +412,64 @@ class BST {
 
   postorderHelper(node, result) {
     if (node !== null) {
-      // Step 1: Highlight entering the function
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Entering postorder function with node ${node.value}`,
-        line: 92 // Line 92: "void postorder(struct TreeNode* root) {"
+        line: 92
       });
-      
-      // Step 2: Highlight the null check
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Checking: if (${node.value} != NULL) - condition is TRUE`,
-        line: 93 // Line 93: "if (root != NULL) {"
+        line: 93
       });
-      
-      // Step 3: About to process left subtree FIRST
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `At node ${node.value}: FIRST, process left subtree (L in L-R-Root)`,
-        line: 94 // Line 94: "postorder(root->left);  // Left"
+        line: 94
       });
-      
-      // Recursively process left subtree
       this.postorderHelper(node.left, result);
-      
-      // Step 4: Back from left, about to process right subtree
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Back at node ${node.value}: Left done, now process right subtree (R in L-R-Root)`,
-        line: 95 // Line 95: "postorder(root->right); // Right"
+        line: 95
       });
-      
-      // Recursively process right subtree
       this.postorderHelper(node.right, result);
-      
-      // Step 5: Back from right, about to process root LAST
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Back at node ${node.value}: Both children done, FINALLY process ROOT (Root in L-R-Root)`,
-        line: 96 // Line 96: "printf("%d ", root->data); // Root"
+        line: 96
       });
-      
-      // Step 6: Actually visit/print the current node LAST
       result.push(node.value);
       this.animationSteps.push({
         type: 'visit',
         currentNode: node.value,
         description: `VISITING node ${node.value}: Printing value LAST (Root step of L-R-Root)`,
-        line: 96 // Line 96: "printf("%d ", root->data); // Root"
+        line: 96
       });
-      
-      // Step 7: Returning from this node
       this.animationSteps.push({
         type: 'traverse',
         currentNode: node.value,
         description: `Completed processing node ${node.value}: L-R-Root all done, returning`,
-        line: 97 // Line 97: "}" closing brace of postorder function
+        line: 97
       });
     } else {
-      // Handle null case
       this.animationSteps.push({
         type: 'traverse',
         currentNode: null,
         description: `Reached NULL node - base case, returning immediately`,
-        line: 93 // Line 93: "if (root != NULL) {" - condition is false
+        line: 93
       });
     }
   }
 }
 
-// Tree Visualization Component - Improved Layout Algorithm
 const TreeDisplay = ({ tree, highlightedNode, currentStep }) => {
   const svgRef = useRef(null);
-  
   if (!tree.root) {
     return (
       <div className="tree-display">
@@ -560,40 +480,27 @@ const TreeDisplay = ({ tree, highlightedNode, currentStep }) => {
       </div>
     );
   }
-
-  // Advanced tree layout calculation to prevent overlaps
   const calculateNodePositions = (node, level = 0, leftBound = 0, rightBound = 800) => {
     if (!node) return null;
-
     const nodeRadius = 22;
-    const minSpacing = 60; // Minimum distance between any two nodes
+    const minSpacing = 60;
     const levelHeight = 70;
-
-    // Calculate subtree widths to determine proper positioning
     const getSubtreeWidth = (n) => {
       if (!n) return 0;
       if (!n.left && !n.right) return minSpacing;
       return getSubtreeWidth(n.left) + getSubtreeWidth(n.right) + minSpacing;
     };
-
     const leftSubtreeWidth = getSubtreeWidth(node.left);
     const rightSubtreeWidth = getSubtreeWidth(node.right);
     const totalWidth = rightBound - leftBound;
-
-    // Position node in center of available space
     const x = leftBound + totalWidth / 2;
     const y = 50 + level * levelHeight;
-
-    // Calculate bounds for children with better spacing
     const leftChildRightBound = x - minSpacing / 2;
     const rightChildLeftBound = x + minSpacing / 2;
-
-    // Recursively calculate child positions with adjusted bounds
     const leftChild = node.left ? 
       calculateNodePositions(node.left, level + 1, leftBound, leftChildRightBound) : null;
     const rightChild = node.right ? 
       calculateNodePositions(node.right, level + 1, rightChildLeftBound, rightBound) : null;
-
     return {
       node,
       x,
@@ -603,32 +510,22 @@ const TreeDisplay = ({ tree, highlightedNode, currentStep }) => {
       rightChild
     };
   };
-
-  // Calculate tree dimensions
   const getTreeHeight = (node) => {
     if (!node) return 0;
     return 1 + Math.max(getTreeHeight(node.left), getTreeHeight(node.right));
   };
-
   const treeHeight = getTreeHeight(tree.root);
-  const svgWidth = 760; // Fit within panel
+  const svgWidth = 760;
   const svgHeight = Math.min(460, Math.max(treeHeight * 70 + 100, 300));
-  
-  // Calculate positions using improved algorithm
   const treeLayout = calculateNodePositions(tree.root, 0, 50, svgWidth - 50);
-
   const renderTreeFromLayout = (layout) => {
     if (!layout) return [];
-
     const { node, x, y, leftChild, rightChild } = layout;
     const elements = [];
     const nodeRadius = 22;
-    
     const isHighlighted = highlightedNode === node.value;
     const isCurrentNode = currentStep && currentStep.currentNode === node.value;
     const isVisiting = currentStep && currentStep.type === 'visit' && currentStep.currentNode === node.value;
-
-    // Draw edges to children with proper positioning
     if (leftChild) {
       elements.push(
         <line
@@ -642,7 +539,6 @@ const TreeDisplay = ({ tree, highlightedNode, currentStep }) => {
         />
       );
     }
-
     if (rightChild) {
       elements.push(
         <line
@@ -656,20 +552,16 @@ const TreeDisplay = ({ tree, highlightedNode, currentStep }) => {
         />
       );
     }
-
-    // Node colors based on state
     let nodeColor;
     if (isVisiting) {
-      nodeColor = "#f39c12"; // Orange for traversal visit
+      nodeColor = "#f39c12";
     } else if (isCurrentNode) {
-      nodeColor = "#58a6ff"; // Blue for current operation
+      nodeColor = "#58a6ff";
     } else if (isHighlighted) {
-      nodeColor = "#f85149"; // Red for highlighted/error
+      nodeColor = "#f85149";
     } else {
-      nodeColor = "#238636"; // Green for normal nodes
+      nodeColor = "#238636";
     }
-    
-    // Render the node
     elements.push(
       <g key={`node-${node.value}`} className="tree-node">
         <circle
@@ -688,18 +580,14 @@ const TreeDisplay = ({ tree, highlightedNode, currentStep }) => {
         </text>
       </g>
     );
-
-    // Render children
     if (leftChild) {
       elements.push(...renderTreeFromLayout(leftChild));
     }
     if (rightChild) {
       elements.push(...renderTreeFromLayout(rightChild));
     }
-
     return elements;
   };
-
   return (
     <div className="tree-display">
       <svg 
@@ -717,13 +605,10 @@ const TreeDisplay = ({ tree, highlightedNode, currentStep }) => {
 };
 
 const TreeVisualizer = () => {
-  // Core state
   const [tree] = useState(new BST());
   const [inputValue, setInputValue] = useState('');
   const [message, setMessage] = useState('Ready for operations');
   const [treeVersion, setTreeVersion] = useState(0);
-  
-  // Animation state
   const [animationSteps, setAnimationSteps] = useState([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -731,11 +616,12 @@ const TreeVisualizer = () => {
   const [highlightedNode, setHighlightedNode] = useState(null);
   const [currentLine, setCurrentLine] = useState(0);
   const [currentStep, setCurrentStep] = useState(null);
-  
+  const [traversalResult, setTraversalResult] = useState([]);
+  const [traversalType, setTraversalType] = useState('');
+  const [fullTraversalResult, setFullTraversalResult] = useState([]);
   const timeoutRef = useRef(null);
   const codeViewerRef = useRef(null);
 
-  // Auto-scroll to highlighted line
   useEffect(() => {
     if (currentLine && codeViewerRef.current) {
       const lineElement = codeViewerRef.current.querySelector(`[data-line-number="${currentLine}"]`);
@@ -749,12 +635,10 @@ const TreeVisualizer = () => {
     }
   }, [currentLine]);
 
-  // Animation control
   useEffect(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-
     if (isAnimating && currentStepIndex < animationSteps.length - 1) {
       timeoutRef.current = setTimeout(() => {
         setCurrentStepIndex(prev => prev + 1);
@@ -762,7 +646,6 @@ const TreeVisualizer = () => {
     } else if (currentStepIndex >= animationSteps.length - 1) {
       setIsAnimating(false);
     }
-
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -770,38 +653,53 @@ const TreeVisualizer = () => {
     };
   }, [isAnimating, currentStepIndex, animationSteps.length, animationSpeed]);
 
-  // Update highlights based on current step
   useEffect(() => {
     if (animationSteps.length > 0 && currentStepIndex < animationSteps.length) {
       const step = animationSteps[currentStepIndex];
       setHighlightedNode(step.currentNode);
       setCurrentLine(step.line);
       setMessage(step.description);
-      setCurrentStep(step); // Set the current step for TreeDisplay
+      setCurrentStep(step);
+
+      // Update traversalResult as nodes are visited
+      if (
+        (step.type === 'visit' || step.type === 'traverse') &&
+        step.currentNode !== null &&
+        fullTraversalResult.length > 0
+      ) {
+        // Find all 'visit' steps up to currentStepIndex
+        const visited = [];
+        for (let i = 0; i <= currentStepIndex; i++) {
+          const s = animationSteps[i];
+          if (s.type === 'visit' && s.currentNode !== null) {
+            if (!visited.includes(s.currentNode)) visited.push(s.currentNode);
+          }
+        }
+        setTraversalResult(visited);
+      }
+      // Reset if not in traversal
+      if (!['inorder', 'preorder', 'postorder'].includes(traversalType)) {
+        setTraversalResult([]);
+      }
     } else {
       setCurrentStep(null);
     }
-  }, [animationSteps, currentStepIndex]);
+  }, [animationSteps, currentStepIndex, fullTraversalResult, traversalType]);
 
   const forceUpdate = () => {
     setTreeVersion(prev => prev + 1);
   };
 
   const resetAnimation = () => {
-    // Stop current animation
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     setIsAnimating(false);
-    
-    // Clear all animation state
     setAnimationSteps([]);
     setCurrentStepIndex(0);
     setHighlightedNode(null);
     setCurrentLine(0);
     setCurrentStep(null);
-    
-    // Clear animation steps from the tree object itself
     if (tree) {
       tree.animationSteps = [];
     }
@@ -813,15 +711,12 @@ const TreeVisualizer = () => {
       setMessage('Please enter a valid number');
       return;
     }
-
-    // Ensure complete state reset
     resetAnimation();
-    
-    // Force a brief delay to ensure state is completely reset
     setTimeout(() => {
       const steps = tree.insert(value);
-      
-      // Check if we got an error step for depth limit
+      setTraversalResult([]);
+      setTraversalType('');
+      setFullTraversalResult([]);
       if (steps.length > 0 && steps[0].error) {
         setAnimationSteps(steps);
         setCurrentStepIndex(0);
@@ -830,22 +725,19 @@ const TreeVisualizer = () => {
         setIsAnimating(true);
         return;
       }
-      
       if (steps.length === 0) {
         setMessage(`Cannot insert ${value} - unexpected error`);
         return;
       }
-      
       setAnimationSteps(steps);
       setCurrentStepIndex(0);
       setMessage(`Inserting ${value}...`);
       setInputValue('');
       forceUpdate();
-      
       if (steps.length > 0) {
         setIsAnimating(true);
       }
-    }, 50); // Small delay to ensure state reset
+    }, 50);
   };
 
   const handleSearch = () => {
@@ -854,28 +746,29 @@ const TreeVisualizer = () => {
       setMessage('Please enter a valid number');
       return;
     }
-
-    // Ensure complete state reset
     resetAnimation();
-    
-    // Force a brief delay to ensure state is completely reset
     setTimeout(() => {
       const { found, steps } = tree.search(value);
+      setTraversalResult([]);
+      setTraversalType('');
+      setFullTraversalResult([]);
       setAnimationSteps(steps);
       setCurrentStepIndex(0);
       setMessage(`Searching for ${value}...`);
-      
       if (steps.length > 0) {
         setIsAnimating(true);
       } else {
         setMessage(found ? `Found ${value}!` : `${value} not found`);
       }
-    }, 50); // Small delay to ensure state reset
+    }, 50);
   };
 
   const handleRandom = () => {
     resetAnimation();
     tree.clear();
+    setTraversalResult([]);
+    setTraversalType('');
+    setFullTraversalResult([]);
     const values = [];
     for (let i = 0; i < 7; i++) {
       values.push(Math.floor(Math.random() * 100) + 1);
@@ -888,6 +781,9 @@ const TreeVisualizer = () => {
   const handleClear = () => {
     resetAnimation();
     tree.clear();
+    setTraversalResult([]);
+    setTraversalType('');
+    setFullTraversalResult([]);
     setMessage('Tree cleared');
     forceUpdate();
   };
@@ -913,16 +809,14 @@ const TreeVisualizer = () => {
   const handleTraversal = (type) => {
     if (!tree.root) {
       setMessage('Tree is empty - add some nodes first');
+      setTraversalResult([]);
+      setTraversalType('');
+      setFullTraversalResult([]);
       return;
     }
-
-    // Ensure complete state reset
     resetAnimation();
-    
-    // Force a brief delay to ensure state is completely reset
     setTimeout(() => {
       let result, steps;
-      
       switch(type) {
         case 'inorder':
           ({ result, steps } = tree.inorderTraversal());
@@ -937,16 +831,20 @@ const TreeVisualizer = () => {
           setMessage(`Postorder traversal: ${result.join(' → ')}`);
           break;
         default:
+          setTraversalResult([]);
+          setTraversalType('');
+          setFullTraversalResult([]);
           return;
       }
-      
+      setTraversalType(type);
+      setFullTraversalResult(result);
+      setTraversalResult([]);
       setAnimationSteps(steps);
       setCurrentStepIndex(0);
-      
       if (steps.length > 0) {
         setIsAnimating(true);
       }
-    }, 50); // Small delay to ensure state reset
+    }, 50);
   };
 
   const getCode = () => {
@@ -1050,9 +948,12 @@ void postorder(struct TreeNode* root) {
 }`;
   };
 
+  const traversalTitle = traversalType
+    ? `${traversalType.charAt(0).toUpperCase() + traversalType.slice(1)} traversal result:`
+    : '';
+
   return (
     <div className="tree-app">
-      {/* Header */}
       <header className="header">
         <Link to="/" className="home-btn">
           <FaHome />
@@ -1060,10 +961,7 @@ void postorder(struct TreeNode* root) {
         </Link>
         <h1>Binary Search Tree Visualizer</h1>
       </header>
-
-      {/* Main Content */}
       <main className="split-view">
-        {/* Code Panel */}
         <section className="panel code-panel">
           <h2>C Implementation</h2>
           <div className="code-viewer" ref={codeViewerRef}>
@@ -1096,9 +994,9 @@ void postorder(struct TreeNode* root) {
                   'data-line-number': lineNumber,
                   style: { 
                     backgroundColor: isErrorLine 
-                      ? 'rgba(248, 81, 73, 0.4)' // Red for errors
+                      ? 'rgba(248, 81, 73, 0.4)'
                       : isCurrentLine 
-                        ? 'rgba(88, 166, 255, 0.3)' // Blue for normal highlighting
+                        ? 'rgba(88, 166, 255, 0.3)'
                         : 'transparent',
                     display: 'block',
                     color: isCurrentLine ? '#fff' : undefined,
@@ -1113,11 +1011,8 @@ void postorder(struct TreeNode* root) {
             </SyntaxHighlighter>
           </div>
         </section>
-
-        {/* Visualization Panel */}
         <section className="panel viz-panel">
           <h2>Interactive Visualization</h2>
-          
           <div className="controls">
             <div className="input-group">
               <input
@@ -1135,7 +1030,6 @@ void postorder(struct TreeNode* root) {
                 <FaSearch /> Search
               </button>
             </div>
-            
             <div className="action-group">
               <button onClick={handleRandom} className="btn btn-info" disabled={isAnimating}>
                 <FaRandom /> Random Tree
@@ -1144,7 +1038,6 @@ void postorder(struct TreeNode* root) {
                 <FaTrash /> Clear
               </button>
             </div>
-
             <div className="traversal-group">
               <button onClick={() => handleTraversal('inorder')} className="btn btn-secondary" disabled={isAnimating}>
                 Inorder
@@ -1156,7 +1049,6 @@ void postorder(struct TreeNode* root) {
                 Postorder
               </button>
             </div>
-
             {animationSteps.length > 0 && (
               <div className="animation-controls">
                 <div className="playback-controls">
@@ -1170,11 +1062,9 @@ void postorder(struct TreeNode* root) {
                     <FaStepForward />
                   </button>
                 </div>
-                
                 <div className="progress-info">
                   Step {currentStepIndex + 1} of {animationSteps.length}
                 </div>
-                
                 <div className="speed-control">
                   <label>Speed:</label>
                   <input
@@ -1191,22 +1081,26 @@ void postorder(struct TreeNode* root) {
               </div>
             )}
           </div>
-
+          {traversalType && (
+            <div>
+              <div style={{ fontWeight: 'bold', marginBottom: 4 }}>{traversalTitle}</div>
+              <div className="traversal-result-bar">
+                {traversalResult.map((val, idx) => (
+                  <div key={idx} className="traversal-block">{val}</div>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="message">
             {message}
           </div>
-
           <TreeDisplay 
             key={treeVersion} 
             tree={tree} 
             highlightedNode={highlightedNode}
             currentStep={currentStep}
           />
-          
-          {/* Explanation Section */}
           <TreeExplanation />
-          
-          {/* DIY Section */}
           <TreeDiySection />
         </section>
       </main>
