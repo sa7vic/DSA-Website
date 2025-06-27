@@ -148,7 +148,7 @@ const HomePage = () => {
             className="take-quiz-btn-wrapper"
           >
 
-            <Link to="/quiz" className="take-quiz-btn">
+            <Link to="/archive" className="take-quiz-btn">
 
                       <span className="quiz-btn-icon">
                         <FaRocket size={20} />
