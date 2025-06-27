@@ -26,6 +26,9 @@ import './features/linkedList/styles/LinkedList.css'
 import './features/sorting/styles/Sorting.css'
 import './features/tree/styles/TreeVisualizer.css'
 import './features/pathfinding/styles/Pathfinding.css'
+import './features/quiz/styles/Quiz.css'
+import './features/quiz/styles/landingpage.css'
+
 
 // Shared components
 import ErrorBoundary from './features/common/components/ErrorBoundary'
@@ -41,6 +44,8 @@ import SortingVisualizer from './features/sorting/components/SortingVisualizer'
 import StackQueueVisualizer from './features/stackQueue/components/StackQueueVisualizer'
 import TreeVisualizer from './features/tree/components/TreeVisualizer'
 import PathfindingVisualizer from './features/pathfinding/components/PathfindingVisualizer'
+import LandingPage from './features/quiz/components/landingpage';
+import Quiz from './features/quiz/components/Quiz';
 
 // Utility functions
 import { generateCppCode } from './utils/codeGenerator'
@@ -239,6 +244,9 @@ function App() {
           <Route path="/trees" element={<Navigate replace to="/tree" />} />
           <Route path="/graphs" element={<Navigate replace to="/pathfinding" />} />
           <Route path="/pathfinding-visualizer" element={<Navigate replace to="/pathfinding" />} />
+          
+          <Route path="/quiz" element={<LandingPage />} />
+          <Route path="/quiz/:topic" element={<ErrorBoundary><Quiz /></ErrorBoundary>} />
         </Routes>
       </Router>
     </ErrorBoundary>
