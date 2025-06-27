@@ -141,16 +141,36 @@ const HomePage = () => {
           </a>
         </div>
         <div className="homepage-nav">
-          <Link to="/about" className="homepage-nav-link">About us</Link>
-          <a href="https://github.com/Openverse-iiitk/DSA-Website" 
-             target="_blank" 
-             rel="noopener noreferrer" 
-             className="homepage-nav-link"
+          <motion.div
+            whileTap={{ scale: 0.97 }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0, transition: { delay: 0.5, type: "spring", stiffness: 200 } }}
+            className="take-quiz-btn-wrapper"
           >
-            <FaGithub size={24} />
-          </a>
-        </div>
-      </header>
+
+            <Link to="/quiz" className="take-quiz-btn">
+
+                      <span className="quiz-btn-icon">
+                        <FaRocket size={20} />
+                      </span>
+                      <span className="quiz-btn-text">Take a Quiz</span>
+                      <span className="quiz-btn-emoji" role="img" aria-label="sparkles">✨</span>
+                    </Link>
+                    <span className="quiz-btn-glow"></span>
+                  </motion.div>
+                  
+                  {/* --- End Cool Button --- */}
+                  <Link to="/about" className="homepage-nav-link">About us</Link>
+                  <a
+                    href="https://github.com/Openverse-iiitk/DSA-Website"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="homepage-nav-link"
+                  >
+                    <FaGithub size={24} />
+                  </a>
+                </div>
+              </header>
 
       <main className="homepage-main">
         <motion.h1
