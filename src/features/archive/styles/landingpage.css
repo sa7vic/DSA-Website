@@ -1194,12 +1194,7 @@
 }
 
 /* Cosmic Quiz Button */
-.take-quiz-btn-wrapper {
-  position: relative;
-  margin-right: 1rem;
-  display: flex;
-  align-items: center;
-}
+
 
 .take-quiz-btn {
   display: flex;
@@ -1217,14 +1212,11 @@
   z-index: 1;
   text-decoration: none;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 3px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
 }
 
-.take-quiz-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(91, 180, 232, 0.4);
-}
+
 
 .quiz-btn-icon {
   display: flex;
@@ -1253,27 +1245,13 @@
   inset: 0;
   border-radius: 999px;
   pointer-events: none;
-  box-shadow: 0 0 20px rgba(91, 180, 232, 0.3);
+  box-shadow: 0 0 20px rgba(142, 204, 239, 0.431);
   opacity: 0.6;
   z-index: 0;
   animation: quiz-btn-glow-anim 3s ease-in-out infinite;
 }
 
-@keyframes quiz-btn-glow-anim {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 0.9; }
-}
 
-@keyframes pearlEnergyField {
-  0%, 100% { 
-    transform: scale(0.8);
-    opacity: 0.2;
-  }
-  50% { 
-    transform: scale(1.4);
-    opacity: 0.6;
-  }
-}
 
 @keyframes pearlSpark {
   0% { 

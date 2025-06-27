@@ -278,11 +278,7 @@ const HomePage = () => {
          <div className="homepage-nav">
           {/* --- Cool "Take a Quiz" Button --- */}
           <motion.div
-            whileHover={{
-              scale: 1.12,
-              rotate: [0, 2, -2, 0],
-              boxShadow: "0 0 24px 8px #a78bfa, 0 0 60px 0px #8b5cf6"
-            }}
+           
             whileTap={{ scale: 0.97 }}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0, transition: { delay: 0.5, type: "spring", stiffness: 200 } }}

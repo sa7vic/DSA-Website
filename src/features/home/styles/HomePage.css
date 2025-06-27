@@ -1194,86 +1194,8 @@
 }
 
 /* Cosmic Quiz Button */
-.take-quiz-btn-wrapper {
-  position: relative;
-  margin-right: 1rem;
-  display: flex;
-  align-items: center;
-}
 
-.take-quiz-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.7rem 1.5rem;
-  background: linear-gradient(135deg, #5BB4E8 0%, #2E86AB 50%, #1E5F7A 100%);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 1rem;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-}
 
-.take-quiz-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(91, 180, 232, 0.4);
-}
-
-.quiz-btn-icon {
-  display: flex;
-  align-items: center;
-  animation: quiz-btn-float 2s ease-in-out infinite;
-}
-
-@keyframes quiz-btn-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
-}
-
-.quiz-btn-emoji {
-  font-size: 1.1em;
-  margin-left: 0.2em;
-  animation: quiz-btn-twinkle 2.5s ease-in-out infinite;
-}
-
-@keyframes quiz-btn-twinkle {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 1; }
-}
-
-.quiz-btn-glow {
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  pointer-events: none;
-  box-shadow: 0 0 20px rgba(91, 180, 232, 0.3);
-  opacity: 0.6;
-  z-index: 0;
-  animation: quiz-btn-glow-anim 3s ease-in-out infinite;
-}
-
-@keyframes quiz-btn-glow-anim {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 0.9; }
-}
-
-@keyframes pearlEnergyField {
-  0%, 100% { 
-    transform: scale(0.8);
-    opacity: 0.2;
-  }
-  50% { 
-    transform: scale(1.4);
-    opacity: 0.6;
-  }
-}
 
 @keyframes pearlSpark {
   0% { 
