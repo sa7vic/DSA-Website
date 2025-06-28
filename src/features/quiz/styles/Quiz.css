@@ -309,6 +309,51 @@
   gap: 0.5rem;
 }
 
+/* Header Start Section */
+.header-start-section {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.header-start-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0 auto 1rem;
+  padding: 1.5rem 2.5rem;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 24px rgba(139, 92, 246, 0.3);
+  overflow: hidden;
+  min-width: 280px;
+}
+
+.header-start-button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+}
+
+.header-start-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.header-start-note {
+  color: #7d8590;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
 /* Main Grid Layout */
 .setup-grid {
   display: grid;
@@ -324,6 +369,74 @@
   min-height: 0;
 }
 
+.setup-right {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.setup-right .quiz-preview {
+  grid-column: 1 / -1;
+}
+.quiz-tips {
+  padding-top: 1.5rem;
+  border-top: 1px solid #30363d;
+  margin-top: 1.5rem;
+}
+
+.quiz-tips h4 {
+  color: #e6edf3;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 1rem 0;
+}
+
+.tips-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.tip-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #7d8590;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.tip-icon {
+  color: #8b5cf6;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.recommendation {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.recommendation h5 {
+  color: #8b5cf6;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.recommendation p {
+  color: #e6edf3;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0;
+}
 /* Section Cards */
 .section-card {
   background: rgba(22, 27, 34, 0.8);

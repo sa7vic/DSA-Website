@@ -67,10 +67,29 @@ const QuizSetup = ({ topic, onStartQuiz, availableQuestions }) => {
                 {availableQuestions} questions available
               </span>
             </div>
-            <p className="topic-description">
-              Test your knowledge of {formatTopicName(topic)} with our comprehensive quiz. 
-              Questions range from basic concepts to advanced applications.
-            </p>
+            
+            {/* Start Quiz Button in Header */}
+            <div className="header-start-section">
+              <motion.button
+                className="header-start-button"
+                onClick={handleStart}
+                disabled={selectedCount < 1 || selectedCount > availableQuestions}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <FaPlay className="start-icon" />
+                <div className="button-content">
+                  <span className="button-text">Start Quiz</span>
+                  <span className="button-subtitle">
+                    {selectedCount} question{selectedCount !== 1 ? 's' : ''} • ~{Math.ceil(selectedCount * 1.5)} minutes
+                  </span>
+                </div>
+              </motion.button>
+              
+              <p className="header-start-note">
+                
+              </p>
+            </div>
           </div>
         </motion.div>
 
@@ -125,35 +144,15 @@ const QuizSetup = ({ topic, onStartQuiz, availableQuestions }) => {
                 </div>
                 <p className="custom-note">Enter any number between 1 and {availableQuestions}</p>
               </div>
-            </div>
 
-            {/* Start Quiz Section */}
-            <div className="section-card start-quiz-card">
-              <h3 className="section-title">
-                <FaPlay className="section-icon" />
-                Ready to Start?
-              </h3>
-              
-              <div className="start-quiz-content">
-                <motion.button
-                  className="start-button"
-                  onClick={handleStart}
-                  disabled={selectedCount < 1 || selectedCount > availableQuestions}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <FaPlay className="start-icon" />
-                  <div className="button-content">
-                    <span className="button-text">Start Quiz</span>
-                    <span className="button-subtitle">
-                      {selectedCount} question{selectedCount !== 1 ? 's' : ''} • ~{Math.ceil(selectedCount * 1.5)} minutes
-                    </span>
-                  </div>
-                </motion.button>
+              {/* Quiz Tips & Information */}
+              <div className="quiz-tips">
                 
-                <p className="start-note">
-                  Navigate between questions and change answers until you submit the quiz.
-                </p>
+                
+                <div className="recommendation">
+                  <h5>💡 Recommendation</h5>
+                  <p>Start with 10-15 questions to get familiar with the format. You can always take more quizzes later!</p>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -182,76 +181,47 @@ const QuizSetup = ({ topic, onStartQuiz, availableQuestions }) => {
               </div>
             </div>
 
-            {/* Topic Statistics */}
+            {/* Topic Statistics - Direct 2x2 Grid */}
             {topicStats && (
-              <div className="section-card topic-stats">
-                <h3 className="section-title">
-                  <FaChartLine className="section-icon" />
-                  Your Stats
-                </h3>
-                <div className="stats-grid">
-                  <div className="stat-card">
-                    <FaListUl className="stat-icon" />
-                    <div className="stat-content">
-                      <span className="stat-number">{topicStats.totalQuizzes}</span>
-                      <span className="stat-label">Quizzes</span>
-                    </div>
-                  </div>
-                  
-                  <div className="stat-card">
-                    <FaChartLine className="stat-icon" />
-                    <div className="stat-content">
-                      <span className="stat-number">{topicStats.averageAccuracy}%</span>
-                      <span className="stat-label">Avg Score</span>
-                    </div>
-                  </div>
-                  
-                  <div className="stat-card best-score">
-                    <FaChartLine className="stat-icon" />
-                    <div className="stat-content">
-                      <span className="stat-number">{topicStats.bestAccuracy}%</span>
-                      <span className="stat-label">Best</span>
-                    </div>
-                  </div>
-                  
-                  <div className="stat-card">
-                    <FaClock className="stat-icon" />
-                    <div className="stat-content">
-                      <span className="stat-number">
-                        {Math.round(topicStats.averageTime / 60000)}m
-                      </span>
-                      <span className="stat-label">Avg Time</span>
-                    </div>
+              <>
+                <div className="stat-card">
+                  <FaListUl className="stat-icon" />
+                  <div className="stat-content">
+                    <span className="stat-number">{topicStats.totalQuizzes}</span>
+                    <span className="stat-label">Quizzes</span>
                   </div>
                 </div>
-              </div>
+                
+                <div className="stat-card">
+                  <FaChartLine className="stat-icon" />
+                  <div className="stat-content">
+                    <span className="stat-number">{topicStats.averageAccuracy}%</span>
+                    <span className="stat-label">Avg Score</span>
+                  </div>
+                </div>
+                
+                <div className="stat-card best-score">
+                  <FaChartLine className="stat-icon" />
+                  <div className="stat-content">
+                    <span className="stat-number">{topicStats.bestAccuracy}%</span>
+                    <span className="stat-label">Best</span>
+                  </div>
+                </div>
+                
+                <div className="stat-card">
+                  <FaClock className="stat-icon" />
+                  <div className="stat-content">
+                    <span className="stat-number">
+                      {Math.round(topicStats.averageTime / 60000)}m
+                    </span>
+                    <span className="stat-label">Avg Time</span>
+                  </div>
+                </div>
+              </>
             )}
 
             {/* Quiz Features */}
-            <div className="section-card quiz-features">
-              <h3 className="section-title">
-                <FaListUl className="section-icon" />
-                Features
-              </h3>
-              <div className="features-grid">
-                <div className="feature">
-                  <FaClock className="feature-icon" />
-                  <span>Timer tracking</span>
-                </div>
-                <div className="feature">
-                  <FaListUl className="feature-icon" />
-                  <span>Question navigation</span>
-                </div>
-                <div className="feature">
-                  <FaChartLine className="feature-icon" />
-                  <span>Detailed explanations</span>
-                </div>
-                <div className="feature">
-                  <FaQuestionCircle className="feature-icon" />
-                  <span>Instant feedback</span>
-                </div>
-              </div>
-            </div>
+            
           </motion.div>
         </div>
       </div>
