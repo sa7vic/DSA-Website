@@ -255,7 +255,6 @@ export const questionBank = {
       explanation: "Linked lists have poor cache locality because nodes are not stored contiguously in memory, unlike arrays.",
       difficulty: "medium"
     },
-    // Adding more linkedlist questions
     {
       id: 11,
       question: "How do you find the middle element of a linked list in one pass?",
@@ -376,6 +375,7 @@ export const questionBank = {
       question: "What is the worst-case time complexity of Quick Sort?",
       options: ["O(n)", "O(n log n)", "O(n²)", "O(2ⁿ)"],
       correctAnswer: 2,
+      explanation: "Quick Sort's worst case occurs when the pivot is always the smallest or largest element, leading to O(n²) complexity.",
       explanation: "Quick Sort's worst case occurs when the pivot is always the smallest or largest element, leading to O(n²) complexity.",
       difficulty: "medium"
     },

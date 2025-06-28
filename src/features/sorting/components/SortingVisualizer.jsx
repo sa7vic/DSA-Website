@@ -1185,8 +1185,7 @@ const SortingVisualizer = () => {
   return (
     <div className="sorting-container">
       {/* Background elements */}
-      <div className="floating-orb orb-1"></div>
-      <div className="floating-orb orb-2"></div>
+      
       
       {/* Header */}
       <motion.header 

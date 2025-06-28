@@ -45,7 +45,7 @@ const HomePage = () => {
   const dataStructureCards = [
     {
       title: 'Linked Lists',
-      link: '/quiz/linked-list', 
+      link: '/quiz/linkedlist', 
       icon: <FaListUl size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-1',
       enabled: true

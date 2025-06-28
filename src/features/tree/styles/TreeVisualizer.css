@@ -94,7 +94,7 @@
   font-size: 2.5rem;
   font-weight: 900;
   margin: 0;
-  background: linear-gradient(90deg, #a8a8ff, #58a6ff, #b286ff, #f561f5, #d891ef);
+  background: linear-gradient(90deg, #a8a8ff, #58a6ff, #86c2ff, #61b7f5, #91d1ef);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -147,7 +147,7 @@
   margin: 0 0 1.5rem 0;
   padding-bottom: 1rem;
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-  color: #a8a8ff;
+  color: #84d8f1;
 }
 
 /* Bulletproof 50/50 split - override any conflicting styles */
@@ -256,7 +256,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(21, 113, 156, 0.2);
   border-radius: 0.5rem;
   font-size: 0.9rem;
   font-weight: 500;
@@ -291,27 +291,27 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #4A3F6E, #8b3ed3);
+  background: linear-gradient(135deg, #8e9ef1, #3e90d3);
   color: white;
-  border-color: #8b3ed3;
+  border-color: #56ccf3;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8b3ed3, #f561f5);
+  background: linear-gradient(135deg, #3e70d3, #61dcf5);
   border-color: #8b3ed3;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(139, 62, 211, 0.3);
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #4A3F6E, #8b3ed3);
+  background: linear-gradient(135deg, #45afbd, #3e8dd3);
   color: white;
-  border-color: #8b3ed3;
+  border-color: #3e9ad3;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8b3ed3, #f561f5);
-  border-color: #8b3ed3;
+  background: linear-gradient(135deg, #3e95d3, #61a6f5);
+  border-color: #3e88d3;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(139, 62, 211, 0.3);
 }
@@ -329,15 +329,15 @@
 }
 
 .btn-info {
-  background: linear-gradient(135deg, #4A3F6E, #8b3ed3);
+  background: linear-gradient(135deg, #3f5d6e, #3e5cd3);
   color: white;
-  border-color: #8b3ed3;
+  border-color: #3e75d3;
 }
 
 .btn-info:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8b3ed3, #f561f5);
+  background: linear-gradient(135deg, #3e7fd3, #61dcf5);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(139, 62, 211, 0.3);
+  box-shadow: 0 4px 12px rgba(62, 127, 211, 0.3);
 }
 
 .btn-warning {
@@ -527,7 +527,7 @@
 .empty-tree p:first-child {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #a8a8ff;
+  color: #a8ceff;
 }
 
 /* Simple tree node and edge styles - clean color-based highlighting */

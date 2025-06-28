@@ -86,15 +86,12 @@
   transition: transform 0.3s ease;
 }
 
-.home-button:hover svg {
-  transform: translateX(-3px);
-}
 
 .app-header h1 {
   font-size: 2.5rem;
   font-weight: 900;
   margin: 0;
-  background: linear-gradient(90deg, #a8a8ff, #58a6ff, #b286ff, #f561f5, #d891ef);
+  background: linear-gradient(90deg, #a8a8ff, #58a6ff, #86f7ff, #1331ba, #04209c);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -147,7 +144,7 @@
   margin: 0 0 1.5rem 0;
   padding-bottom: 1rem;
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-  color: #a8a8ff;
+  color: #8cd1f3;
 }
 
 /* Custom scrollbar */
@@ -617,7 +614,7 @@
   margin: 0 0 1rem 0;
   font-weight: 700;
   font-size: 1.4rem;
-  color: #a8a8ff;
+  color: #63bfec;
 }
 
 .placeholder small {
