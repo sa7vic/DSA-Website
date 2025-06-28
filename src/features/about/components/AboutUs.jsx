@@ -1,165 +1,316 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaHome } from 'react-icons/fa';
+import { FaHome, FaGithub, FaLinkedin, FaChevronDown } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { Parallax, Background } from 'react-parallax';
 import { useInView } from 'react-intersection-observer';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import styled from 'styled-components';
+import Slider from 'react-slick';
+import Particles from 'react-tsparticles';
+import { loadFull } from 'tsparticles';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import '../styles/AboutUs.css';
-import image2 from '../../../assets/image 2.png';
 import openverseLogo from '../../../assets/openverse2.svg';
-import Robocats from '../../../assets/Robocats.svg';
-
-// Styled components
-const FooterImage = styled.img`
-  width: 100%;
-  height: auto;
-  margin-top: 2rem;
-`;
-
-const TeamCard = styled(motion.div)`
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-`;
+import particlesConfig from './particles.json';
 
 const AboutUs = () => {
-  // Initialize AOS (Animate on Scroll)
-  useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      once: true
-    });
-  }, []);
+  // Intersection observers for scroll animations
+  const [heroRef, heroInView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [goalsRef, goalsInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [teamRef, teamInView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [moralsRef, moralsInView] = useInView({ triggerOnce: true, threshold: 0.2 });
 
-  // Setup intersection observer for animation triggers
-  const [titleRef, titleInView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+  // Particles initialization
+  const particlesInit = async (main) => {
+    await loadFull(main);
+  };
+
+  // Developer data
+  const developers = [
+    {
+      name: "Manvith Kumar",
+      education: "Computer Science, IIIT Kottayam",
+      role: "Club-lead",
+      note: "git better you suck"
+    },
+    {
+      name: "Prajwal Kumar",
+      education: "Computer science, IIIT Kottayam", 
+      role: "Project-lead",
+      note: "Loves optimizing algorithms and system architecture"
+    },
+    {
+      name: "Michael Rodriguez",
+      education: "Data Science, IIIT Kottayam",
+      role: "Full Stack Developer", 
+      note: "Bridges the gap between data and user interfaces"
+    },
+    {
+      name: "Emily Davis",
+      education: "Information Technology, IIIT Kottayam",
+      role: "UI/UX Designer",
+      note: "Crafting beautiful and functional digital experiences"
+    },
+    {
+      name: "David Kim",
+      education: "Computer Science, IIIT Kottayam",
+      role: "DevOps Engineer",
+      note: "Ensuring smooth deployment and system reliability"
+    },
+    {
+      name: "Lisa Wang",
+      education: "Software Engineering, IIIT Kottayam",
+      role: "Project Manager",
+      note: "Coordinating teams to deliver exceptional results"
+    }
+  ];
+
+  // Testimonials data (keeping for future use, but not displaying)
+  const testimonials = [
+    {
+      text: "Openverse helped me grow as a developer and understand complex algorithms through beautiful visualizations!",
+      author: "Student, IIIT Kottayam"
+    },
+    {
+      text: "A supportive community with cosmic vision. The interactive learning approach is revolutionary.",
+      author: "Computer Science Graduate"
+    },
+    {
+      text: "The pathfinding visualizer made graph algorithms so much easier to understand. Amazing work!",
+      author: "Programming Enthusiast"
+    },
+    {
+      text: "Openverse bridges the gap between theory and practice in the most elegant way possible.",
+      author: "Software Developer"
+    }
+  ];
+
+  // Image gallery settings
+  const imageSettings = {
+    dots: true,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: true,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1
+        }
+      }
+    ]
+  };
 
   return (
     <div className="about-us-container">
-      {/* Background overlay for the starry effect */}
-      <div className="about-us-bg-overlay"></div>
-      
-      {/* Floating particles */}
-      <div className="floating-particle particle-1"></div>
-      <div className="floating-particle particle-2"></div>
-      <div className="floating-particle particle-3"></div>
-      <div className="floating-particle particle-4"></div>
-      <div className="floating-particle particle-5"></div>
-      
-      <motion.header 
-        className="about-us-header"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <Link to="/" className="home-button">
-          <FaHome size={18} />
+      {/* Navigation */}
+      <nav className="about-us-nav">
+        <Link to="/" className="home-link">
+          <FaHome />
           <span>Home</span>
         </Link>
-        <div className="logo-container">
-          <img src={openverseLogo} alt="Openverse Logo" className="openverse-small-logo" />
-        </div>
-      </motion.header>
-      
-      <main className="about-us-main">
-        {/* Hero section with parallax effect */}
-        <Parallax 
-          blur={{ min: -15, max: 15 }}
-          bgImage={image2}
-          strength={300}
-          className="about-us-parallax"
-        >
-          <div className="about-us-hero-content">
-            <motion.h1 
-              className="about-us-title"
-              ref={titleRef}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={titleInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.8 }}
-            >
-              Openverse
-            </motion.h1>
-          </div>
-        </Parallax>
+      </nav>
 
-        {/* Institution info with animation */}
+      {/* Hero Section */}
+      <section 
+        ref={heroRef}
+        className={`hero-section ${heroInView ? 'fade-in' : ''}`}
+      >
+        <div className="hero-background"></div>
+        <Particles 
+          id="tsparticles"
+          init={particlesInit}
+          options={particlesConfig}
+          className="particles-background"
+        />
         <motion.div 
-          className="about-us-institution"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
+          className="hero-content"
+          initial={{ opacity: 0, y: 50 }}
+          animate={heroInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1, delay: 0.2 }}
         >
-          <p className="institution-name">Indian Institute of Information Technology Kottayam</p>
-          <p className="institution-year">2025</p>
+          <img src={openverseLogo} alt="Openverse Logo" className="hero-logo" />
+          <h1 className="hero-title">Openverse</h1>
+          <p className="hero-tagline">Empowering Developers Through Cosmic Innovation</p>
         </motion.div>
         
-        {/* Main content area with split layout */}
-        <div className="about-us-split-layout">
-          {/* Team grid - 2/3 width */}
-          <div className="about-us-team-section" data-aos="fade-right">
-            <h2>Our Team</h2>
-            <div className="team-grid">
-              {/* Team cards with staggered animation */}
-              {[...Array(9)].map((_, index) => (
-                <TeamCard
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * index, duration: 0.5 }}
-                  className="team-member-card"
-                  whileHover={{ scale: 1.03 }}
-                >
-                  <div className="team-member-placeholder"></div>
-                  <h3>Team Member</h3>
-                  <p>Role</p>
-                </TeamCard>
-              ))}
+        {/* Scroll Indicator */}
+        <div className="scroll-indicator">
+          <span>Scroll Down</span>
+          <FaChevronDown className="scroll-arrow" />
+        </div>
+      </section>
+
+      {/* Our Goals Section */}
+      <section 
+        ref={goalsRef}
+        className={`goals-section ${goalsInView ? 'fade-in' : ''}`}
+      >
+        <motion.div 
+          className="goals-content"
+          initial={{ opacity: 0, y: 30 }}
+          animate={goalsInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.1 }}
+        >
+          <h2>Our Mission</h2>
+          <div className="goals-grid">
+            <div className="goal-item">
+              <h3>🚀 Innovation</h3>
+              <p>Pushing the boundaries of educational technology through creative visualization tools that make complex algorithms accessible to everyone.</p>
+            </div>
+            <div className="goal-item">
+              <h3>🌟 Excellence</h3>
+              <p>Delivering high-quality interactive experiences that combine beautiful design with powerful functionality for optimal learning outcomes.</p>
+            </div>
+            <div className="goal-item">
+              <h3>🤝 Community</h3>
+              <p>Building a supportive ecosystem where developers can learn, collaborate, and grow together in their programming journey.</p>
             </div>
           </div>
-          
-          {/* Description - 1/3 width */}
-          <div className="about-us-description-section" data-aos="fade-left">
-            <h2>About Us</h2>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in laoreet tellus, nec commodo massa. Aenean ut ex at ex pellentesque efficitur. In hac habitasse platea dictumst.
-            </p>
-            <p>
-              Nullam egestas eros ut quam gravida, in vehicula dolor finibus. In hac habitasse platea dictumst. Proin eleifend orci vel mauris pretium, eget tempus diam rutrum.
-            </p>
-            <p>
-              Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed vitae lectus non risus vehicula feugiat. Phasellus vulputate justo at metus dapibus, at lobortis erat vehicula.
-            </p>
-          </div>
-        </div>
-      </main>
+        </motion.div>
+      </section>
 
-      {/* Footer with stretched Robocats image */}
-      <footer className="about-us-footer">
-        <FooterImage 
-          src={Robocats} 
-          alt="Robocats Logo" 
-          data-aos="fade-up"
-        />
+      {/* Developers Section */}
+      <section 
+        ref={teamRef}
+        className={`developers-section ${teamInView ? 'fade-in' : ''}`}
+      >
+        <motion.div 
+          className="developers-content"
+          initial={{ opacity: 0 }}
+          animate={teamInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.8 }}
+        >
+          <h2>Meet Our Developers</h2>
+          <div className="developers-grid">
+            {developers.map((developer, index) => (
+              <motion.div 
+                key={index}
+                className="developer-card"
+                initial={{ opacity: 0, y: 30 }}
+                animate={teamInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.1 * index }}
+                whileHover={{ 
+                  y: -8,
+                  transition: { duration: 0.3 }
+                }}
+              >
+                <div className="developer-image">
+                  <img src={openverseLogo} alt={developer.name} />
+                </div>
+                <div className="developer-info">
+                  <h3>{developer.name}</h3>
+                  <p className="developer-role">{developer.role}</p>
+                  <p className="developer-education">{developer.education}</p>
+                  <div className="developer-note">
+                    <p>"{developer.note}"</p>
+                  </div>
+                  <div className="developer-links">
+                    <FaGithub />
+                    <FaLinkedin />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          {/* Our Guide Section */}
+          <motion.div 
+            className="our-guide"
+            initial={{ opacity: 0, y: 30 }}
+            animate={teamInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <h3>Our Guide</h3>
+            <div className="guide-info">
+              <p className="guide-name">Prof. [Guide Name]</p>
+              <p className="guide-department">[Department], IIIT Kottayam</p>
+              <p className="guide-note">
+                "With gratitude to our mentor who inspired this journey of learning and innovation."
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Club Morals Section */}
+      <section 
+        ref={moralsRef}
+        className={`morals-section ${moralsInView ? 'fade-in' : ''}`}
+      >
+        <motion.div 
+          className="morals-content"
+          initial={{ opacity: 0, y: 30 }}
+          animate={moralsInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+        >
+          <h2>Our Core Values</h2>
+          <div className="values-list">
+            <div className="value-item">
+              <h4>🎯 Purpose-Driven</h4>
+              <p>Every feature we build serves a clear educational purpose, helping users understand complex concepts through intuitive interactions.</p>
+            </div>
+            <div className="value-item">
+              <h4>🔬 Quality-Focused</h4>
+              <p>We maintain high standards in code quality, user experience, and educational accuracy across all our projects.</p>
+            </div>
+            <div className="value-item">
+              <h4>🌍 Inclusive</h4>
+              <p>Our tools are designed to be accessible to learners of all backgrounds and skill levels, fostering an inclusive learning environment.</p>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Image Gallery Section */}
+      <section className="gallery-section">
+        <motion.div 
+          className="gallery-content"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <h2>Our Journey</h2>
+          <div className="image-slider">
+            <Slider {...imageSettings}>
+              {[...Array(6)].map((_, index) => (
+                <div key={index} className="gallery-slide">
+                  <div className="gallery-image">
+                    <img src={openverseLogo} alt={`Gallery ${index + 1}`} />
+                    <div className="gallery-overlay">
+                      <p>Project Milestone {index + 1}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Slider>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Footer */}
+      <footer className="about-footer">
+        <div className="footer-content">
+          <img src={openverseLogo} alt="Openverse Logo" className="footer-logo" />
+          <p>© 2025 Openverse | IIIT Kottayam</p>
+          <p>Building the future of interactive learning</p>
+        </div>
       </footer>
     </div>
   );
 };
 
 export default AboutUs;
+
