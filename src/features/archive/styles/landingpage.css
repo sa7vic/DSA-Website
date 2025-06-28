@@ -691,9 +691,7 @@
   padding: 20px 40px;
   position: relative;
   z-index: 20;
-  background: rgba(11, 12, 42, 0.3);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(91, 180, 232, 0.1);
+  
 }
 
 .homepage-logo {

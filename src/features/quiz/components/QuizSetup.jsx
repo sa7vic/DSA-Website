@@ -56,10 +56,10 @@ const QuizSetup = ({ topic, onStartQuiz, availableQuestions }) => {
       initial="hidden"
       animate="visible"
     >
-      <div className="setup-content">
-        {/* Topic Information */}
-        <motion.div className="topic-info" variants={itemVariants}>
-          <div className="topic-header">
+      <div className="setup-container">
+        {/* Header Section */}
+        <motion.div className="setup-header" variants={itemVariants}>
+          <div className="topic-info">
             <h2>{formatTopicName(topic)}</h2>
             <div className="topic-meta">
               <span className="available-questions">
@@ -67,139 +67,193 @@ const QuizSetup = ({ topic, onStartQuiz, availableQuestions }) => {
                 {availableQuestions} questions available
               </span>
             </div>
-          </div>
-          
-          <p className="topic-description">
-            Test your knowledge of {formatTopicName(topic)} with our comprehensive quiz. 
-            Questions range from basic concepts to advanced applications.
-          </p>
-        </motion.div>
-
-        {/* Question Count Selection */}
-        <motion.div className="question-selection" variants={itemVariants}>
-          <h3>How many questions would you like?</h3>
-          <div className="question-options">
-            {questionOptions.map(option => (
-              <motion.button
-                key={option}
-                className={`question-option ${selectedCount === option ? 'selected' : ''}`}
-                onClick={() => setSelectedCount(option)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="option-number">{option}</span>
-                <span className="option-label">questions</span>
-                <span className="option-time">
-                  <FaClock />
-                  ~{Math.ceil(option * 1.5)} min
-                </span>
-              </motion.button>
-            ))}
+            <p className="topic-description">
+              Test your knowledge of {formatTopicName(topic)} with our comprehensive quiz. 
+              Questions range from basic concepts to advanced applications.
+            </p>
           </div>
         </motion.div>
 
-        {/* Custom Count Input */}
-        <motion.div className="custom-count" variants={itemVariants}>
-          <label htmlFor="custom-count">Or enter a custom number:</label>
-          <div className="custom-input-group">
-            <input
-              id="custom-count"
-              type="number"
-              min="1"
-              max={availableQuestions}
-              value={selectedCount}
-              onChange={(e) => setSelectedCount(Math.min(parseInt(e.target.value) || 1, availableQuestions))}
-              className="custom-input"
-            />
-            <span className="input-suffix">/ {availableQuestions}</span>
-          </div>
-        </motion.div>
+        {/* Main Grid Layout */}
+        <div className="setup-grid">
+          {/* Left Column - Question Selection and Start Quiz */}
+          <motion.div className="setup-column setup-left" variants={itemVariants}>
+            {/* Question Selection */}
+            <div className="section-card">
+              <h3 className="section-title">
+                <FaQuestionCircle className="section-icon" />
+                Question Selection
+              </h3>
+              
+              {/* Quick Options */}
+              <div className="quick-options">
+                <h4>Quick Select</h4>
+                <div className="question-options">
+                  {questionOptions.slice(0, 6).map(option => (
+                    <motion.button
+                      key={option}
+                      className={`question-option ${selectedCount === option ? 'selected' : ''}`}
+                      onClick={() => setSelectedCount(option)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <span className="option-number">{option}</span>
+                      <span className="option-label">questions</span>
+                      <span className="option-time">
+                        <FaClock />
+                        ~{Math.ceil(option * 1.5)}min
+                      </span>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
 
-        {/* Topic Statistics */}
-        {topicStats && (
-          <motion.div className="topic-stats" variants={itemVariants}>
-            <h3>Your {formatTopicName(topic)} Stats</h3>
-            <div className="stats-grid">
-              <div className="stat-card">
-                <FaListUl className="stat-icon" />
-                <div className="stat-content">
-                  <span className="stat-number">{topicStats.totalQuizzes}</span>
-                  <span className="stat-label">Quizzes Taken</span>
+              {/* Custom Input */}
+              <div className="custom-selection">
+                <h4>Custom Amount</h4>
+                <div className="custom-input-group">
+                  <input
+                    id="custom-count"
+                    type="number"
+                    min="1"
+                    max={availableQuestions}
+                    value={selectedCount}
+                    onChange={(e) => setSelectedCount(Math.min(parseInt(e.target.value) || 1, availableQuestions))}
+                    className="custom-input"
+                  />
+                  <span className="input-suffix">/ {availableQuestions}</span>
+                </div>
+                <p className="custom-note">Enter any number between 1 and {availableQuestions}</p>
+              </div>
+            </div>
+
+            {/* Start Quiz Section */}
+            <div className="section-card start-quiz-card">
+              <h3 className="section-title">
+                <FaPlay className="section-icon" />
+                Ready to Start?
+              </h3>
+              
+              <div className="start-quiz-content">
+                <motion.button
+                  className="start-button"
+                  onClick={handleStart}
+                  disabled={selectedCount < 1 || selectedCount > availableQuestions}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <FaPlay className="start-icon" />
+                  <div className="button-content">
+                    <span className="button-text">Start Quiz</span>
+                    <span className="button-subtitle">
+                      {selectedCount} question{selectedCount !== 1 ? 's' : ''} • ~{Math.ceil(selectedCount * 1.5)} minutes
+                    </span>
+                  </div>
+                </motion.button>
+                
+                <p className="start-note">
+                  Navigate between questions and change answers until you submit the quiz.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right Column - Stats & Actions */}
+          <motion.div className="setup-column setup-right" variants={itemVariants}>
+            {/* Quiz Preview */}
+            <div className="section-card quiz-preview">
+              <h3 className="section-title">
+                <FaPlay className="section-icon" />
+                Quiz Preview
+              </h3>
+              <div className="preview-details">
+                <div className="preview-item">
+                  <FaQuestionCircle className="preview-icon" />
+                  <span>{selectedCount} Questions</span>
+                </div>
+                <div className="preview-item">
+                  <FaClock className="preview-icon" />
+                  <span>~{Math.ceil(selectedCount * 1.5)} Minutes</span>
+                </div>
+                <div className="preview-item">
+                  <FaChartLine className="preview-icon" />
+                  <span>Mixed Difficulty</span>
                 </div>
               </div>
-              
-              <div className="stat-card">
-                <FaChartLine className="stat-icon" />
-                <div className="stat-content">
-                  <span className="stat-number">{topicStats.averageAccuracy}%</span>
-                  <span className="stat-label">Average Score</span>
+            </div>
+
+            {/* Topic Statistics */}
+            {topicStats && (
+              <div className="section-card topic-stats">
+                <h3 className="section-title">
+                  <FaChartLine className="section-icon" />
+                  Your Stats
+                </h3>
+                <div className="stats-grid">
+                  <div className="stat-card">
+                    <FaListUl className="stat-icon" />
+                    <div className="stat-content">
+                      <span className="stat-number">{topicStats.totalQuizzes}</span>
+                      <span className="stat-label">Quizzes</span>
+                    </div>
+                  </div>
+                  
+                  <div className="stat-card">
+                    <FaChartLine className="stat-icon" />
+                    <div className="stat-content">
+                      <span className="stat-number">{topicStats.averageAccuracy}%</span>
+                      <span className="stat-label">Avg Score</span>
+                    </div>
+                  </div>
+                  
+                  <div className="stat-card best-score">
+                    <FaChartLine className="stat-icon" />
+                    <div className="stat-content">
+                      <span className="stat-number">{topicStats.bestAccuracy}%</span>
+                      <span className="stat-label">Best</span>
+                    </div>
+                  </div>
+                  
+                  <div className="stat-card">
+                    <FaClock className="stat-icon" />
+                    <div className="stat-content">
+                      <span className="stat-number">
+                        {Math.round(topicStats.averageTime / 60000)}m
+                      </span>
+                      <span className="stat-label">Avg Time</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              
-              <div className="stat-card">
-                <FaClock className="stat-icon" />
-                <div className="stat-content">
-                  <span className="stat-number">
-                    {Math.round(topicStats.averageTime / 60000)}m
-                  </span>
-                  <span className="stat-label">Average Time</span>
+            )}
+
+            {/* Quiz Features */}
+            <div className="section-card quiz-features">
+              <h3 className="section-title">
+                <FaListUl className="section-icon" />
+                Features
+              </h3>
+              <div className="features-grid">
+                <div className="feature">
+                  <FaClock className="feature-icon" />
+                  <span>Timer tracking</span>
                 </div>
-              </div>
-              
-              <div className="stat-card best-score">
-                <FaChartLine className="stat-icon" />
-                <div className="stat-content">
-                  <span className="stat-number">{topicStats.bestAccuracy}%</span>
-                  <span className="stat-label">Best Score</span>
+                <div className="feature">
+                  <FaListUl className="feature-icon" />
+                  <span>Question navigation</span>
+                </div>
+                <div className="feature">
+                  <FaChartLine className="feature-icon" />
+                  <span>Detailed explanations</span>
+                </div>
+                <div className="feature">
+                  <FaQuestionCircle className="feature-icon" />
+                  <span>Instant feedback</span>
                 </div>
               </div>
             </div>
           </motion.div>
-        )}
-
-        {/* Start Button */}
-        <motion.div className="start-section" variants={itemVariants}>
-          <motion.button
-            className="start-button"
-            onClick={handleStart}
-            disabled={selectedCount < 1 || selectedCount > availableQuestions}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <FaPlay />
-            Start Quiz
-            <span className="button-subtitle">
-              {selectedCount} question{selectedCount !== 1 ? 's' : ''} • ~{Math.ceil(selectedCount * 1.5)} minutes
-            </span>
-          </motion.button>
-          
-          <p className="start-note">
-            You can navigate between questions and change answers until you submit the quiz.
-          </p>
-        </motion.div>
-
-        {/* Quiz Features */}
-        <motion.div className="quiz-features" variants={itemVariants}>
-          <h4>Quiz Features</h4>
-          <div className="features-list">
-            <div className="feature">
-              <FaClock className="feature-icon" />
-              <span>Timer tracking</span>
-            </div>
-            <div className="feature">
-              <FaListUl className="feature-icon" />
-              <span>Question navigation</span>
-            </div>
-            <div className="feature">
-              <FaChartLine className="feature-icon" />
-              <span>Detailed explanations</span>
-            </div>
-            <div className="feature">
-              <FaQuestionCircle className="feature-icon" />
-              <span>Instant feedback</span>
-            </div>
-          </div>
-        </motion.div>
+        </div>
       </div>
     </motion.div>
   );

@@ -78,9 +78,7 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
   return (
     <div className="app-container">
       <div className="linkedlist-bg-overlay"></div>
-      <div className="floating-orb orb-1"></div>
-      <div className="floating-orb orb-2"></div>
-      
+     
       <motion.header 
         className="app-header"
         initial={{ opacity: 0, y: -20 }}
