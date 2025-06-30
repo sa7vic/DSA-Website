@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaHome, FaClock, FaQuestionCircle, FaCheck, FaTimes, FaArrowLeft, FaArrowRight, FaPlay, FaRedo } from 'react-icons/fa';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 import { useQuizStore, formatTime } from '../store/quizStore';
 import { getRandomQuestions, getQuestionCount } from '../data/questions';
@@ -42,6 +40,34 @@ const Quiz = () => {
   const [showSetup, setShowSetup] = useState(true);
   const [selectedOption, setSelectedOption] = useState(null);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [notification, setNotification] = useState({ message: '', type: '', show: false });
+
+  // Simple notification system to replace toast
+  const showNotification = (message, type = 'info') => {
+    setNotification({ message, type, show: true });
+    setTimeout(() => {
+      setNotification(prev => ({ ...prev, show: false }));
+    }, 3000);
+  };
+
+  // Notification component
+  const NotificationToast = () => {
+    if (!notification.show) {
+      return null;
+    }
+    
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -50 }}
+        className={`notification-toast notification-${notification.type}`}
+        onClick={() => setNotification(prev => ({ ...prev, show: false }))}
+      >
+        {notification.message}
+      </motion.div>
+    );
+  };
 
   // Initialize quiz setup
   useEffect(() => {
@@ -60,12 +86,12 @@ const Quiz = () => {
     const availableQuestions = getRandomQuestions(topic, selectedCount);
     
     if (availableQuestions.length === 0) {
-      toast.error('No questions available for this topic!');
+      showNotification('No questions available for this topic!', 'error');
       return;
     }
 
     if (availableQuestions.length < selectedCount) {
-      toast.warning(`Only ${availableQuestions.length} questions available for ${topic}`);
+      showNotification(`Only ${availableQuestions.length} questions available for ${topic}`, 'warning');
     }
 
     startQuiz(topic, availableQuestions, selectedCount);
@@ -73,7 +99,7 @@ const Quiz = () => {
     setSelectedOption(null);
     setShowExplanation(false);
     
-    toast.success(`Quiz started! ${availableQuestions.length} questions loaded.`);
+    showNotification(`Quiz started! ${availableQuestions.length} questions loaded.`, 'success');
   };
 
   // Handle answer selection
@@ -90,9 +116,9 @@ const Quiz = () => {
     const isCorrect = optionIndex === currentQuestion.correctAnswer;
     
     if (isCorrect) {
-      toast.success('Correct! 🎉');
+      showNotification('Correct! 🎉', 'success');
     } else {
-      toast.error('Incorrect! 😞');
+      showNotification('Incorrect! 😞', 'error');
     }
     
     setShowExplanation(true);
@@ -103,7 +129,7 @@ const Quiz = () => {
         handleNextQuestion();
       } else {
         // Last question - show submit option
-        toast.info('Last question! Ready to submit?');
+        showNotification('Last question! Ready to submit?', 'info');
       }
     }, 3000);
   };
@@ -145,7 +171,7 @@ const Quiz = () => {
     }
 
     submitQuiz();
-    toast.success('Quiz submitted successfully!');
+    showNotification('Quiz submitted successfully!', 'success');
   };
 
   // Handle retry
@@ -189,18 +215,7 @@ const Quiz = () => {
           availableQuestions={getQuestionCount(topic)}
         />
 
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        />
+        <NotificationToast />
       </motion.div>
     );
   }
@@ -230,18 +245,7 @@ const Quiz = () => {
           onBackToTopics={() => navigate('/quiz')}
         />
 
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        />
+        <NotificationToast />
       </motion.div>
     );
   }
@@ -390,18 +394,7 @@ const Quiz = () => {
       </div>
 
       {/* Toast Notifications */}
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
+      <NotificationToast />
     </motion.div>
   );
 };

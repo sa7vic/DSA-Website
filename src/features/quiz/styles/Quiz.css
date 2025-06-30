@@ -1750,145 +1750,59 @@
 }
 
 /* ==========================================================================
-   Confetti Animation
+   Notification Toast Styles (Replacement for react-toastify)
    ========================================================================== */
 
-.confetti-container {
+.notification-toast {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1000;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  z-index: 9999;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  max-width: 350px;
+  word-wrap: break-word;
 }
 
-.confetti {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #8b5cf6;
-  animation: confetti-fall 3s linear forwards;
+.notification-success {
+  background: rgba(34, 197, 94, 0.9);
+  color: #ffffff;
+  border-color: rgba(34, 197, 94, 0.3);
 }
 
-.confetti-0 { background: #8b5cf6; left: 10%; animation-delay: 0s; }
-.confetti-1 { background: #10b981; left: 20%; animation-delay: 0.1s; }
-.confetti-2 { background: #f59e0b; left: 30%; animation-delay: 0.2s; }
-.confetti-3 { background: #ef4444; left: 40%; animation-delay: 0.3s; }
-.confetti-4 { background: #3b82f6; left: 50%; animation-delay: 0.4s; }
-
-@keyframes confetti-fall {
-  to {
-    transform: translateY(100vh) rotate(720deg);
-  }
+.notification-error {
+  background: rgba(239, 68, 68, 0.9);
+  color: #ffffff;
+  border-color: rgba(239, 68, 68, 0.3);
 }
 
-/* ==========================================================================
-   Responsive Design
-   ========================================================================== */
+.notification-warning {
+  background: rgba(245, 158, 11, 0.9);
+  color: #ffffff;
+  border-color: rgba(245, 158, 11, 0.3);
+}
 
-@media (max-width: 1024px) {
-  .quiz-main {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
-  .quiz-sidebar {
-    position: static;
-    order: -1;
-  }
-  
-  .question-grid {
-    grid-template-columns: repeat(8, 1fr);
-  }
+.notification-info {
+  background: rgba(59, 130, 246, 0.9);
+  color: #ffffff;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.notification-toast:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
 @media (max-width: 768px) {
-  .quiz-header {
-    padding: 1rem;
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .quiz-info h1 {
-    font-size: 1.3rem;
-  }
-  
-  .quiz-meta {
-    justify-content: center;
-  }
-  
-  .quiz-main {
-    padding: 1rem;
-  }
-  
-  .question-card {
-    padding: 1.5rem;
-  }
-  
-  .question-options {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .results-actions {
-    flex-direction: column;
-  }
-  
-  .floating-actions {
-    bottom: 1rem;
-    right: 1rem;
-  }
-  
-  .fab {
-    width: 48px;
-    height: 48px;
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .quiz-header {
-    padding: 0.75rem;
-  }
-  
-  .home-button span {
-    display: none;
-  }
-  
-  .question-card {
-    padding: 1rem;
-  }
-  
-  .question-text h3 {
-    font-size: 1.1rem;
-  }
-  
-  .option-content {
-    padding: 0.75rem 1rem;
-  }
-  
-  .question-options {
-    grid-template-columns: 1fr;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .question-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
-  
-  .quiz-overview {
-    padding: 1rem;
-  }
-  
-  .nav-buttons {
-    flex-direction: column;
+  .notification-toast {
+    right: 10px;
+    left: 10px;
+    max-width: calc(100vw - 20px);
   }
 }
