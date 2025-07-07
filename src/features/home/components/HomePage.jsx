@@ -89,37 +89,38 @@ const HomePage = () => {
     {
       title: 'Sorting Algorithms',
       link: '/sorting',
-      icon: <FaSortNumericDown size={40} color="#FFFFFF" />,
+      icon: <FaSortNumericDown size={40} color="#FFFFFF" />, 
       gradientClass: 'homepage-card-gradient-1',
       enabled: true
     },
     {
       title: 'Search Algorithms',
-      icon: <FaRegLightbulb size={40} color="#8E8CA7" />,
+      link: '/search',
+      icon: <FaRegLightbulb size={40} color="#FFFFFF" />, 
       gradientClass: 'homepage-card-gradient-2',
-      enabled: false
+      enabled: true
     },
     {
       title: 'Dynamic Programming',
-      icon: <FaChartLine size={40} color="#8E8CA7" />,
+      icon: <FaChartLine size={40} color="#8E8CA7" />, 
       gradientClass: 'homepage-card-gradient-3',
       enabled: false
     },
     {
       title: 'Greedy Algorithms',
-      icon: <FaCode size={40} color="#8E8CA7" />,
+      icon: <FaCode size={40} color="#8E8CA7" />, 
       gradientClass: 'homepage-card-gradient-1',
       enabled: false
     },
     {
       title: 'Randomized Algorithms',
-      icon: <FaRandom size={40} color="#8E8CA7" />,
+      icon: <FaRandom size={40} color="#8E8CA7" />, 
       gradientClass: 'homepage-card-gradient-2',
       enabled: false
     },
     {
       title: 'Optimization Algorithms',
-      icon: <FaSlidersH size={40} color="#8E8CA7" />,
+      icon: <FaSlidersH size={40} color="#8E8CA7" />, 
       gradientClass: 'homepage-card-gradient-3',
       enabled: false
     }

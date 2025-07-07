@@ -30,6 +30,7 @@ import './features/quiz/styles/Quiz.css'
 import './features/quiz/styles/landingpage.css'
 import './features/archive/styles/landingpage.css'
 import './features/archive/styles/Archive.css'
+import './features/searchAlgos/styles/SearchAlgos.css'
 
 
 // Shared components
@@ -50,6 +51,7 @@ import LandingPage from './features/quiz/components/landingpage';
 import Quiz from './features/quiz/components/Quiz';
 import ArchiveLanding from './features/archive/components/landingpage'
 import Archive from './features/archive/components/Archive'
+import SearchAlgos from './features/searchAlgos/components/SearchAlgos';
 
 
 // Utility functions
@@ -253,6 +255,7 @@ function App() {
           
           <Route path="/quiz" element={<LandingPage />} />
           <Route path="/quiz/:topic" element={<ErrorBoundary><Quiz /></ErrorBoundary>} />
+          <Route path="/search" element={<ErrorBoundary><SearchAlgos /></ErrorBoundary>} />
         </Routes>
       </Router>
     </ErrorBoundary>
