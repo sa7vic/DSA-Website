@@ -28,7 +28,7 @@ dist-ssr
 .github/copilot-instructions.md
 
 algorithm-visualizer-master
-algorithms
+
 tracers.js
 
 .gitignore
