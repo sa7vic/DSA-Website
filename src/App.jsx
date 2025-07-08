@@ -31,6 +31,8 @@ import './features/quiz/styles/landingpage.css'
 import './features/archive/styles/landingpage.css'
 import './features/archive/styles/Archive.css'
 import './features/searchAlgos/styles/SearchAlgos.css'
+import './features/graphs/styles/GraphAlgorithmsList.css'
+import './features/graphs/styles/GraphVisualizerTemplate.css'
 
 
 // Shared components
@@ -52,6 +54,16 @@ import Quiz from './features/quiz/components/Quiz';
 import ArchiveLanding from './features/archive/components/landingpage'
 import Archive from './features/archive/components/Archive'
 import SearchAlgos from './features/searchAlgos/components/SearchAlgos';
+
+// Graph algorithm components
+import {
+  GraphAlgorithmsList,
+  BFSPage,
+  DFSPage,
+  DijkstraPage,
+  PrimPage,
+  KruskalPage
+} from './features/graphs';
 
 
 // Utility functions
@@ -245,9 +257,15 @@ function App() {
           <Route path="/tree" element={<ErrorBoundary><TreeVisualizer /></ErrorBoundary>} />
           <Route path="/pathfinding" element={<ErrorBoundary><PathfindingRedirect /></ErrorBoundary>} />
           <Route path="/about" element={<AboutUs />} />
+          {/* Graph Algorithm Routes */}
+          <Route path="/graphs" element={<ErrorBoundary><GraphAlgorithmsList /></ErrorBoundary>} />
+          <Route path="/graphs/bfs" element={<ErrorBoundary><BFSPage /></ErrorBoundary>} />
+          <Route path="/graphs/dfs" element={<ErrorBoundary><DFSPage /></ErrorBoundary>} />
+          <Route path="/graphs/dijkstra" element={<ErrorBoundary><DijkstraPage /></ErrorBoundary>} />
+          <Route path="/graphs/prim" element={<ErrorBoundary><PrimPage /></ErrorBoundary>} />
+          <Route path="/graphs/kruskal" element={<ErrorBoundary><KruskalPage /></ErrorBoundary>} />
           {/* Redirect old routes */}
           <Route path="/trees" element={<Navigate replace to="/tree" />} />
-          <Route path="/graphs" element={<Navigate replace to="/pathfinding" />} />
           <Route path="/pathfinding-visualizer" element={<Navigate replace to="/pathfinding" />} />
           <Route path="/archive" element={<ErrorBoundary><ArchiveLanding /></ErrorBoundary>} />
           <Route path="/archive/:topic" element={<ErrorBoundary><Archive /></ErrorBoundary>} />

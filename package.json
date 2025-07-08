@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/lang-cpp": "^6.0.3",
     "@monaco-editor/react": "^4.7.0",
     "@popperjs/core": "^2.11.8",
+    "@uiw/codemirror-theme-dracula": "^4.24.0",
+    "@uiw/react-codemirror": "^4.24.0",
     "aos": "^2.3.4",
     "bootstrap": "^5.3.6",
     "framer-motion": "^12.11.3",
@@ -33,6 +36,7 @@
     "styled-components": "^6.1.18",
     "tsparticles": "^3.8.1",
     "tsparticles-engine": "^2.12.0",
+    "vis-network": "^9.1.13",
     "zustand": "^4.0.0"
   },
   "devDependencies": {

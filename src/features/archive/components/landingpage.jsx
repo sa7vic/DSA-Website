@@ -84,8 +84,8 @@ const HomePage = () => {
       enabled: true
     },
     {
-      title: 'Heaps',
-      link: '/archive/pyq/heaps',
+      title: 'Graphs',
+      link: '/archive/pyq/graphs',
       icon: <FaLayerGroup size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-3',
       enabled: true

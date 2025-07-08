@@ -79,8 +79,8 @@ const HomePage = () => {
       enabled: false
     },
     {
-      title: 'Heaps',
-      link: '/quiz/heaps',
+      title: 'graph',
+      link: '/quiz/graph',
       icon: <FaLayerGroup size={40} color="#8E8CA7" />,
       gradientClass: 'homepage-card-gradient-3',
       enabled: false

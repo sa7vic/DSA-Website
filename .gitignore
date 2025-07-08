@@ -27,8 +27,8 @@ dist-ssr
 #Ignore vscode AI rules
 .github/copilot-instructions.md
 
-algorithm-visualizer-master
-
-tracers.js
+master
+archive
+anima
 
 .gitignore

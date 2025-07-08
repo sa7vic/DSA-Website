@@ -72,16 +72,17 @@ const HomePage = () => {
       enabled: true
     },
     {
-      title: 'Hash Tables',
+      title: 'HashTables',
       icon: <FaSitemap size={40} color="#8E8CA7" />,
       gradientClass: 'homepage-card-gradient-2',
       enabled: false
     },
     {
-      title: 'Heaps',
+      title: 'Graphs',
+      link: '/graphs',
       icon: <FaLayerGroup size={40} color="#8E8CA7" />,
       gradientClass: 'homepage-card-gradient-3',
-      enabled: false
+      enabled: true
     }
   ];
   
