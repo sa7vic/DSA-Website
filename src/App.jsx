@@ -33,6 +33,8 @@ import './features/archive/styles/Archive.css'
 import './features/searchAlgos/styles/SearchAlgos.css'
 import './features/graphs/styles/GraphAlgorithmsList.css'
 import './features/graphs/styles/GraphVisualizerTemplate.css'
+import './features/recursion/styles/RecursionVisualizer.css'
+import './features/hashTable/styles/HashTableVisualizer.css'
 
 
 // Shared components
@@ -48,6 +50,8 @@ import AboutUs from './features/about/components/AboutUs'
 import SortingVisualizer from './features/sorting/components/SortingVisualizer'
 import StackQueueVisualizer from './features/stackQueue/components/StackQueueVisualizer'
 import TreeVisualizer from './features/tree/components/TreeVisualizer'
+import RecursionVisualizer from './features/recursion/components/RecursionVisualizer'
+import HashTableVisualizer from './features/hashTable/components/HashTableVisualizer'
 import PathfindingVisualizer from './features/pathfinding/components/PathfindingVisualizer'
 import LandingPage from './features/quiz/components/landingpage';
 import Quiz from './features/quiz/components/Quiz';
@@ -255,6 +259,8 @@ function App() {
           <Route path="/sorting" element={<ErrorBoundary><SortingVisualizer /></ErrorBoundary>} />
           <Route path="/stacks-queues" element={<ErrorBoundary><StackQueueVisualizer /></ErrorBoundary>} />
           <Route path="/tree" element={<ErrorBoundary><TreeVisualizer /></ErrorBoundary>} />
+          <Route path="/recursion" element={<ErrorBoundary><RecursionVisualizer /></ErrorBoundary>} />
+          <Route path="/hashtable" element={<ErrorBoundary><HashTableVisualizer /></ErrorBoundary>} />
           <Route path="/pathfinding" element={<ErrorBoundary><PathfindingRedirect /></ErrorBoundary>} />
           <Route path="/about" element={<AboutUs />} />
           {/* Graph Algorithm Routes */}

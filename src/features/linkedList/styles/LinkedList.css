@@ -143,7 +143,6 @@
 
 .panel:hover {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
 }
 
 .panel h2 {
@@ -238,7 +237,6 @@
 
 .control-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #8b3ed3, #f561f5);
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(139, 62, 211, 0.3);
 }
 
@@ -466,7 +464,6 @@
 }
 
 .copy-button:hover {
-  transform: translateY(-2px);
   box-shadow: 0 0 25px rgba(139, 62, 211, 0.5);
 }
 
@@ -627,7 +624,6 @@ input.invalid {
 .button-group button:hover:not(:disabled) {
   background: linear-gradient(135deg, #17a6d6, #1022ac);
   border-color: #8b3ed3;
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(139, 62, 211, 0.3);
 }
 
@@ -746,7 +742,6 @@ input.invalid {
 }
 
 .node:hover {
-  transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(25, 160, 206, 0.968);
 }
 

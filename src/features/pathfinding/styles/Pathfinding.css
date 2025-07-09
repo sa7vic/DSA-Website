@@ -434,14 +434,10 @@ tr {
 }
 
 .chat-btn:hover {
-  transform: translateY(-2px) scale(1.02);
   box-shadow: 0 8px 25px rgba(88, 166, 255, 0.5);
   background: linear-gradient(135deg, #4a9eff, #58a6ff);
 }
 
-.chat-btn:active {
-  transform: translateY(-1px) scale(1.01);
-}
 
 /* Icon styling within the button */
 .chat-btn svg {

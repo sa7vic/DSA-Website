@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaGithub, FaRocket, FaBook  , FaRegLightbulb, FaListUl, FaLayerGroup, FaTree, FaProjectDiagram, FaSitemap, FaSortNumericDown, FaChartLine, FaCode, FaRandom, FaSlidersH } from 'react-icons/fa';
+import { FaGithub, FaRocket, FaBook  , FaRegLightbulb, FaListUl, FaLayerGroup, FaTree, FaProjectDiagram, FaSitemap, FaSortNumericDown, FaChartLine, FaCode, FaRandom, FaSlidersH, FaSync } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import '../styles/HomePage.css';
 import Robocats from '../../../assets/Robocats.svg';
@@ -72,10 +72,11 @@ const HomePage = () => {
       enabled: true
     },
     {
-      title: 'HashTables',
-      icon: <FaSitemap size={40} color="#8E8CA7" />,
+      title: 'Hash Tables',
+      link: '/hashtable',
+      icon: <FaSitemap size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-2',
-      enabled: false
+      enabled: true
     },
     {
       title: 'Graphs',
@@ -102,10 +103,11 @@ const HomePage = () => {
       enabled: true
     },
     {
-      title: 'Dynamic Programming',
-      icon: <FaChartLine size={40} color="#8E8CA7" />, 
+      title: 'Recursion',
+      link: '/recursion',
+      icon: <FaSync size={40} color="#FFFFFF" />,
       gradientClass: 'homepage-card-gradient-3',
-      enabled: false
+      enabled: true
     },
     {
       title: 'Greedy Algorithms',

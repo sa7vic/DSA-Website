@@ -54,7 +54,6 @@
 
 .home-button:hover {
   background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
   color: #f8fafc;
   text-decoration: none;
 }
@@ -211,7 +210,6 @@
 
 .info-card:hover {
   background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-5px);
 }
 
 .info-card h3 {

@@ -331,7 +331,6 @@
 .control-button:hover:not(:disabled) {
   background-color: #30363d; /* Darken on hover */
   border-color: #444c56; /* Slightly lighter border on hover */
-  transform: translateY(-1px); /* Subtle lift effect */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 

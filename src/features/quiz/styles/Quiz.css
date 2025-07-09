@@ -1217,7 +1217,6 @@
 .nav-button:hover:not(.disabled) {
   background: rgba(139, 92, 246, 0.2);
   border-color: rgba(139, 92, 246, 0.5);
-  transform: translateY(-2px);
 }
 
 .nav-button.disabled {

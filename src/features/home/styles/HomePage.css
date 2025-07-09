@@ -923,7 +923,6 @@
 
 /* Minimal hover effects */
 .homepage-card:hover:not(.homepage-card-disabled) {
-  transform: translateY(-8px);
   border-color: rgba(91, 180, 232, 0.3);
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.4),
@@ -1221,19 +1220,12 @@
 }
 
 .take-quiz-btn:hover {
-  transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(91, 180, 232, 0.4);
 }
 
 .quiz-btn-icon {
   display: flex;
   align-items: center;
-  animation: quiz-btn-float 2s ease-in-out infinite;
-}
-
-@keyframes quiz-btn-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
 }
 
 .quiz-btn-emoji {
