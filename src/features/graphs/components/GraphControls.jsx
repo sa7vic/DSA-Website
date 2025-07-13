@@ -138,127 +138,152 @@ const GraphControls = ({
   }, [graph, startNode, endNode, isWeighted, isDirected, onAlgorithmExecute]);
 
   return (
-    <div className="graph-controls">
+    <div className="graph-control-group">
       {/* Algorithm Controls */}
-      <div className="control-group">
-        <h4>Algorithm</h4>
-        <div className="button-group">
-          <motion.button
-            className={`control-button primary ${isPlaying ? 'playing' : ''}`}
-            onClick={isPlaying ? onReset : handleExecute}
-            disabled={!graph || graph.length === 0}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {isPlaying ? <FaStop /> : <FaPlay />}
-            {isPlaying ? 'Stop' : 'Start'}
-          </motion.button>
-          
-          <motion.button
-            className="control-button secondary"
-            onClick={onReset}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Reset
-          </motion.button>
-        </div>
-      </div>
+      <div className="graph-control-row">
+        <motion.button
+          className={`graph-compact-btn ${isPlaying ? 'warning' : 'success'}`}
+          onClick={isPlaying ? onReset : handleExecute}
+          disabled={!graph || graph.length === 0}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          title={isPlaying ? "Stop Algorithm" : "Start Algorithm"}
+        >
+          {isPlaying ? <FaStop /> : <FaPlay />}
+          {isPlaying ? 'Stop' : 'Start'}
+        </motion.button>
+        
+        <motion.button
+          className="graph-compact-btn"
+          onClick={onReset}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          title="Reset Algorithm"
+        >
+          Reset
+        </motion.button>
 
-      {/* Speed Control */}
-      <div className="control-group">
-        <h4>Speed</h4>
-        <div className="speed-control">
-          <button onClick={() => onSpeedChange(Math.max(0.1, speed - 0.1))}>
-            <FaMinus />
-          </button>
-          <span>{speed.toFixed(1)}x</span>
-          <button onClick={() => onSpeedChange(Math.min(3, speed + 0.1))}>
-            <FaPlus />
-          </button>
-        </div>
+        <motion.button
+          className="graph-compact-btn primary"
+          onClick={generateRandomGraph}
+          disabled={isPlaying}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          title="Generate Random Graph"
+        >
+          <FaRandom />
+        </motion.button>
       </div>
 
       {/* Node Selection */}
-      <div className="control-group">
-        <h4>Nodes</h4>
-        <div className="input-group">
-          <label>
-            Start:
+      <div className="graph-control-row">
+        <div className="graph-input-group">
+          <label>Start Node:</label>
+          <select 
+            className="graph-compact-select"
+            value={startNode} 
+            onChange={(e) => setStartNode(parseInt(e.target.value))}
+            disabled={isPlaying}
+          >
+            {graph && graph.map((_, index) => (
+              <option key={index} value={index}>Node {index}</option>
+            ))}
+          </select>
+        </div>
+        
+        {config.needsEndNode && (
+          <div className="graph-input-group">
+            <label>End Node:</label>
             <select 
-              value={startNode} 
-              onChange={(e) => setStartNode(parseInt(e.target.value))}
+              className="graph-compact-select"
+              value={endNode || ''} 
+              onChange={(e) => setEndNode(e.target.value ? parseInt(e.target.value) : null)}
               disabled={isPlaying}
             >
+              <option value="">None</option>
               {graph && graph.map((_, index) => (
                 <option key={index} value={index}>Node {index}</option>
               ))}
             </select>
-          </label>
-          
-          {config.needsEndNode && (
-            <label>
-              End:
-              <select 
-                value={endNode || ''} 
-                onChange={(e) => setEndNode(e.target.value ? parseInt(e.target.value) : null)}
-                disabled={isPlaying}
-              >
-                <option value="">None</option>
-                {graph && graph.map((_, index) => (
-                  <option key={index} value={index}>Node {index}</option>
-                ))}
-              </select>
-            </label>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Graph Generation */}
-      <div className="control-group">
-        <h4>Generate</h4>
-        <div className="button-group">
-          <motion.button
-            className="control-button"
-            onClick={generateRandomGraph}
-            disabled={isPlaying}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FaRandom />
-          </motion.button>
-          
-          <motion.button
-            className="control-button"
-            onClick={() => setShowSettings(!showSettings)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FaCog />
-          </motion.button>
-        </div>
-        
-        <div className="preset-buttons">
-          <button onClick={() => generatePresetGraph('tree')}>Tree</button>
-          <button onClick={() => generatePresetGraph('complete')}>Complete</button>
-          <button onClick={() => generatePresetGraph('path')}>Path</button>
-        </div>
+      {/* Preset Graphs */}
+      <div className="graph-control-row">
+        <button 
+          className="graph-compact-btn" 
+          onClick={() => generatePresetGraph('tree')}
+          disabled={isPlaying}
+          title="Generate Tree Graph"
+        >
+          Tree
+        </button>
+        <button 
+          className="graph-compact-btn" 
+          onClick={() => generatePresetGraph('complete')}
+          disabled={isPlaying}
+          title="Generate Complete Graph"
+        >
+          Complete
+        </button>
+        <button 
+          className="graph-compact-btn" 
+          onClick={() => generatePresetGraph('path')}
+          disabled={isPlaying}
+          title="Generate Path Graph"
+        >
+          Path
+        </button>
+      </div>
+
+      {/* Speed Control */}
+      <div className="graph-speed-control">
+        <label>Speed:</label>
+        <button 
+          className="graph-compact-btn" 
+          onClick={() => onSpeedChange(Math.max(0.1, speed - 0.1))}
+          title="Decrease Speed"
+        >
+          <FaMinus />
+        </button>
+        <span>{speed.toFixed(1)}x</span>
+        <button 
+          className="graph-compact-btn" 
+          onClick={() => onSpeedChange(Math.min(3, speed + 0.1))}
+          title="Increase Speed"
+        >
+          <FaPlus />
+        </button>
+      </div>
+
+      {/* Settings Toggle */}
+      <div className="graph-control-row">
+        <motion.button
+          className="graph-compact-btn"
+          onClick={() => setShowSettings(!showSettings)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          title="Graph Settings"
+        >
+          <FaCog />
+          Settings
+        </motion.button>
       </div>
 
       {/* Settings Panel */}
       {showSettings && (
         <motion.div 
-          className="settings-panel"
+          className="graph-settings-panel"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
         >
-          <h4>Graph Settings</h4>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-            <label>
-              Size:
+          <div className="graph-control-row">
+            <div className="graph-input-group">
+              <label>Graph Size:</label>
               <input
+                className="graph-compact-input"
                 type="range"
                 min="3"
                 max="10"
@@ -267,11 +292,12 @@ const GraphControls = ({
                 disabled={isPlaying}
               />
               <span>{graphSize} nodes</span>
-            </label>
+            </div>
             
-            <label>
-              Density:
+            <div className="graph-input-group">
+              <label>Density:</label>
               <input
+                className="graph-compact-input"
                 type="range"
                 min="0.1"
                 max="1"
@@ -281,11 +307,11 @@ const GraphControls = ({
                 disabled={isPlaying}
               />
               <span>{(graphDensity * 100).toFixed(0)}%</span>
-            </label>
+            </div>
           </div>
           
-          <div className="checkbox-group">
-            <label>
+          <div className="graph-control-row">
+            <label className="graph-checkbox-label">
               <input
                 type="checkbox"
                 checked={isWeighted}
@@ -295,7 +321,7 @@ const GraphControls = ({
               Weighted
             </label>
             
-            <label>
+            <label className="graph-checkbox-label">
               <input
                 type="checkbox"
                 checked={isDirected}

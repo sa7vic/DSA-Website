@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlay, FaPause, FaRedo, FaForward, FaBackward, FaCode } from 'react-icons/fa';
+import { FaPlay, FaPause, FaRedo, FaForward, FaBackward } from 'react-icons/fa';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { binarySearchIterative, binarySearchRecursive } from '../algorithms/binarySearch';
+import SearchVisualizerTemplate from './SearchVisualizerTemplate';
 
 const BinarySearchVisualizer = () => {
   const [array, setArray] = useState([2, 5, 8, 12, 16, 23, 38, 45, 56, 67, 78]);
@@ -13,10 +14,7 @@ const BinarySearchVisualizer = () => {
   const [steps, setSteps] = useState([]);
   const [searchType, setSearchType] = useState('iterative');
   const [speed, setSpeed] = useState(1000);
-  const [showCode, setShowCode] = useState(true);
   const [currentLine, setCurrentLine] = useState(0);
-
-  const codeViewerRef = useRef(null);
 
   const cCode = `// Iterative Binary Search
 int binarySearchIterative(int arr[], int n, int target) {
@@ -127,192 +125,217 @@ int binarySearchRecursive(int arr[], int left, int right, int target) {
     return 'array-item inactive';
   };
 
-  return (
-    <div className="binary-search-container">
-      <div className="main-layout">
-        {/* Controls Section */}
-        <div className="controls-section">
-          <div className="array-controls">
-            <button onClick={generateRandomArray} className="control-btn">
-              <FaRedo /> Generate Array
-            </button>
-            
-            <div className="target-input">
-              <label>Target: </label>
-              <input 
-                type="number" 
-                value={target} 
-                onChange={(e) => setTarget(parseInt(e.target.value))}
-                className="target-input-field"
-              />
-            </div>
-
-            <div className="search-type">
-              <label>
-                <input 
-                  type="radio" 
-                  value="iterative" 
-                  checked={searchType === 'iterative'}
-                  onChange={(e) => setSearchType(e.target.value)}
-                />
-                Iterative
-              </label>
-              <label>
-                <input 
-                  type="radio" 
-                  value="recursive" 
-                  checked={searchType === 'recursive'}
-                  onChange={(e) => setSearchType(e.target.value)}
-                />
-                Recursive
-              </label>
-            </div>
-
-            <button 
-              onClick={() => setShowCode(!showCode)} 
-              className="control-btn"
-            >
-              <FaCode /> {showCode ? 'Hide' : 'Show'} Code
-            </button>
-          </div>
-
-          <div className="playback-controls">
-            <button 
-              onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-              disabled={currentStep === 0}
-              className="control-btn"
-            >
-              <FaBackward />
-            </button>
-            
-            <button 
-              onClick={() => setIsPlaying(!isPlaying)}
-              disabled={steps.length === 0}
-              className="control-btn primary"
-            >
-              {isPlaying ? <FaPause /> : <FaPlay />}
-            </button>
-            
-            <button 
-              onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
-              disabled={currentStep >= steps.length}
-              className="control-btn"
-            >
-              <FaForward />
-            </button>
-            
-            <button onClick={runSearch} className="control-btn">
-              Start Search
-            </button>
-          </div>
-
-          <div className="speed-control">
-            <label>Speed: </label>
-            <input 
-              type="range" 
-              min="200" 
-              max="2000" 
-              value={speed}
-              onChange={(e) => setSpeed(parseInt(e.target.value))}
-              className="speed-slider"
-            />
-            <span>{speed}ms</span>
-          </div>
+  const renderControls = () => (
+    <div className="control-group">
+      <div className="input-controls">
+        <div className="input-group">
+          <label>Target Value:</label>
+          <input 
+            type="number" 
+            value={target} 
+            onChange={(e) => setTarget(parseInt(e.target.value))}
+            className="search-input"
+          />
         </div>
 
-        <div className="content-layout">
-          {/* Code Section */}
-          {showCode && (
-            <div className="code-section">
-              <h3>C Implementation - {searchType}</h3>
-              <div className="code-viewer" ref={codeViewerRef}>
-                <SyntaxHighlighter
-                  language="c"
-                  style={vscDarkPlus}
-                  wrapLines={true}
-                  showLineNumbers={true}
-                  lineNumberStyle={{ color: '#6a737d' }}
-                  wrapLongLines={true}
-                  customStyle={{
-                    margin: 0,
-                    padding: '1rem',
-                    fontSize: '0.85rem',
-                    lineHeight: '1.5',
-                    height: '100%',
-                    overflow: 'auto',
-                    background: 'rgba(13, 17, 23, 0.8)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                    borderRadius: '8px'
-                  }}
-                  lineProps={lineNumber => ({
-                    style: { 
-                      backgroundColor: lineNumber === currentLine ? 'rgba(139, 92, 246, 0.3)' : 'transparent',
-                      display: 'block',
-                      color: lineNumber === currentLine ? '#fff' : undefined,
-                    }
-                  })}
-                >
-                  {cCode}
-                </SyntaxHighlighter>
-              </div>
-            </div>
-          )}
-
-          {/* Visualization Section */}
-          <div className="visualization-section">
-            <div className="algorithm-info">
-              <h3>Binary Search - {searchType}</h3>
-              <div className="complexity-info">
-                <div>Time Complexity: <span className="complexity">O(log n)</span></div>
-                <div>Space Complexity: <span className="complexity">
-                  {searchType === 'iterative' ? 'O(1)' : 'O(log n)'}
-                </span></div>
-              </div>
-            </div>
-
-            <div className="array-container">
-              {array.map((value, index) => (
-                <motion.div
-                  key={index}
-                  className={getArrayItemStyle(index)}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <div className="array-value">{value}</div>
-                  <div className="array-index">{index}</div>
-                </motion.div>
-              ))}
-            </div>
-
-            <AnimatePresence>
-              {currentStepData && (
-                <motion.div 
-                  className="step-info"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                >
-                  <div className="step-description">
-                    <strong>Step {currentStep}:</strong> {currentStepData.action}
-                  </div>
-                  
-                  {currentStepData.left !== undefined && (
-                    <div className="step-details">
-                      <span>Left: {currentStepData.left}</span>
-                      <span>Right: {currentStepData.right}</span>
-                      <span>Mid: {currentStepData.mid}</span>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+        <div className="input-group">
+          <label>Search Type:</label>
+          <div className="radio-group">
+            <label>
+              <input 
+                type="radio" 
+                value="iterative" 
+                checked={searchType === 'iterative'}
+                onChange={(e) => setSearchType(e.target.value)}
+              />
+              Iterative
+            </label>
+            <label>
+              <input 
+                type="radio" 
+                value="recursive" 
+                checked={searchType === 'recursive'}
+                onChange={(e) => setSearchType(e.target.value)}
+              />
+              Recursive
+            </label>
           </div>
         </div>
       </div>
+
+      <div className="playback-controls">
+        <button 
+          onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+          disabled={currentStep === 0}
+          className="search-control-btn"
+          title="Previous Step"
+        >
+          <FaBackward />
+        </button>
+        
+        <button 
+          onClick={() => setIsPlaying(!isPlaying)}
+          disabled={steps.length === 0}
+          className="search-control-btn primary"
+          title={isPlaying ? "Pause" : "Play"}
+        >
+          {isPlaying ? <FaPause /> : <FaPlay />}
+        </button>
+        
+        <button 
+          onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
+          disabled={currentStep >= steps.length}
+          className="search-control-btn"
+          title="Next Step"
+        >
+          <FaForward />
+        </button>
+        
+        <button 
+          onClick={runSearch} 
+          className="search-control-btn success"
+          title="Start Search"
+        >
+          Start Search
+        </button>
+
+        <button 
+          onClick={generateRandomArray} 
+          className="search-control-btn"
+          title="Generate New Array"
+        >
+          <FaRedo /> New Array
+        </button>
+      </div>
+
+      <div className="speed-control">
+        <label>Speed:</label>
+        <input 
+          type="range" 
+          min="200" 
+          max="2000" 
+          value={speed}
+          onChange={(e) => setSpeed(parseInt(e.target.value))}
+        />
+        <span>{speed}ms</span>
+      </div>
     </div>
+  );
+
+  const renderVisualization = () => (
+    <>
+      <div className="algorithm-info">
+        <h4>Binary Search - {searchType}</h4>
+      </div>
+      
+      <div className="array-container">
+        {array.map((value, index) => (
+          <motion.div
+            key={index}
+            className={getArrayItemStyle(index)}
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+          >
+            <div className="array-value">{value}</div>
+            <div className="array-index">{index}</div>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="algorithm-status">
+        <div className="status-item">
+          <strong>Target</strong>
+          <span>{target}</span>
+        </div>
+        <div className="status-item">
+          <strong>Step</strong>
+          <span>{currentStep} / {steps.length}</span>
+        </div>
+        <div className="status-item">
+          <strong>Status</strong>
+          <span>
+            {currentStepData?.found ? 'Found!' : 
+             currentStepData?.notFound ? 'Not Found' : 
+             'Searching...'}
+          </span>
+        </div>
+      </div>
+    </>
+  );
+
+  const renderConsole = () => (
+    <>
+      {currentStepData && (
+        <div className="step-info">
+          <div className="step-description">
+            <strong>Step {currentStep}:</strong> {currentStepData.action}
+          </div>
+          
+          {currentStepData.left !== undefined && (
+            <div className="step-details">
+              <span>Left: {currentStepData.left}</span>
+              <span>Right: {currentStepData.right}</span>
+              <span>Mid: {currentStepData.mid}</span>
+            </div>
+          )}
+        </div>
+      )}
+      
+      <div className="console-output">
+        {steps.slice(0, currentStep).map((step, index) => (
+          <div key={index} className="console-line">
+            Step {index + 1}: {step.action}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+
+  const renderCode = () => (
+    <SyntaxHighlighter
+      language="c"
+      style={vscDarkPlus}
+      wrapLines={true}
+      showLineNumbers={true}
+      lineNumberStyle={{ color: '#6a737d' }}
+      wrapLongLines={true}
+      customStyle={{
+        margin: 0,
+        padding: '1rem',
+        fontSize: '0.85rem',
+        lineHeight: '1.5',
+        height: '100%',
+        overflow: 'auto',
+        background: 'rgba(13, 17, 23, 0.8)',
+        backdropFilter: 'blur(10px)',
+      }}
+      lineProps={lineNumber => ({
+        style: { 
+          backgroundColor: lineNumber === currentLine ? 'rgba(139, 92, 246, 0.3)' : 'transparent',
+          display: 'block',
+          color: lineNumber === currentLine ? '#fff' : undefined,
+        }
+      })}
+    >
+      {cCode}
+    </SyntaxHighlighter>
+  );
+
+  return (
+    <SearchVisualizerTemplate
+      title="Binary Search Visualizer"
+      description="Efficient search for sorted arrays using divide-and-conquer strategy"
+      complexity={{
+        time: "O(log n)",
+        space: searchType === 'iterative' ? 'O(1)' : 'O(log n)'
+      }}
+      controls={renderControls()}
+      visualization={renderVisualization()}
+      consoleOutput={renderConsole()}
+      codeComponent={renderCode()}
+    />
   );
 };
 

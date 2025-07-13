@@ -103,9 +103,9 @@ const CodeViewer = ({ code, onChange, currentLine, isAnimating, nodes }) => {
   }
 
   return (
-    <div className="code-viewer" style={{ outline: 'none' }}>
+    <div className="code-viewer" style={{ outline: 'none', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Editor
-        height="70vh"
+        height="100%"
         defaultLanguage="cpp"
         defaultValue={code}
         theme="vs-dark"

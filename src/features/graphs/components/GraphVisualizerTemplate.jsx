@@ -1,14 +1,14 @@
 /**
  * Graph Visualizer Template Component
  * 
- * Reusable template for graph algorithm visualizations with:
- * - Split layout: Code viewer (right) and Visualization + Controls (left)
+ * Compact reusable template for graph algorithm visualizations with:
+ * - Split layout: Code viewer (right) and Visualization + Controls + Console (left)
+ * - Compact controls with better spacing
+ * - Console for algorithm steps
  * - Real-time code highlighting
- * - Interactive controls
- * - Graph visualization area
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaHome, FaArrowLeft } from 'react-icons/fa';
@@ -37,6 +37,7 @@ const GraphVisualizerTemplate = ({
   const [speed, setSpeed] = useState(1);
   const [visitedNodes, setVisitedNodes] = useState(new Set());
   const [visitedEdges, setVisitedEdges] = useState(new Set());
+  const [consoleLog, setConsoleLog] = useState([]);
 
   // Animation callback
   const handleAnimationUpdate = useCallback((lineNumber, step, animating, state = {}) => {
@@ -44,6 +45,16 @@ const GraphVisualizerTemplate = ({
     setCurrentStep(step);
     setIsAnimating(animating);
     setAlgorithmState(prev => ({ ...prev, ...state }));
+    
+    // Add to console log
+    if (step) {
+      setConsoleLog(prev => [...prev, {
+        timestamp: Date.now(),
+        step: prev.length + 1,
+        message: step,
+        state: { ...state }
+      }]);
+    }
     
     // Update visited nodes and edges from algorithm state
     if (state.visitedNodes) {
@@ -60,6 +71,7 @@ const GraphVisualizerTemplate = ({
       setIsPlaying(true);
       setVisitedNodes(new Set());
       setVisitedEdges(new Set());
+      setConsoleLog([]);
       await onAlgorithmStep(graph, startNode, endNode, handleAnimationUpdate, config, speed);
       setIsPlaying(false);
     }
@@ -73,6 +85,7 @@ const GraphVisualizerTemplate = ({
     setCurrentLine(0);
     setCurrentStep('');
     setAlgorithmState({});
+    setConsoleLog([]);
   }, []);
 
   // Reset algorithm state
@@ -84,6 +97,7 @@ const GraphVisualizerTemplate = ({
     setAlgorithmState({});
     setIsPlaying(false);
     setIsAnimating(false);
+    setConsoleLog([]);
   }, []);
 
   return (
@@ -97,13 +111,13 @@ const GraphVisualizerTemplate = ({
         transition={{ duration: 0.8 }}
       >
         <div className="header-navigation">
-          <Link to="/" className="nav-button home-button">
+          <Link to="/" className="graph-nav-button">
             <FaHome size={16} />
             <span>Home</span>
           </Link>
-          <Link to="/graphs" className="nav-button back-button">
+          <Link to="/graphs" className="graph-nav-button">
             <FaArrowLeft size={16} />
-            <span>Graphs</span>
+            <span>Back to Graphs</span>
           </Link>
         </div>
         
@@ -111,31 +125,31 @@ const GraphVisualizerTemplate = ({
           <h1>{algorithmName}</h1>
           <p>{algorithmDescription}</p>
           <div className="complexity-info">
-            <span className="complexity-item">
-              <strong>Time:</strong> {timeComplexity}
-            </span>
-            <span className="complexity-item">
-              <strong>Space:</strong> {spaceComplexity}
-            </span>
+            <div className="complexity-item">
+              <strong>Time Complexity:</strong> {timeComplexity}
+            </div>
+            <div className="complexity-item">
+              <strong>Space Complexity:</strong> {spaceComplexity}
+            </div>
           </div>
         </div>
       </motion.header>
 
       <motion.div 
-        className="visualizer-content"
+        className="graph-visualizer-content"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
       >
-        {/* Left Panel - Visualization and Controls */}
+        {/* Left Panel - Controls, Visualization and Console */}
         <motion.div 
-          className="left-panel"
+          className="graph-left-panel"
           initial={{ x: -20 }}
           animate={{ x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          {/* Controls Section */}
-          <div className="controls-section">
+          {/* Compact Controls Section */}
+          <div className="graph-controls-section">
             <h3>Controls</h3>
             <GraphControls
               graph={graph}
@@ -151,51 +165,64 @@ const GraphVisualizerTemplate = ({
           </div>
 
           {/* Visualization Section */}
-          <div className="visualization-section">
-            <h3>Visualization</h3>
-            <GraphVisualization
-              graph={graph}
-              visitedNodes={visitedNodes}
-              visitedEdges={visitedEdges}
-              currentStep={currentStep}
-              algorithmState={algorithmState}
-              isAnimating={isAnimating}
-            />
+          <div className="graph-visualization-section">
+            <h3>Graph Visualization</h3>
+            <div className="graph-visualization-content">
+              <GraphVisualization
+                graph={graph}
+                visitedNodes={visitedNodes}
+                visitedEdges={visitedEdges}
+                currentStep={currentStep}
+                algorithmState={algorithmState}
+                isAnimating={isAnimating}
+              />
+            </div>
           </div>
 
-          {/* Status Section */}
-          {currentStep && (
-            <div className="status-section">
-              <h4>Current Step</h4>
-              <p>{currentStep}</p>
-              {Object.keys(algorithmState).length > 0 && (
-                <div className="algorithm-state">
-                  {Object.entries(algorithmState).map(([key, value]) => (
-                    <div key={key} className="state-item">
-                      <strong>{key}:</strong> {JSON.stringify(value)}
+          {/* Console Section */}
+          <div className="graph-console-section">
+            <h3>Algorithm History</h3>
+            <div className="graph-console-content">
+              <div className="graph-console-output">
+                {consoleLog.length > 0 ? (
+                  consoleLog.map((log, index) => (
+                    <div key={index} className="console-line">
+                      <span className="step-number">Step {log.step}:</span> {log.message}
+                      {log.state && Object.keys(log.state).length > 0 && (
+                        <span className="step-state">
+                          {Object.entries(log.state)
+                            .filter(([key]) => !['visitedNodes', 'visitedEdges'].includes(key))
+                            .map(([key, value]) => ` | ${key}: ${JSON.stringify(value)}`)
+                            .join('')}
+                        </span>
+                      )}
                     </div>
-                  ))}
-                </div>
-              )}
+                  ))
+                ) : (
+                  <div className="console-line empty">No algorithm steps recorded yet. Click "Run Algorithm" to start.</div>
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </motion.div>
 
         {/* Right Panel - Code Viewer */}
         <motion.div 
-          className="right-panel"
+          className="graph-right-panel"
           initial={{ x: 20 }}
           animate={{ x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <h3>C Implementation</h3>
-          <CodeViewer 
-            code={algorithmCode}
-            language="c"
-            currentLine={currentLine}
-            isAnimating={isAnimating}
-            theme="dark"
-          />
+          <div className="graph-code-viewer">
+            <CodeViewer 
+              code={algorithmCode}
+              language="c"
+              currentLine={currentLine}
+              isAnimating={isAnimating}
+              theme="dark"
+            />
+          </div>
         </motion.div>
       </motion.div>
     </div>

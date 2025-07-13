@@ -18,7 +18,7 @@ const GraphVisualization = ({
 }) => {
   const canvasRef = useRef(null);
   const [nodePositions, setNodePositions] = useState([]);
-  const [canvasDimensions, setCanvasDimensions] = useState({ width: 600, height: 400 });
+  const [canvasDimensions, setCanvasDimensions] = useState({ width: 1000, height: 700 });
 
   // Calculate node positions in a circular layout
   const calculateNodePositions = useCallback((numNodes) => {
@@ -57,8 +57,8 @@ const GraphVisualization = ({
       if (container) {
         const rect = container.getBoundingClientRect();
         setCanvasDimensions({
-          width: Math.min(rect.width - 40, 800),
-          height: Math.min(rect.height - 40, 600)
+          width: Math.min(rect.width - 40, 1000),
+          height: Math.min(rect.height - 40, 700)
         });
       }
     };
@@ -238,30 +238,7 @@ const GraphVisualization = ({
         transition={{ duration: 0.5 }}
       />
       
-      {/* Legend */}
-      <div className="graph-legend">
-        <div className="legend-item">
-          <div className="legend-color" style={{ backgroundColor: '#3b82f6' }}></div>
-          <span>Start Node</span>
-        </div>
-        <div className="legend-item">
-          <div className="legend-color" style={{ backgroundColor: '#ef4444' }}></div>
-          <span>End Node</span>
-        </div>
-        <div className="legend-item">
-          <div className="legend-color" style={{ backgroundColor: '#fbbf24' }}></div>
-          <span>Current</span>
-        </div>
-        <div className="legend-item">
-          <div className="legend-color" style={{ backgroundColor: '#10b981' }}></div>
-          <span>Visited</span>
-        </div>
-        <div className="legend-item">
-          <div className="legend-color" style={{ backgroundColor: '#64748b' }}></div>
-          <span>Unvisited</span>
-        </div>
-      </div>
-      
+     
       {/* Animation indicator */}
       {isAnimating && (
         <motion.div 
