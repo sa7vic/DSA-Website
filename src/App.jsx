@@ -35,6 +35,8 @@ import './features/graphs/styles/GraphAlgorithmsList.css'
 import './features/graphs/styles/GraphVisualizerTemplate.css'
 import './features/recursion/styles/RecursionVisualizer.css'
 import './features/hashTable/styles/HashTableVisualizer.css'
+import './features/greedyAlgorithms/styles/GreedyAlgorithmsList.css'
+import './features/greedyAlgorithms/styles/GreedyVisualizerTemplate.css'
 
 
 // Shared components
@@ -68,6 +70,12 @@ import {
   PrimPage,
   KruskalPage
 } from './features/graphs';
+
+// Greedy algorithm components
+import GreedyAlgorithmsList from './features/greedyAlgorithms/components/GreedyAlgorithmsList';
+import BoyerMooreMajority from './features/greedyAlgorithms/components/BoyerMooreMajority';
+import StableMatching from './features/greedyAlgorithms/components/StableMatching';
+import JobScheduling from './features/greedyAlgorithms/components/JobScheduling';
 
 
 // Utility functions
@@ -270,6 +278,11 @@ function App() {
           <Route path="/graphs/dijkstra" element={<ErrorBoundary><DijkstraPage /></ErrorBoundary>} />
           <Route path="/graphs/prim" element={<ErrorBoundary><PrimPage /></ErrorBoundary>} />
           <Route path="/graphs/kruskal" element={<ErrorBoundary><KruskalPage /></ErrorBoundary>} />
+          {/* Greedy Algorithm Routes */}
+          <Route path="/greedy" element={<ErrorBoundary><GreedyAlgorithmsList /></ErrorBoundary>} />
+          <Route path="/greedy/boyer-moore" element={<ErrorBoundary><BoyerMooreMajority /></ErrorBoundary>} />
+          <Route path="/greedy/stable-matching" element={<ErrorBoundary><StableMatching /></ErrorBoundary>} />
+          <Route path="/greedy/job-scheduling" element={<ErrorBoundary><JobScheduling /></ErrorBoundary>} />
           {/* Redirect old routes */}
           <Route path="/trees" element={<Navigate replace to="/tree" />} />
           <Route path="/pathfinding-visualizer" element={<Navigate replace to="/pathfinding" />} />

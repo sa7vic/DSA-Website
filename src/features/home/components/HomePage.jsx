@@ -111,9 +111,10 @@ const HomePage = () => {
     },
     {
       title: 'Greedy Algorithms',
-      icon: <FaCode size={40} color="#8E8CA7" />, 
+      link: '/greedy',
+      icon: <FaCode size={40} color="#FFFFFF" />, 
       gradientClass: 'homepage-card-gradient-1',
-      enabled: false
+      enabled: true
     },
     {
       title: 'Randomized Algorithms',

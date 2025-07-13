@@ -27,8 +27,7 @@ dist-ssr
 #Ignore vscode AI rules
 .github/copilot-instructions.md
 
-master
-archive
-animat
 
-.gitignore
+dev
+arhcives
+trans
