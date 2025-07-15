@@ -10,7 +10,15 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import '../styles/AboutUs.css';
 import openverseLogo from '../../../assets/openverse2.svg';
+
 import particlesConfig from './particles.json';
+
+import manchanImg from '../../../assets/manchan.jpeg';
+import prajwalImg from '../../../assets/prajwal.webp';
+import shaunImg from '../../../assets/shaun.png';
+import nikhilImg from '../../../assets/nikhil.webp';
+import couldBeYouImg from '../../../assets/couldbeyou.jpg';
+import manuImg from '../../../assets/manu.jpeg';
 
 const AboutUs = () => {
   // Intersection observers for scroll animations
@@ -30,37 +38,48 @@ const AboutUs = () => {
       name: "Manvith Kumar",
       education: "Computer Science, IIIT Kottayam",
       role: "Club-lead",
-      note: "git better you suck"
+      note: "git better you suck",
+      github: "/manvith12",
+      linkedin: "manvith-sanisetty",
+      image: manchanImg
     },
     {
-      name: "Prajwal Kumar",
-      education: "Computer science, IIIT Kottayam", 
+      name: "Prajwal K",
+      education: "Computer Science, IIIT Kottayam",
       role: "Project-lead",
-      note: "Loves optimizing algorithms and system architecture"
+      note: "Loves optimizing algorithms and system architecture",
+      github: "/Prajwal-k-tech",
+      image: prajwalImg
     },
     {
-      name: "Michael Rodriguez",
-      education: "Data Science, IIIT Kottayam",
-      role: "Full Stack Developer", 
-      note: "Bridges the gap between data and user interfaces"
+      name: "Shaun Sebastian",
+      education: "Computer Science, IIIT Kottayam",
+      role: "Full Stack Developer",
+      note: "Bridges the gap between data and user interfaces",
+      github: "/Babu-Nambothiri",
+      image: shaunImg
     },
     {
-      name: "Emily Davis",
-      education: "Information Technology, IIIT Kottayam",
-      role: "UI/UX Designer",
-      note: "Crafting beautiful and functional digital experiences"
-    },
-    {
-      name: "David Kim",
+      name: "Nikhil",
       education: "Computer Science, IIIT Kottayam",
       role: "DevOps Engineer",
-      note: "Ensuring smooth deployment and system reliability"
+      note: "Ensuring smooth deployment and system reliability",
+      github: "/nikhilanil87",
+      image: nikhilImg
     },
     {
-      name: "Lisa Wang",
-      education: "Software Engineering, IIIT Kottayam",
-      role: "Project Manager",
-      note: "Coordinating teams to deliver exceptional results"
+      name: "This could be you!",
+      education: "",
+      role: "Future Developer",
+      note: "Join us and be part of Openverse!",
+      image: couldBeYouImg
+    },
+    {
+      name: "This could be you!",
+      education: "",
+      role: "Future Developer",
+      note: "Join us and be part of Openverse!",
+      image: couldBeYouImg
     }
   ];
 
@@ -207,7 +226,7 @@ const AboutUs = () => {
                 }}
               >
                 <div className="developer-image">
-                  <img src={openverseLogo} alt={developer.name} />
+                  <img src={developer.image} alt={developer.name} />
                 </div>
                 <div className="developer-info">
                   <h3>{developer.name}</h3>
@@ -217,8 +236,12 @@ const AboutUs = () => {
                     <p>"{developer.note}"</p>
                   </div>
                   <div className="developer-links">
-                    <FaGithub />
-                    <FaLinkedin />
+                    {developer.github && (
+                      <a href={`https://github.com${developer.github}`} target="_blank" rel="noopener noreferrer"><FaGithub /></a>
+                    )}
+                    {developer.linkedin && (
+                      <a href={`https://linkedin.com/in/${developer.linkedin}`} target="_blank" rel="noopener noreferrer"><FaLinkedin /></a>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -234,8 +257,12 @@ const AboutUs = () => {
           >
             <h3>Our Guide</h3>
             <div className="guide-info">
-              <p className="guide-name">Prof. [Guide Name]</p>
-              <p className="guide-department">[Department], IIIT Kottayam</p>
+              <a href="https://iiitkottayam.ac.in/#!/faculty/manu" target="_blank" rel="noopener noreferrer">
+                <img src={manuImg}
+                  alt="Dr Manu Madhavan" className="guide-image" style={{ width: '120px', borderRadius: '50%', marginBottom: '1rem' }} />
+              </a>
+              <p className="guide-name">Dr Manu Madhavan</p>
+              <p className="guide-department">Assistant Professor, IIIT Kottayam</p>
               <p className="guide-note">
                 "With gratitude to our mentor who inspired this journey of learning and innovation."
               </p>
