@@ -22,6 +22,7 @@ import { FaHome } from 'react-icons/fa'
 // Global styles - imported in order of specificity
 import './App.css'
 import './features/common/styles/common.css'
+import './features/linkedList/styles/LinkedListHome.css'
 import './features/linkedList/styles/LinkedList.css'
 import './features/sorting/styles/Sorting.css'
 import './features/tree/styles/TreeVisualizer.css'
@@ -44,6 +45,7 @@ import ErrorBoundary from './features/common/components/ErrorBoundary'
 import CodeViewer from './features/common/components/CodeViewer'
 
 // Feature components - each handles its own visualization
+import LinkedListHome from './features/linkedList/components/LinkedListHome'
 import LinkedListVisualizer from './features/linkedList/components/LinkedListVisualizer'
 import DiySection from './features/linkedList/components/DiySection'
 import DoublyLinkedListExplanation from './features/linkedList/components/DoublyLinkedListExplanation'
@@ -247,8 +249,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/linked-list" element={<ErrorBoundary><LinkedListHome /></ErrorBoundary>} />
           <Route 
-            path="/linked-list" 
+            path="/doubly-linkedlist" 
             element={
               <ErrorBoundary>
                 <LinkedListPage
