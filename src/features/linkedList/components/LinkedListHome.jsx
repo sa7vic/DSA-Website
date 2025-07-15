@@ -87,7 +87,7 @@ const cardVariants = {
 };
 
 const LinkedListCard = ({ card, index }) => {
-  const isDisabled = card.id === 'singly' || card.id === 'circular'; // Only doubly is implemented
+  const isDisabled = false; // All linked list types are now implemented
   
   return (
     <motion.div

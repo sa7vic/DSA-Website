@@ -47,6 +47,12 @@ import CodeViewer from './features/common/components/CodeViewer'
 // Feature components - each handles its own visualization
 import LinkedListHome from './features/linkedList/components/LinkedListHome'
 import LinkedListVisualizer from './features/linkedList/components/LinkedListVisualizer'
+import SinglyLinkedListVisualizer from './features/linkedList/components/SinglyLinkedListVisualizer'
+import SinglyLinkedListExplanation from './features/linkedList/components/SinglyLinkedListExplanation'
+import SinglyLinkedListCodeViewer from './features/linkedList/components/SinglyLinkedListCodeViewer'
+import CircularLinkedListVisualizer from './features/linkedList/components/CircularLinkedListVisualizer'
+import CircularLinkedListExplanation from './features/linkedList/components/CircularLinkedListExplanation'
+import CircularLinkedListCodeViewer from './features/linkedList/components/CircularLinkedListCodeViewer'
 import DiySection from './features/linkedList/components/DiySection'
 import DoublyLinkedListExplanation from './features/linkedList/components/DoublyLinkedListExplanation'
 import HomePage from './features/home/components/HomePage'
@@ -82,6 +88,8 @@ import JobScheduling from './features/greedyAlgorithms/components/JobScheduling'
 
 // Utility functions
 import { generateCppCode } from './utils/codeGenerator'
+import { generateSinglyLinkedListCode } from './utils/singlyLinkedListCodeGenerator'
+import { generateCircularLinkedListCode } from './utils/circularLinkedListCodeGenerator'
 import { setStorageItem, getStorageItem } from './utils/helpers'
 import { MEMORY_POOL_SIZE } from './constants'
 
@@ -163,6 +171,162 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
   );
 }
 
+/**
+ * SinglyLinkedListPage wrapper component
+ * Handles state coordination between code viewer and visualizer for singly linked lists
+ * Manages animation synchronization and memory pool
+ */
+function SinglyLinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, handleMemoryPoolInit, handleCodeChange, updateNodesAndCode }) {
+  // State for animation coordination between CodeViewer and SinglyLinkedListVisualizer
+  const [currentLine, setCurrentLine] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [currentStep, setCurrentStep] = useState('');
+
+  // Function to handle animation state updates from SinglyLinkedListVisualizer
+  const handleAnimationUpdate = useCallback((lineNumber, step, animating) => {
+    setCurrentLine(lineNumber);
+    setCurrentStep(step);
+    setIsAnimating(animating);
+  }, []);
+
+  return (
+    <div className="app-container">
+      <div className="linkedlist-bg-overlay"></div>
+     
+      <motion.header 
+        className="app-header"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <Link to="/" className="home-button">
+          <FaHome size={18} />
+          <span>Home</span>
+        </Link>
+        <h1 style={{ flex: 1, textAlign: 'center' }}>Singly Linked List Visualizer</h1>
+      </motion.header>
+
+      <motion.div 
+        className="split-view"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+      >
+        <motion.div 
+          className="panel panel-left"
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <h2>C Implementation</h2>
+          <SinglyLinkedListCodeViewer 
+            code={code} 
+            onChange={handleCodeChange}
+            currentLine={currentLine}
+            isAnimating={isAnimating}
+            nodes={nodes}
+          />
+        </motion.div>
+
+        <motion.div 
+          className="panel panel-right"
+          initial={{ x: 20 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <h2>Interactive Visualization</h2>
+          <SinglyLinkedListVisualizer 
+            nodes={nodes} 
+            onNodesChange={updateNodesAndCode}
+            onMemoryPoolInit={handleMemoryPoolInit}
+            onAnimationUpdate={handleAnimationUpdate}
+          />
+          <SinglyLinkedListExplanation />
+          <DiySection code={code} />
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
+
+/**
+ * CircularLinkedListPage wrapper component
+ * Handles state coordination between code viewer and visualizer for circular linked lists
+ * Manages animation synchronization and memory pool
+ */
+function CircularLinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, handleMemoryPoolInit, handleCodeChange, updateNodesAndCode }) {
+  // State for animation coordination between CodeViewer and CircularLinkedListVisualizer
+  const [currentLine, setCurrentLine] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [currentStep, setCurrentStep] = useState('');
+
+  // Function to handle animation state updates from CircularLinkedListVisualizer
+  const handleAnimationUpdate = useCallback((lineNumber, step, animating) => {
+    setCurrentLine(lineNumber);
+    setCurrentStep(step);
+    setIsAnimating(animating);
+  }, []);
+
+  return (
+    <div className="app-container">
+      <div className="linkedlist-bg-overlay"></div>
+     
+      <motion.header 
+        className="app-header"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <Link to="/" className="home-button">
+          <FaHome size={18} />
+          <span>Home</span>
+        </Link>
+        <h1 style={{ flex: 1, textAlign: 'center' }}>Circular Linked List Visualizer</h1>
+      </motion.header>
+
+      <motion.div 
+        className="split-view"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+      >
+        <motion.div 
+          className="panel panel-left"
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <h2>C Implementation</h2>
+          <CircularLinkedListCodeViewer 
+            code={code} 
+            onChange={handleCodeChange}
+            currentLine={currentLine}
+            isAnimating={isAnimating}
+            nodes={nodes}
+          />
+        </motion.div>
+
+        <motion.div 
+          className="panel panel-right"
+          initial={{ x: 20 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <h2>Interactive Visualization</h2>
+          <CircularLinkedListVisualizer 
+            nodes={nodes} 
+            onNodesChange={updateNodesAndCode}
+            onMemoryPoolInit={handleMemoryPoolInit}
+            onAnimationUpdate={handleAnimationUpdate}
+          />
+          <CircularLinkedListExplanation />
+          <DiySection code={code} />
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
+
 // Redirection component for the pathfinding visualizer
 function PathfindingRedirect() {
   useEffect(() => {
@@ -174,7 +338,7 @@ function PathfindingRedirect() {
 }
 
 function App() {
-  // Persist state at App level using helper functions
+  // Persist state at App level using helper functions for doubly linked list
   const [nodes, setNodes] = useState(() => {
     const saved = getStorageItem('linkedListNodes', 'session');
     return saved ? JSON.parse(saved) : [];
@@ -185,11 +349,43 @@ function App() {
     return saved || generateCppCode([]);
   });
 
+  // State for singly linked list
+  const [singlyNodes, setSinglyNodes] = useState(() => {
+    const saved = getStorageItem('singlyLinkedListNodes', 'session');
+    return saved ? JSON.parse(saved) : [];
+  });
+  
+  const [singlyCode, setSinglyCode] = useState(() => {
+    const saved = getStorageItem('singlyLinkedListCode', 'session');
+    return saved || generateSinglyLinkedListCode([]);
+  });
+
+  // State for circular linked list
+  const [circularNodes, setCircularNodes] = useState(() => {
+    const saved = getStorageItem('circularLinkedListNodes', 'session');
+    return saved ? JSON.parse(saved) : [];
+  });
+  
+  const [circularCode, setCircularCode] = useState(() => {
+    const saved = getStorageItem('circularLinkedListCode', 'session');
+    return saved || generateCircularLinkedListCode([]);
+  });
+
   // Save state to sessionStorage when it changes
   useEffect(() => {
     setStorageItem('linkedListNodes', JSON.stringify(nodes), 'session');
     setStorageItem('linkedListCode', code, 'session');
   }, [nodes, code]);
+
+  useEffect(() => {
+    setStorageItem('singlyLinkedListNodes', JSON.stringify(singlyNodes), 'session');
+    setStorageItem('singlyLinkedListCode', singlyCode, 'session');
+  }, [singlyNodes, singlyCode]);
+
+  useEffect(() => {
+    setStorageItem('circularLinkedListNodes', JSON.stringify(circularNodes), 'session');
+    setStorageItem('circularLinkedListCode', circularCode, 'session');
+  }, [circularNodes, circularCode]);
 
   // Store memory pool addresses
   const [memoryPoolAddresses, setMemoryPoolAddresses] = useState([]);
@@ -244,6 +440,98 @@ function App() {
     setCode(generateCppCode(newNodes));
   };
 
+  // Helper functions for singly linked list
+  const handleSinglyCodeChange = (nodesData) => {
+    if (Array.isArray(nodesData) && memoryPoolAddresses.length > 0) {
+      // Track used indices to avoid duplicates
+      const usedIndices = new Set();
+      
+      const newNodes = nodesData.map((node, index) => {
+        // Find first available index
+        let memoryIndex = index % MEMORY_POOL_SIZE;
+        
+        // Only increment if this index is already used
+        if (usedIndices.has(memoryIndex)) {
+          let attemptsCount = 0;
+          while (usedIndices.has(memoryIndex) && attemptsCount < MEMORY_POOL_SIZE) {
+            memoryIndex = (memoryIndex + 1) % MEMORY_POOL_SIZE;
+            attemptsCount++;
+          }
+          
+          // If we couldn't find an available slot, just use the original index
+          if (attemptsCount >= MEMORY_POOL_SIZE) {
+            memoryIndex = index % MEMORY_POOL_SIZE;
+          }
+        }
+        
+        usedIndices.add(memoryIndex);
+        
+        return {
+          data: node.data,
+          address: memoryPoolAddresses[memoryIndex],
+          memoryIndex: memoryIndex,
+          next: index < nodesData.length - 1 ? index + 1 : null  // Only next pointer for singly linked list
+        };
+      });
+      setSinglyNodes(newNodes);
+    }
+  };
+
+  const updateSinglyNodesAndCode = (newNodes) => {
+    setSinglyNodes(newNodes);
+    setSinglyCode(generateSinglyLinkedListCode(newNodes));
+  };
+
+  // Helper functions for circular linked list
+  const handleCircularCodeChange = (nodesData) => {
+    if (Array.isArray(nodesData) && memoryPoolAddresses.length > 0) {
+      // Track used indices to avoid duplicates
+      const usedIndices = new Set();
+      
+      const newNodes = nodesData.map((node, index) => {
+        // Find first available index
+        let memoryIndex = index % MEMORY_POOL_SIZE;
+        
+        // Only increment if this index is already used
+        if (usedIndices.has(memoryIndex)) {
+          let attemptsCount = 0;
+          while (usedIndices.has(memoryIndex) && attemptsCount < MEMORY_POOL_SIZE) {
+            memoryIndex = (memoryIndex + 1) % MEMORY_POOL_SIZE;
+            attemptsCount++;
+          }
+          
+          // If we couldn't find an available slot, just use the original index
+          if (attemptsCount >= MEMORY_POOL_SIZE) {
+            memoryIndex = index % MEMORY_POOL_SIZE;
+          }
+        }
+        
+        usedIndices.add(memoryIndex);
+        
+        // For circular linked list, last node points to first
+        let nextIndex = null;
+        if (nodesData.length > 1) {
+          nextIndex = index < nodesData.length - 1 ? index + 1 : 0; // Last points to first
+        } else if (nodesData.length === 1) {
+          nextIndex = 0; // Single node points to itself
+        }
+        
+        return {
+          data: node.data,
+          address: memoryPoolAddresses[memoryIndex],
+          memoryIndex: memoryIndex,
+          next: nextIndex
+        };
+      });
+      setCircularNodes(newNodes);
+    }
+  };
+
+  const updateCircularNodesAndCode = (newNodes) => {
+    setCircularNodes(newNodes);
+    setCircularCode(generateCircularLinkedListCode(newNodes));
+  };
+
   return (
     <ErrorBoundary>
       <Router>
@@ -263,6 +551,40 @@ function App() {
                   handleMemoryPoolInit={handleMemoryPoolInit}
                   handleCodeChange={handleCodeChange}
                   updateNodesAndCode={updateNodesAndCode}
+                />
+              </ErrorBoundary>
+            }
+          />
+          <Route 
+            path="/singly-linkedlist" 
+            element={
+              <ErrorBoundary>
+                <SinglyLinkedListPage
+                  nodes={singlyNodes}
+                  setNodes={setSinglyNodes}
+                  code={singlyCode}
+                  setCode={setSinglyCode}
+                  memoryPoolAddresses={memoryPoolAddresses}
+                  handleMemoryPoolInit={handleMemoryPoolInit}
+                  handleCodeChange={handleSinglyCodeChange}
+                  updateNodesAndCode={updateSinglyNodesAndCode}
+                />
+              </ErrorBoundary>
+            }
+          />
+          <Route 
+            path="/circular-linkedlist" 
+            element={
+              <ErrorBoundary>
+                <CircularLinkedListPage
+                  nodes={circularNodes}
+                  setNodes={setCircularNodes}
+                  code={circularCode}
+                  setCode={setCircularCode}
+                  memoryPoolAddresses={memoryPoolAddresses}
+                  handleMemoryPoolInit={handleMemoryPoolInit}
+                  handleCodeChange={handleCircularCodeChange}
+                  updateNodesAndCode={updateCircularNodesAndCode}
                 />
               </ErrorBoundary>
             }

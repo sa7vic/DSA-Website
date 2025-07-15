@@ -843,6 +843,122 @@ input.invalid {
   animation: flashWarning 2s ease-in-out infinite;
 }
 
+/* Debug Section Styles */
+.debug-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(22, 27, 34, 0.6);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.debug-section h3 {
+  color: #90dffb;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(144, 223, 251, 0.2);
+}
+
+.debug-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.debug-subsection {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.debug-subsection h4 {
+  color: #c9d1d9;
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Rajdhani', monospace;
+}
+
+.debug-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+.debug-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.25rem;
+  border-left: 3px solid rgba(168, 168, 255, 0.5);
+  transition: all 0.2s ease;
+}
+
+.debug-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-left-color: #a8a8ff;
+  transform: translateX(2px);
+}
+
+.debug-index {
+  color: #f97583;
+  font-weight: bold;
+  min-width: 2rem;
+}
+
+.debug-data {
+  color: #79c0ff;
+  min-width: 6rem;
+}
+
+.debug-memory {
+  color: #a5a5a5;
+  min-width: 8rem;
+}
+
+.debug-next {
+  color: #85e89d;
+}
+
+.debug-traversal {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.debug-path {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  color: #c9d1d9;
+  padding: 0.75rem;
+  background: rgba(22, 27, 34, 0.8);
+  border-radius: 0.25rem;
+  border-left: 4px solid #79c0ff;
+  letter-spacing: 0.5px;
+  word-spacing: 0.25rem;
+}
+
+.debug-error {
+  color: #ff7b72;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  background: rgba(255, 123, 114, 0.1);
+  border-radius: 0.25rem;
+  border-left: 4px solid #ff7b72;
+}
+
 @keyframes fadeInScale {
   from {
     opacity: 0;
