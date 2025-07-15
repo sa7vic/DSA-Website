@@ -7,7 +7,8 @@ const QuestionCard = ({
   questionNumber,
   selectedOption,
   showExplanation,
-  onAnswerSelect
+  onAnswerSelect,
+  isTestMode = false
 }) => {
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -55,7 +56,7 @@ const QuestionCard = ({
       baseClass += ' selected';
     }
     
-    if (showExplanation) {
+    if (showExplanation && !isTestMode) {
       if (index === question.correctAnswer) {
         baseClass += ' correct';
       } else if (selectedOption === index && index !== question.correctAnswer) {
@@ -69,7 +70,7 @@ const QuestionCard = ({
   };
 
   const getOptionIcon = (index) => {
-    if (!showExplanation) {
+    if (!showExplanation || isTestMode) {
       return null;
     }
     
@@ -128,11 +129,11 @@ const QuestionCard = ({
             key={index}
             custom={index}
             variants={optionVariants}
-            whileHover={showExplanation ? {} : "hover"}
-            whileTap={showExplanation ? {} : "tap"}
+            whileHover={showExplanation && !isTestMode ? {} : "hover"}
+            whileTap={showExplanation && !isTestMode ? {} : "tap"}
             className={getOptionClass(index)}
             onClick={() => onAnswerSelect(index)}
-            disabled={showExplanation}
+            disabled={showExplanation && !isTestMode}
           >
             <div className="option-content">
               <span className="option-letter">
@@ -146,7 +147,7 @@ const QuestionCard = ({
       </motion.div>
 
       {/* Explanation */}
-      {showExplanation && (
+      {showExplanation && !isTestMode && (
         <motion.div 
           className="explanation-section"
           initial={{ opacity: 0, height: 0 }}
@@ -199,7 +200,7 @@ const QuestionCard = ({
       )}
 
       {/* Hints (if not answered yet) */}
-      {!showExplanation && question.hint && (
+      {!showExplanation && !isTestMode && question.hint && (
         <motion.div 
           className="hint-section"
           initial={{ opacity: 0 }}

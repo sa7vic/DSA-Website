@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaHome, FaClock, FaQuestionCircle, FaCheck, FaTimes, FaArrowLeft, FaArrowRight, FaPlay, FaRedo } from 'react-icons/fa';
+import { FaHome, FaClock, FaQuestionCircle, FaCheck, FaTimes, FaArrowLeft, FaArrowRight, FaPlay, FaRedo, FaHistory, FaTrophy, FaDownload, FaTrash, FaFlask, FaEye, FaListUl } from 'react-icons/fa';
 
 import { useQuizStore, formatTime } from '../store/quizStore';
 import { getRandomQuestions, getQuestionCount } from '../data/questions';
@@ -13,6 +13,179 @@ import ProgressBar from './ProgressBar';
 import Timer from './Timer';
 
 import '../styles/Quiz.css';
+
+// Results viewer component
+const QuizResultsViewer = ({ results, onClose, onDelete, onViewDetails }) => {
+  const getScoreColor = (accuracy) => {
+    if (accuracy >= 80) {
+      return '#10b981';
+    }
+    if (accuracy >= 60) {
+      return '#f59e0b';
+    }
+    return '#ef4444';
+  };
+
+  const formatTopicName = (topicName) => {
+    return topicName
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const downloadResults = (result) => {
+    const content = `Quiz Results - ${formatTopicName(result.topic)}
+Date: ${new Date(result.date).toLocaleDateString()}
+Score: ${result.correctAnswers}/${result.totalQuestions} (${result.accuracy}%)
+Time Taken: ${formatTime(result.timeTaken)}
+Mode: ${result.isTestMode ? 'Test Mode' : 'Practice Mode'}
+
+Questions and Answers:
+${result.questionResults.map((q, index) => `
+${index + 1}. ${q.question}
+Your Answer: ${q.userAnswer !== null ? q.options[q.userAnswer] : 'Not answered'}
+Correct Answer: ${q.options[q.correctAnswer]}
+Result: ${q.isCorrect ? '✓ Correct' : '✗ Incorrect'}
+Explanation: ${q.explanation}
+`).join('\n')}`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `quiz-results-${result.topic}-${new Date(result.date).toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  if (results.length === 0) {
+    return (
+      <motion.div 
+        className="results-viewer"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <div className="results-overlay" onClick={onClose}></div>
+        <motion.div 
+          className="results-modal"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+        >
+          <div className="results-header">
+            <h2>Quiz Results</h2>
+            <button className="close-button" onClick={onClose}>×</button>
+          </div>
+          <div className="results-content">
+            <div className="no-results">
+              <FaHistory size={48} />
+              <h3>No Quiz Results Yet</h3>
+              <p>Take a quiz to see your results here!</p>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div 
+      className="results-viewer"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className="results-overlay" onClick={onClose}></div>
+      <motion.div 
+        className="results-modal"
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+      >
+        <div className="results-header">
+          <h2>Recent Quiz Results</h2>
+          <button className="close-button" onClick={onClose}>×</button>
+        </div>
+        <div className="results-content">
+          <div className="results-list">
+            {results.map((result) => (
+              <motion.div 
+                key={result.id}
+                className="result-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => onViewDetails(result)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="result-header">
+                  <div className="result-topic">
+                    <h3>{formatTopicName(result.topic)}</h3>
+                    <div className="result-mode">
+                      {result.isTestMode ? <FaFlask /> : <FaEye />}
+                      <span>{result.isTestMode ? 'Test Mode' : 'Practice Mode'}</span>
+                    </div>
+                  </div>
+                  <div className="result-date">
+                    {new Date(result.date).toLocaleDateString()}
+                  </div>
+                </div>
+                
+                <div className="result-stats">
+                  <div className="stat">
+                    <FaTrophy style={{ color: getScoreColor(result.accuracy) }} />
+                    <span className="stat-value" style={{ color: getScoreColor(result.accuracy) }}>
+                      {result.accuracy}%
+                    </span>
+                    <span className="stat-label">Score</span>
+                  </div>
+                  
+                  <div className="stat">
+                    <FaListUl />
+                    <span className="stat-value">
+                      {result.correctAnswers}/{result.totalQuestions}
+                    </span>
+                    <span className="stat-label">Correct</span>
+                  </div>
+                  
+                  <div className="stat">
+                    <FaClock />
+                    <span className="stat-value">
+                      {formatTime(result.timeTaken)}
+                    </span>
+                    <span className="stat-label">Time</span>
+                  </div>
+                </div>
+                
+                <div className="result-actions" onClick={(e) => e.stopPropagation()}>
+                  <button 
+                    className="action-btn download-btn"
+                    onClick={() => downloadResults(result)}
+                    title="Download Results"
+                  >
+                    <FaDownload />
+                    Download
+                  </button>
+                  <button 
+                    className="action-btn delete-btn"
+                    onClick={() => onDelete(result.id)}
+                    title="Delete Result"
+                  >
+                    <FaTrash />
+                    Delete
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 const Quiz = () => {
   const { topic } = useParams();
@@ -27,6 +200,8 @@ const Quiz = () => {
     timeStarted,
     questionCount,
     quizResults,
+    isTestMode,
+    quizHistory,
     startQuiz,
     answerQuestion,
     nextQuestion,
@@ -34,13 +209,16 @@ const Quiz = () => {
     goToQuestion,
     submitQuiz,
     resetQuiz,
-    setQuestionCount
+    setQuestionCount,
+    deleteQuizFromHistory
   } = useQuizStore();
 
   const [showSetup, setShowSetup] = useState(true);
   const [selectedOption, setSelectedOption] = useState(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [notification, setNotification] = useState({ message: '', type: '', show: false });
+  const [showResults, setShowResults] = useState(false);
+  const [selectedResult, setSelectedResult] = useState(null);
 
   // Simple notification system to replace toast
   const showNotification = (message, type = 'info') => {
@@ -81,8 +259,72 @@ const Quiz = () => {
     setShowSetup(true);
   }, [topic, navigate, resetQuiz]);
 
+  // Tab switch and focus detection for test mode
+  useEffect(() => {
+    if (!isQuizActive || !isTestMode || isQuizCompleted) {
+      return;
+    }
+
+    let hasWarned = false;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden && !hasWarned) {
+        hasWarned = true;
+        showNotification('⚠️ Tab switch detected in Test Mode! Quiz will be auto-submitted.', 'error');
+        
+        setTimeout(() => {
+          if (isQuizActive && !isQuizCompleted) {
+            submitQuiz();
+            showNotification('Quiz auto-submitted due to tab switch violation in Test Mode.', 'error');
+          }
+        }, 2000);
+      }
+    };
+
+    const handleBlur = () => {
+      if (!hasWarned) {
+        hasWarned = true;
+        showNotification('⚠️ Window focus lost in Test Mode! Quiz will be auto-submitted.', 'error');
+        
+        setTimeout(() => {
+          if (isQuizActive && !isQuizCompleted) {
+            submitQuiz();
+            showNotification('Quiz auto-submitted due to focus loss violation in Test Mode.', 'error');
+          }
+        }, 2000);
+      }
+    };
+
+    const handleBeforeUnload = (e) => {
+      if (isQuizActive && !isQuizCompleted) {
+        const message = 'Are you sure you want to leave? Your quiz progress will be lost.';
+        e.returnValue = message;
+        return message;
+      }
+    };
+
+    // Add event listeners
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Cleanup function
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isQuizActive, isTestMode, isQuizCompleted, submitQuiz]);
+
+  // Display warning message when quiz starts in test mode
+  useEffect(() => {
+    if (isQuizActive && isTestMode && !showSetup) {
+      showNotification('🔒 Test Mode: Do not switch tabs or lose focus, or the quiz will be auto-submitted!', 'warning');
+    }
+  }, [isQuizActive, isTestMode, showSetup]);
+
   // Handle quiz start
-  const handleStartQuiz = (selectedCount) => {
+  const handleStartQuiz = (selectedCount, testMode = false) => {
     const availableQuestions = getRandomQuestions(topic, selectedCount);
     
     if (availableQuestions.length === 0) {
@@ -94,44 +336,49 @@ const Quiz = () => {
       showNotification(`Only ${availableQuestions.length} questions available for ${topic}`, 'warning');
     }
 
-    startQuiz(topic, availableQuestions, selectedCount);
+    startQuiz(topic, availableQuestions, selectedCount, testMode);
     setShowSetup(false);
     setSelectedOption(null);
     setShowExplanation(false);
     
-    showNotification(`Quiz started! ${availableQuestions.length} questions loaded.`, 'success');
+    showNotification(`Quiz started! ${availableQuestions.length} questions loaded. Mode: ${testMode ? 'Test' : 'Practice'}`, 'success');
   };
 
   // Handle answer selection
   const handleAnswerSelect = (optionIndex) => {
-    if (showExplanation) {
-      return; // Don't allow changes after showing explanation
+    if (showExplanation && !isTestMode) {
+      return; // Don't allow changes after showing explanation in practice mode
     }
 
     setSelectedOption(optionIndex);
     answerQuestion(currentQuestionIndex, optionIndex);
     
-    // Show feedback
-    const currentQuestion = questions[currentQuestionIndex];
-    const isCorrect = optionIndex === currentQuestion.correctAnswer;
-    
-    if (isCorrect) {
-      showNotification('Correct! 🎉', 'success');
-    } else {
-      showNotification('Incorrect! 😞', 'error');
-    }
-    
-    setShowExplanation(true);
-    
-    // Auto-advance after 3 seconds
-    setTimeout(() => {
-      if (currentQuestionIndex < questions.length - 1) {
-        handleNextQuestion();
+    if (!isTestMode) {
+      // Practice mode - show feedback immediately
+      const currentQuestion = questions[currentQuestionIndex];
+      const isCorrect = optionIndex === currentQuestion.correctAnswer;
+      
+      if (isCorrect) {
+        showNotification('Correct! 🎉', 'success');
       } else {
-        // Last question - show submit option
-        showNotification('Last question! Ready to submit?', 'info');
+        showNotification('Incorrect! 😞', 'error');
       }
-    }, 3000);
+      
+      setShowExplanation(true);
+      
+      // Auto-advance after 3 seconds in practice mode
+      setTimeout(() => {
+        if (currentQuestionIndex < questions.length - 1) {
+          handleNextQuestion();
+        } else {
+          // Last question - show submit option
+          showNotification('Last question! Ready to submit?', 'info');
+        }
+      }, 3000);
+    } else {
+      // Test mode - just show that answer was selected
+      showNotification('Answer selected!', 'info');
+    }
   };
 
   // Handle navigation
@@ -139,7 +386,7 @@ const Quiz = () => {
     if (currentQuestionIndex < questions.length - 1) {
       nextQuestion();
       setSelectedOption(userAnswers[currentQuestionIndex + 1]);
-      setShowExplanation(userAnswers[currentQuestionIndex + 1] !== null);
+      setShowExplanation(!isTestMode && userAnswers[currentQuestionIndex + 1] !== null);
     }
   };
 
@@ -147,14 +394,14 @@ const Quiz = () => {
     if (currentQuestionIndex > 0) {
       previousQuestion();
       setSelectedOption(userAnswers[currentQuestionIndex - 1]);
-      setShowExplanation(userAnswers[currentQuestionIndex - 1] !== null);
+      setShowExplanation(!isTestMode && userAnswers[currentQuestionIndex - 1] !== null);
     }
   };
 
   const handleQuestionJump = (index) => {
     goToQuestion(index);
     setSelectedOption(userAnswers[index]);
-    setShowExplanation(userAnswers[index] !== null);
+    setShowExplanation(!isTestMode && userAnswers[index] !== null);
   };
 
   // Handle quiz submission
@@ -171,7 +418,12 @@ const Quiz = () => {
     }
 
     submitQuiz();
-    showNotification('Quiz submitted successfully!', 'success');
+    
+    if (isTestMode) {
+      showNotification('Quiz submitted! Viewing results with explanations...', 'success');
+    } else {
+      showNotification('Quiz submitted successfully!', 'success');
+    }
   };
 
   // Handle retry
@@ -188,6 +440,17 @@ const Quiz = () => {
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  };
+
+  // Handle viewing detailed results
+  const handleViewDetails = (result) => {
+    setSelectedResult(result);
+    setShowResults(false);
+  };
+
+  // Handle closing detailed results
+  const handleCloseDetails = () => {
+    setSelectedResult(null);
   };
 
   // Show setup screen
@@ -207,6 +470,13 @@ const Quiz = () => {
             <span>Back to Topics</span>
           </Link>
           <h1>{formatTopicName(topic)} Quiz</h1>
+          <button 
+            className="view-results-btn"
+            onClick={() => setShowResults(true)}
+          >
+            <FaHistory size={18} />
+            <span>Results ({quizHistory.length})</span>
+          </button>
         </header>
 
         <QuizSetup
@@ -216,6 +486,30 @@ const Quiz = () => {
         />
 
         <NotificationToast />
+
+        {/* Results Viewer Modal */}
+        <AnimatePresence>
+          {showResults && (
+            <QuizResultsViewer
+              results={quizHistory}
+              onClose={() => setShowResults(false)}
+              onDelete={deleteQuizFromHistory}
+              onViewDetails={handleViewDetails}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Detailed Results Viewer */}
+        <AnimatePresence>
+          {selectedResult && (
+            <QuizResults
+              results={selectedResult}
+              onRetry={() => {}}
+              onBackToTopics={handleCloseDetails}
+              isDetailedView={true}
+            />
+          )}
+        </AnimatePresence>
       </motion.div>
     );
   }
@@ -278,6 +572,9 @@ const Quiz = () => {
               <FaQuestionCircle />
               {currentQuestionIndex + 1} of {questions.length}
             </span>
+            <span className="quiz-mode">
+              {isTestMode ? 'Test Mode' : 'Practice Mode'}
+            </span>
             <Timer startTime={timeStarted} isActive={isQuizActive} />
           </div>
         </div>
@@ -318,6 +615,7 @@ const Quiz = () => {
                 selectedOption={selectedOption}
                 showExplanation={showExplanation}
                 onAnswerSelect={handleAnswerSelect}
+                isTestMode={isTestMode}
               />
             </motion.div>
           </AnimatePresence>

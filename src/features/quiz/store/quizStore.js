@@ -20,21 +20,24 @@ export const useQuizStore = create(
       // Quiz settings
       questionCount: 10,
       topic: '',
+      isTestMode: false,
       
       // Results and history
       quizResults: null,
       quizHistory: [],
       
       // Actions
-      startQuiz: (topic, questions, questionCount) => set((state) => ({
+      startQuiz: (topic, questions, questionCount, isTestMode = false) => set((state) => ({
         currentQuiz: {
           topic,
           questionCount,
-          id: Date.now().toString()
+          id: Date.now().toString(),
+          isTestMode
         },
         questions,
         topic,
         questionCount,
+        isTestMode,
         currentQuestionIndex: 0,
         userAnswers: new Array(questions.length).fill(null),
         selectedAnswers: new Array(questions.length).fill(null),
@@ -108,7 +111,8 @@ export const useQuizStore = create(
           timeStarted: state.timeStarted,
           timeFinished,
           questionResults,
-          date: new Date().toISOString()
+          date: new Date().toISOString(),
+          isTestMode: state.isTestMode
         };
         
         // Add to history
@@ -135,11 +139,16 @@ export const useQuizStore = create(
         isQuizCompleted: false,
         quizResults: null,
         topic: '',
-        questionCount: 10
+        questionCount: 10,
+        isTestMode: false
       })),
       
       setQuestionCount: (count) => set(() => ({
         questionCount: count
+      })),
+      
+      setTestMode: (testMode) => set(() => ({
+        isTestMode: testMode
       })),
       
       // Get statistics
@@ -179,7 +188,8 @@ export const useQuizStore = create(
       name: 'quiz-storage',
       partialize: (state) => ({
         quizHistory: state.quizHistory,
-        questionCount: state.questionCount
+        questionCount: state.questionCount,
+        isTestMode: state.isTestMode
       })
     }
   )

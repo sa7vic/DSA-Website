@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaTrophy, FaClock, FaPercentage, FaRedo, FaHome, FaCheckCircle, FaTimesCircle, FaStar, FaLightbulb } from 'react-icons/fa';
+import { FaTrophy, FaClock, FaPercentage, FaRedo, FaHome, FaCheckCircle, FaTimesCircle, FaStar, FaLightbulb, FaDownload } from 'react-icons/fa';
 import { formatTime } from '../store/quizStore';
 
-const QuizResults = ({ results, onRetry, onBackToTopics }) => {
+// Helper function to format topic names
+const formatTopicName = (topicName) => {
+  return topicName
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+const QuizResults = ({ results, onRetry, onBackToTopics, isDetailedView = false }) => {
   const [showConfetti, setShowConfetti] = useState(false);
-  const [showDetailedView, setShowDetailedView] = useState(false);
+  const [showDetailedView, setShowDetailedView] = useState(results.isTestMode || isDetailedView);
 
   // Show confetti for good scores
   useEffect(() => {
@@ -14,6 +22,66 @@ const QuizResults = ({ results, onRetry, onBackToTopics }) => {
       setTimeout(() => setShowConfetti(false), 3000);
     }
   }, [results.accuracy]);
+
+  // If this is a detailed view (viewing past results), wrap in a full-screen modal
+  if (isDetailedView) {
+    return (
+      <motion.div 
+        className="detailed-results-overlay"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <div className="detailed-results-backdrop" onClick={onBackToTopics}></div>
+        <motion.div 
+          className="detailed-results-container"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+        >
+          <div className="detailed-results-header">
+            <h2>{formatTopicName(results.topic)} - Detailed Results</h2>
+            <button className="detailed-close-button" onClick={onBackToTopics}>×</button>
+          </div>
+          <div className="detailed-results-body">
+            <QuizResultsContent 
+              results={results} 
+              showDetailedView={true} 
+              onRetry={onRetry} 
+              onBackToTopics={onBackToTopics}
+              isModal={true}
+              forceShowDetails={true}
+            />
+          </div>
+        </motion.div>
+      </motion.div>
+    );
+  }
+
+  // Regular results view (after completing a quiz)
+  return (
+    <QuizResultsContent 
+      results={results} 
+      showDetailedView={showDetailedView} 
+      onRetry={onRetry} 
+      onBackToTopics={onBackToTopics}
+      isModal={false}
+    />
+  );
+};
+
+// Extracted the main results content into a separate component
+const QuizResultsContent = ({ results, showDetailedView, onRetry, onBackToTopics, isModal = false, forceShowDetails = false }) => {
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showDetails, setShowDetails] = useState(forceShowDetails || showDetailedView);
+
+  // Show confetti for good scores
+  useEffect(() => {
+    if (results.accuracy >= 80 && !isModal) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3000);
+    }
+  }, [results.accuracy, isModal]);
 
   const getGrade = (accuracy) => {
     if (accuracy >= 90) {
@@ -47,11 +115,86 @@ const QuizResults = ({ results, onRetry, onBackToTopics }) => {
     return "Keep practicing! Every expert was once a beginner! 💪";
   };
 
-  const formatTopicName = (topicName) => {
-    return topicName
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+  const downloadQuizResults = () => {
+    const formatDate = (dateString) => {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    };
+
+    const content = `
+# ${formatTopicName(results.topic)} Quiz Results
+
+**Quiz Completed:** ${formatDate(results.date)}
+**Mode:** ${results.isTestMode ? 'Test Mode' : 'Practice Mode'}
+**Score:** ${results.correctAnswers}/${results.totalQuestions} (${results.accuracy}%)
+**Time Taken:** ${formatTime(results.timeTaken)}
+**Grade:** ${getGrade(results.accuracy).grade}
+
+---
+
+## Questions and Solutions
+
+${results.questionResults.map((result, index) => `
+### Question ${index + 1}
+**${result.question}**
+
+**Options:**
+${result.options.map((option, optIndex) => `${String.fromCharCode(65 + optIndex)}. ${option}`).join('\n')}
+
+**Your Answer:** ${result.userAnswer !== null 
+  ? `${String.fromCharCode(65 + result.userAnswer)}. ${result.options[result.userAnswer]} ${result.isCorrect ? '✅' : '❌'}`
+  : 'Not answered ❌'
+}
+
+**Correct Answer:** ${String.fromCharCode(65 + result.correctAnswer)}. ${result.options[result.correctAnswer]} ✅
+
+**Explanation:** ${result.explanation}
+
+**Difficulty:** ${result.difficulty}
+
+---
+`).join('')}
+
+## Performance Summary
+
+- **Total Questions:** ${results.totalQuestions}
+- **Correct Answers:** ${results.correctAnswers}
+- **Incorrect Answers:** ${results.totalQuestions - results.correctAnswers}
+- **Accuracy:** ${results.accuracy}%
+- **Time Taken:** ${formatTime(results.timeTaken)}
+
+## Performance Analysis
+
+**Strengths:** ${results.accuracy >= 80 
+  ? "Excellent understanding of core concepts!"
+  : results.accuracy >= 60
+  ? "Good grasp of fundamental concepts."
+  : "Shows potential for improvement with practice."}
+
+**Recommendations:** ${results.accuracy >= 80 
+  ? "Try more challenging topics or advanced questions."
+  : "Review the explanations and practice similar questions."}
+
+---
+
+*Generated by Openverse DSA Quiz Platform*
+*Date: ${formatDate(new Date().toISOString())}*
+`;
+
+    const blob = new Blob([content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${results.topic}-quiz-results-${new Date().toISOString().split('T')[0]}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const gradeInfo = getGrade(results.accuracy);
@@ -113,6 +256,11 @@ const QuizResults = ({ results, onRetry, onBackToTopics }) => {
           
           <h2 className="results-title">Quiz Complete!</h2>
           <p className="topic-name">{formatTopicName(results.topic)}</p>
+          {results.isTestMode && (
+            <p className="test-mode-notice">
+              🧪 Test Mode: Answers and explanations are shown below
+            </p>
+          )}
           <p className="motivational-message">{getMotivationalMessage(results.accuracy)}</p>
         </motion.div>
 
@@ -185,14 +333,16 @@ const QuizResults = ({ results, onRetry, onBackToTopics }) => {
 
         {/* Detailed Results Toggle */}
         <motion.div className="detailed-results-section" variants={itemVariants}>
-          <button 
-            className="toggle-details-btn"
-            onClick={() => setShowDetailedView(!showDetailedView)}
-          >
-            {showDetailedView ? 'Hide' : 'Show'} Detailed Results
-          </button>
+          {!forceShowDetails && (
+            <button 
+              className="toggle-details-btn"
+              onClick={() => setShowDetails(!showDetails)}
+            >
+              {showDetails ? 'Hide' : 'Show'} Detailed Results
+            </button>
+          )}
           
-          {showDetailedView && (
+          {showDetails && (
             <motion.div 
               className="detailed-results"
               initial={{ opacity: 0, height: 0 }}
@@ -258,6 +408,16 @@ const QuizResults = ({ results, onRetry, onBackToTopics }) => {
           >
             <FaRedo />
             Try Again
+          </motion.button>
+          
+          <motion.button
+            className="action-button download"
+            onClick={downloadQuizResults}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FaDownload />
+            Download Results
           </motion.button>
           
           <motion.button

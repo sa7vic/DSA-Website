@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaPlay, FaQuestionCircle, FaClock, FaListUl, FaChartLine } from 'react-icons/fa';
+import { FaPlay, FaQuestionCircle, FaClock, FaListUl, FaChartLine, FaFlask, FaEye } from 'react-icons/fa';
 import { useQuizStore } from '../store/quizStore';
 
 const QuizSetup = ({ topic, onStartQuiz, availableQuestions }) => {
-  const { questionCount, setQuestionCount, getTopicStats } = useQuizStore();
+  const { questionCount, setQuestionCount, getTopicStats, isTestMode, setTestMode } = useQuizStore();
   const [selectedCount, setSelectedCount] = useState(questionCount);
+  const [selectedTestMode, setSelectedTestMode] = useState(isTestMode);
   
   const topicStats = getTopicStats(topic);
   
@@ -18,7 +19,8 @@ const QuizSetup = ({ topic, onStartQuiz, availableQuestions }) => {
 
   const handleStart = () => {
     setQuestionCount(selectedCount);
-    onStartQuiz(selectedCount);
+    setTestMode(selectedTestMode);
+    onStartQuiz(selectedCount, selectedTestMode);
   };
 
   const formatTopicName = (topicName) => {
@@ -81,7 +83,7 @@ const QuizSetup = ({ topic, onStartQuiz, availableQuestions }) => {
                 <div className="button-content">
                   <span className="button-text">Start Quiz</span>
                   <span className="button-subtitle">
-                    {selectedCount} question{selectedCount !== 1 ? 's' : ''} • ~{Math.ceil(selectedCount * 1.5)} minutes
+                    {selectedCount} question{selectedCount !== 1 ? 's' : ''} • ~{Math.ceil(selectedCount * 1.5)} minutes • {selectedTestMode ? 'Test Mode' : 'Practice Mode'}
                   </span>
                 </div>
               </motion.button>
@@ -145,9 +147,62 @@ const QuizSetup = ({ topic, onStartQuiz, availableQuestions }) => {
                 <p className="custom-note">Enter any number between 1 and {availableQuestions}</p>
               </div>
 
+              {/* Quiz Mode Selection */}
+              <div className="mode-selection">
+                <h4>Quiz Mode</h4>
+                <div className="mode-options">
+                  <motion.button
+                    className={`mode-option ${selectedTestMode ? '' : 'selected'}`}
+                    onClick={() => setSelectedTestMode(false)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className="mode-content">
+                      <FaEye className="mode-icon" />
+                      <div className="mode-text">
+                        <span className="mode-title">Practice Mode</span>
+                        <span className="mode-description">See answers immediately after each question</span>
+                      </div>
+                    </div>
+                  </motion.button>
+                  
+                  <motion.button
+                    className={`mode-option test-mode ${selectedTestMode ? 'selected' : ''}`}
+                    onClick={() => setSelectedTestMode(true)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className="mode-content">
+                      <FaFlask className="mode-icon" />
+                      <div className="mode-text">
+                        <span className="mode-title">Test Mode</span>
+                        <span className="mode-description">Answer all questions first, then see results. ⚠️ Do not switch tabs or lose focus - quiz will auto-submit!</span>
+                      </div>
+                    </div>
+                  </motion.button>
+                </div>
+              </div>
+
               {/* Quiz Tips & Information */}
               <div className="quiz-tips">
                 
+                {/* Test Mode Warning */}
+                {selectedTestMode && (
+                  <motion.div 
+                    className="test-mode-warning"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    <h5>🔒 Test Mode Restrictions</h5>
+                    <ul>
+                      <li>Do not switch browser tabs or windows</li>
+                      <li>Do not minimize the browser window</li>
+                      <li>Keep this tab in focus throughout the quiz</li>
+                      <li>Quiz will be auto-submitted if these rules are violated</li>
+                    </ul>
+                  </motion.div>
+                )}
                 
                 <div className="recommendation">
                   <h5>💡 Recommendation</h5>
@@ -177,6 +232,10 @@ const QuizSetup = ({ topic, onStartQuiz, availableQuestions }) => {
                 <div className="preview-item">
                   <FaChartLine className="preview-icon" />
                   <span>Mixed Difficulty</span>
+                </div>
+                <div className="preview-item">
+                  {selectedTestMode ? <FaFlask className="preview-icon" /> : <FaEye className="preview-icon" />}
+                  <span>{selectedTestMode ? 'Test Mode' : 'Practice Mode'}</span>
                 </div>
               </div>
             </div>
