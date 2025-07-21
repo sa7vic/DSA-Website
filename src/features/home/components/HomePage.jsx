@@ -44,6 +44,13 @@ const HomePage = () => {
   // Card data structure with gradient classes cycling through the 3 gradient types
   const dataStructureCards = [
     {
+      title: 'Pointers',
+      link: '/pointers',
+      icon: <FaRocket size={40} color="#FFFFFF" />, // You can change icon to something more pointer-specific
+      gradientClass: 'homepage-card-gradient-1',
+      enabled: true
+    },
+    {
       title: 'Linked Lists',
       link: '/linked-list', 
       icon: <FaListUl size={40} color="#FFFFFF" />,

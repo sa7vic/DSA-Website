@@ -69,6 +69,7 @@ import Quiz from './features/quiz/components/Quiz';
 import ArchiveLanding from './features/archive/components/landingpage'
 import Archive from './features/archive/components/Archive'
 import SearchAlgos from './features/searchAlgos/components/SearchAlgos';
+import PointersPage from './features/pointers/PointersPage';
 
 // Graph algorithm components
 import {
@@ -620,6 +621,7 @@ function App() {
           <Route path="/quiz" element={<LandingPage />} />
           <Route path="/quiz/:topic" element={<ErrorBoundary><Quiz /></ErrorBoundary>} />
           <Route path="/search" element={<ErrorBoundary><SearchAlgos /></ErrorBoundary>} />
+          <Route path="/pointers" element={<PointersPage />} />
         </Routes>
       </Router>
     </ErrorBoundary>
