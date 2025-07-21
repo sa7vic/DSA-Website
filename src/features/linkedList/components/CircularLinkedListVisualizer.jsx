@@ -1,5 +1,7 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { FaArrowRight, FaExclamationTriangle, FaTrash, FaPlus, FaRecycle } from 'react-icons/fa';
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { FaArrowRight, FaExclamationTriangle, FaTrash, FaPlus } from 'react-icons/fa';
+import { ReactFlow, MiniMap, Controls, Background } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import { MEMORY_POOL_SIZE } from '../../../constants';
 import CurrentOperationDisplay from './CurrentOperationDisplay';
 import '../styles/LinkedList.css';
@@ -750,6 +752,45 @@ const CircularLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolI
     setMemoryLeaks(leaks);
   }, [nodes, memoryPool]);
 
+  // Custom L-shaped edge for circular connection
+  const LShapeEdge = memo(({ id, sourceX, sourceY, targetX, targetY, markerEnd, style }) => {
+    // Calculate the L shape with minimal curviness: down from source, gentle curve horizontally, up to target
+    const midY = sourceY + 60;
+    // Control points for Bezier curve
+    const curveAmount = 30; // minimal curviness
+    const startCurveX = sourceX;
+    const endCurveX = targetX;
+    const control1X = sourceX + curveAmount;
+    const control2X = targetX - curveAmount;
+    // Path: down, gentle curve, up
+    const path = `M${sourceX},${sourceY} L${sourceX},${midY} C${control1X},${midY} ${control2X},${midY} ${targetX},${midY} L${targetX},${targetY}`;
+    return (
+      <g>
+        <path
+          id={id}
+          d={path}
+          fill="none"
+          stroke={style?.stroke || '#0077ff'}
+          strokeWidth={style?.strokeWidth || 3}
+          markerEnd={markerEnd ? `url(#${id}-arrow)` : undefined}
+        />
+        {markerEnd && (
+          <marker
+            id={`${id}-arrow`}
+            markerWidth="12"
+            markerHeight="12"
+            refX="12"
+            refY="6"
+            orient="auto"
+            markerUnits="strokeWidth"
+          >
+            <path d="M0,0 L12,6 L0,12 L3,6 Z" fill={markerEnd.color || '#0077ff'} />
+          </marker>
+        )}
+      </g>
+    );
+  });
+
   return (
     <div className="visualization">
       {/* Input controls */}
@@ -823,8 +864,8 @@ const CircularLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolI
       )}
 
       <div className="visualization-area">
-        {/* Circular Linked List Display */}
-        <div className="linked-list-display">
+        {/* Circular Linked List Display with React Flow */}
+        <div className="linked-list-display" style={{ height: 400, width: '100%', background: '#181A20', borderRadius: 8 }}>
           {nodes.length === 0 ? (
             <div className="placeholder">
               <p>Insert something to visualize the circular linked list</p>
@@ -832,59 +873,122 @@ const CircularLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolI
             </div>
           ) : (
             (() => {
-              // Build the actual linked list order based on pointers, starting from head
-              const renderLinkedList = () => {
-                if (nodes.length === 0) {
-                  return null;
-                }
-                
-                // Find the head node (first node in array for circular linked list)
-                const headNode = nodes[0];
-                if (!headNode) {
-                  return nodes.map((node, index) => renderNode(node, index, index > 0, index < nodes.length - 1));
-                }
-                
-                // Traverse the linked list from head to tail
-                const orderedNodes = [];
-                let currentNode = headNode;
-                const visited = new Set();
-                
-                while (currentNode && !visited.has(currentNode.memoryIndex)) {
-                  visited.add(currentNode.memoryIndex);
-                  orderedNodes.push(currentNode);
-                  
-                  // Find next node (but stop before going full circle)
-                  if (currentNode.next !== null && currentNode.next !== undefined && currentNode.next !== headNode.memoryIndex) {
-                    currentNode = nodes.find(node => node.memoryIndex === currentNode.next);
-                  } else {
-                    currentNode = null;
-                  }
-                }
-                
-                return orderedNodes.map((node, index) => 
-                  renderNode(node, index, false, true, index === orderedNodes.length - 1)
-                );
-              };
-              
-              const renderNode = (node, index, showLeftArrow, showRightArrow, isLastNode = false) => (
-                <div key={`${node.address}-${index}`} className="node-container">
-                  <div className="node node-active">
-                    <div className="node-address">Address: {node.address}</div>
-                    <div className="node-data">Data: {node.data}</div>
-                    <div className="node-pointers">
-                      <div>next: {node.next !== null && node.next !== undefined ? 
-                        MEMORY_ADDRESSES[node.next] || `Index[${node.next}]` : 'NULL'}</div>
+              // Build nodes and edges for React Flow
+              // Canvas size and layout parameters
+              const canvasWidth = 900;
+              const canvasHeight = 400;
+              const nodeWidth = 120;
+              const nodeHeight = 80;
+              // Layout nodes in a straight horizontal line, centered vertically
+              const totalWidth = nodes.length * nodeWidth + (nodes.length - 1) * 40;
+              const startX = Math.max((canvasWidth - totalWidth) / 2, 20);
+              const centerY = canvasHeight / 2 - nodeHeight / 2;
+
+              const rfNodes = nodes.map((node, idx) => ({
+                id: node.memoryIndex.toString(),
+                data: {
+                  label: (
+                    <div style={{
+                      padding: 8,
+                      borderRadius: 6,
+                      background: idx === 0 ? '#232A34' : '#222',
+                      color: '#fff',
+                      border: '1px solid ' + (idx === 0 ? '#0077ff' : '#444'), // single border only
+                    }}>
+                      <div style={{ color: idx === 0 ? '#0077ff' : '#7ec8ff', fontWeight: 'bold' }}>{idx === 0 ? 'Head' : ''}</div>
+                      <div>Address: {node.address}</div>
+                      <div>Data: {node.data}</div>
+                      <div>Next: {node.next !== null && node.next !== undefined ? MEMORY_ADDRESSES[node.next] || `Index[${node.next}]` : 'NULL'}</div>
                     </div>
-                  </div>
-                  {showRightArrow && (
-                    <div className="pointer-right">
-                      {isLastNode ? <FaRecycle title="Back to head" /> : <FaArrowRight />}
-                    </div>
-                  )}
-                </div>
+                  ),
+                },
+                position: {
+                  x: startX + idx * (nodeWidth + 40),
+                  y: centerY,
+                },
+                style: {
+                  width: nodeWidth,
+                  height: nodeHeight,
+                  border: '1px solid ' + (idx === 0 ? '#0077ff' : '#444'), // single border only
+                  background: idx === 0 ? '#232A34' : '#222',
+                  color: '#fff',
+                },
+              }));
+
+              // Edges: next pointers
+              const rfEdges = nodes.map((node, idx) => {
+                // Only draw edge if next is valid, not self, and not the circular connection
+                if (
+                  node.next !== null &&
+                  node.next !== undefined &&
+                  node.next !== node.memoryIndex &&
+                  !(idx === nodes.length - 1 && node.next === nodes[0].memoryIndex)
+                ) {
+                  return {
+                    id: `e${node.memoryIndex}-${node.next}`,
+                    source: node.memoryIndex.toString(),
+                    target: node.next.toString(),
+                    animated: true,
+                    style: { stroke: '#ff69b4', strokeWidth: 2 }, // pink
+                    markerEnd: {
+                      type: 'arrowclosed',
+                      color: '#ff69b4',
+                    },
+                  };
+                }
+                return null;
+              }).filter(Boolean);
+
+              // If last node, ensure circular edge to head
+              if (nodes.length > 1) {
+                const lastNode = nodes[nodes.length - 1];
+                if (lastNode.next === nodes[0].memoryIndex) {
+                  rfEdges.push({
+                    id: `circular-${lastNode.memoryIndex}-to-${nodes[0].memoryIndex}`,
+                    source: lastNode.memoryIndex.toString(),
+                    target: nodes[0].memoryIndex.toString(),
+                    animated: false,
+                    type: 'lshape',
+                    style: { stroke: '#0077ff', strokeWidth: 3 },
+                    markerEnd: {
+                      color: '#0077ff',
+                    },
+                    label: 'Back to Head',
+                    labelBgStyle: { fill: '#d1eaff', color: '#0077ff', fontWeight: 'bold' },
+                  });
+                }
+              }
+
+              return (
+                <ReactFlow
+                  nodes={rfNodes}
+                  edges={rfEdges}
+                  fitView={false}
+                  panOnDrag={false}
+                  zoomOnScroll={false}
+                  zoomOnPinch={false}
+                  zoomOnDoubleClick={false}
+                  minZoom={1}
+                  maxZoom={1}
+                  style={{ width: canvasWidth, height: canvasHeight, background: '#181A20', borderRadius: 8 }}
+                  edgeTypes={{ lshape: LShapeEdge }}
+                >
+                  <MiniMap nodeColor={n => n.style?.background || '#222'} maskColor="#181A20" />
+                  <Controls showInteractive={false} style={{ background: '#232A34', color: '#fff', boxShadow: '0 2px 8px #000', borderRadius: 8, border: '1px solid #222' }} />
+                  <Background color="#232A34" gap={16} />
+                  <style>{`
+                    .react-flow__controls-button {
+                      background: #232A34 !important;
+                      color: #fff !important;
+                      border: 1px solid #222 !important;
+                    }
+                    .react-flow__controls-button:hover {
+                      background: #0077ff !important;
+                      color: #fff !important;
+                    }
+                  `}</style>
+                </ReactFlow>
               );
-              
-              return renderLinkedList();
             })()
           )}
         </div>
