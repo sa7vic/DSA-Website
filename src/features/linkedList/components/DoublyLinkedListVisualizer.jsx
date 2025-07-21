@@ -1,9 +1,16 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { FaArrowRight, FaArrowLeft, FaExclamationTriangle, FaTrash, FaPlus } from 'react-icons/fa';
-import { MEMORY_POOL_SIZE } from '../../../constants';
-import CurrentOperationDisplay from './CurrentOperationDisplay';
-import '../styles/LinkedList.css';
-import '../styles/CurrentOperationDisplay.css';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { FaPlus, FaTrash, FaExclamationTriangle, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
+
+// Constants
+const MEMORY_POOL_SIZE = 20; // Maximum nodes we can allocate
+
+// Helper component to display current operation
+const CurrentOperationDisplay = ({ currentStep, isAnimating }) => (
+  <div className={`current-operation ${isAnimating ? 'animating' : ''}`}>
+    <div className="operation-label">Current Operation:</div>
+    <div className="operation-text">{currentStep}</div>
+  </div>
+);
 
 // Pre-generate fixed memory addresses
 const MEMORY_ADDRESSES = Array(MEMORY_POOL_SIZE).fill().map((_, i) => 
@@ -223,7 +230,7 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
         case 9:
           setCurrentLine(46);
           setCurrentStep(`Successfully inserted ${inputValue} at beginning`);
-          onAnimationUpdate && onAnimationUpdate(33, `Successfully inserted ${inputValue} at beginning`, true);
+          onAnimationUpdate && onAnimationUpdate(46, `Successfully inserted ${inputValue} at beginning`, true);
           setIsAnimating(false);
           setIsLoading(false);
           setTimeout(() => {
@@ -291,21 +298,21 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
         case 6:
           if (nodes.length > 0) {
             setCurrentLine(57);
-            setCurrentStep("Setting tail\'s next to new node");
-            onAnimationUpdate && onAnimationUpdate(57, "Setting tail\'s next to new node", true);
+            setCurrentStep("Setting new node's prev to current tail");
+            onAnimationUpdate && onAnimationUpdate(57, "Setting new node's prev to current tail", true);
           }
           break;
         case 7:
           if (nodes.length > 0) {
             setCurrentLine(58);
-            setCurrentStep("Setting new node\'s prev to tail");
-            onAnimationUpdate && onAnimationUpdate(58, "Setting new node\'s prev to tail", true);
+            setCurrentStep("Setting current tail's next to new node");
+            onAnimationUpdate && onAnimationUpdate(58, "Setting current tail's next to new node", true);
           }
           break;
         case 8:
-          setCurrentLine(60);
-          setCurrentStep("Updating tail pointer");
-          onAnimationUpdate && onAnimationUpdate(60, "Updating tail pointer", true);
+          setCurrentLine(59);
+          setCurrentStep("Updating tail pointer to new node");
+          onAnimationUpdate && onAnimationUpdate(59, "Updating tail pointer to new node", true);
           
           try {
             const newNode = allocateMemory(inputValue);
@@ -327,9 +334,9 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
           }
           break;
         case 9:
-          setCurrentLine(46);
+          setCurrentLine(60);
           setCurrentStep(`Successfully inserted ${inputValue} at end`);
-          onAnimationUpdate && onAnimationUpdate(46, `Successfully inserted ${inputValue} at end`, true);
+          onAnimationUpdate && onAnimationUpdate(60, `Successfully inserted ${inputValue} at end`, true);
           setIsAnimating(false);
           setIsLoading(false);
           setTimeout(() => {
@@ -376,61 +383,72 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
     const animate = () => {
       switch(step) {
         case 0:
-          setCurrentLine(48); // insertAtPosition function declaration
-          setCurrentStep(`Calling insertAtPosition(${inputValue}, ${position})`);
-          onAnimationUpdate && onAnimationUpdate(48, `Calling insertAtPosition(${inputValue}, ${position})`, true);
+          setCurrentLine(12);
+          setCurrentStep("Creating new DoublyLinkedList node");
+          onAnimationUpdate && onAnimationUpdate(12, "Creating new DoublyLinkedList node", true);
           break;
         case 1:
-          setCurrentLine(55); // Allocate memory
-          setCurrentStep("Allocating memory for new node");
-          onAnimationUpdate && onAnimationUpdate(55, "Allocating memory for new node", true);
+          setCurrentLine(64);
+          setCurrentStep(`Calling insertAtPosition(${inputValue}, ${position})`);
+          onAnimationUpdate && onAnimationUpdate(64, `Calling insertAtPosition(${inputValue}, ${position})`, true);
           break;
         case 2:
-          setCurrentLine(56); // Set data
-          setCurrentStep(`Setting node data to ${inputValue}`);
-          onAnimationUpdate && onAnimationUpdate(56, `Setting node data to ${inputValue}`, true);
+          setCurrentLine(65);
+          setCurrentStep("Validating position");
+          onAnimationUpdate && onAnimationUpdate(65, "Validating position", true);
           break;
         case 3:
-          setCurrentLine(58); // Start traversal
-          setCurrentStep("Traversing to the specified position");
-          onAnimationUpdate && onAnimationUpdate(58, "Traversing to the specified position", true);
+          setCurrentLine(71);
+          setCurrentStep("Allocating memory for new node");
+          onAnimationUpdate && onAnimationUpdate(71, "Allocating memory for new node", true);
           break;
         case 4:
-          setCurrentLine(66); // Link new node's next
-          setCurrentStep("Updating new node's next pointer");
-          onAnimationUpdate && onAnimationUpdate(66, "Updating new node's next pointer", true);
+          setCurrentLine(72);
+          setCurrentStep(`Setting node data to ${inputValue}`);
+          onAnimationUpdate && onAnimationUpdate(72, `Setting node data to ${inputValue}`, true);
           break;
         case 5:
-          setCurrentLine(67); // Link new node's prev
-          setCurrentStep("Updating new node's previous pointer");
-          onAnimationUpdate && onAnimationUpdate(67, "Updating new node's previous pointer", true);
+          setCurrentLine(74);
+          setCurrentStep("Starting traversal from head");
+          onAnimationUpdate && onAnimationUpdate(74, "Starting traversal from head", true);
           break;
         case 6:
-          setCurrentLine(69); // Update next node's prev
-          setCurrentStep("Updating next node's previous pointer");
-          onAnimationUpdate && onAnimationUpdate(69, "Updating next node's previous pointer", true);
+          setCurrentLine(75);
+          setCurrentStep(`Traversing to position ${position - 1}`);
+          onAnimationUpdate && onAnimationUpdate(75, `Traversing to position ${position - 1}`, true);
           break;
         case 7:
-          setCurrentLine(74); // Update current's next
-          setCurrentStep("Updating current node's next pointer");
-          onAnimationUpdate && onAnimationUpdate(74, "Updating current node's next pointer", true);
+          setCurrentLine(87);
+          setCurrentStep("Setting up new node's links");
+          onAnimationUpdate && onAnimationUpdate(87, "Setting up new node's links", true);
+          break;
+        case 8:
+          setCurrentLine(88);
+          setCurrentStep("Setting new node's prev pointer");
+          onAnimationUpdate && onAnimationUpdate(88, "Setting new node's prev pointer", true);
+          break;
+        case 9:
+          setCurrentLine(89);
+          setCurrentStep("Setting next node's prev pointer");
+          onAnimationUpdate && onAnimationUpdate(89, "Setting next node's prev pointer", true);
+          break;
+        case 10:
+          setCurrentLine(90);
+          setCurrentStep("Setting current node's next pointer");
+          onAnimationUpdate && onAnimationUpdate(90, "Setting current node's next pointer", true);
           
           try {
             const newNode = allocateMemory(inputValue);
-            if (!newNode) {
-              setIsAnimating(false);
-              setIsLoading(false);
-              return;
-            }
-
-            const updatedNodes = [...nodes];
+            if (!newNode) return;
             
+            const updatedNodes = [...nodes];
             newNode.prev = updatedNodes[position - 1].memoryIndex;
             newNode.next = updatedNodes[position].memoryIndex;
             
             updatedNodes[position - 1].next = newNode.memoryIndex;
             updatedNodes[position].prev = newNode.memoryIndex;
-            
+
+            // Insert new node at position
             updatedNodes.splice(position, 0, newNode);
             onNodesChange(updatedNodes);
             setInputValue('');
@@ -439,10 +457,10 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
             showError('Failed to insert node: ' + err.message);
           }
           break;
-        case 8:
-          setCurrentLine(75); // Success message
+        case 11:
+          setCurrentLine(91);
           setCurrentStep(`Successfully inserted ${inputValue} at position ${position}`);
-          onAnimationUpdate && onAnimationUpdate(75, `Successfully inserted ${inputValue} at position ${position}`, true);
+          onAnimationUpdate && onAnimationUpdate(91, `Successfully inserted ${inputValue} at position ${position}`, true);
           setIsAnimating(false);
           setIsLoading(false);
           setTimeout(() => {
@@ -462,7 +480,7 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
   // Enhanced delete operations with animation
   const deleteFromBeginning = useCallback(() => {
     if (nodes.length === 0) {
-      showError('List is empty - nothing to delete');
+      showError('Cannot delete from an empty list');
       return;
     }
 
@@ -473,59 +491,62 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
     const animate = () => {
       switch(step) {
         case 0:
-          setCurrentLine(48);
+          setCurrentLine(95);
           setCurrentStep("Calling deleteFromBeginning()");
-          onAnimationUpdate && onAnimationUpdate(48, "Calling deleteFromBeginning()", true);
+          onAnimationUpdate && onAnimationUpdate(95, "Calling deleteFromBeginning()", true);
           break;
         case 1:
-          setCurrentLine(49);
+          setCurrentLine(96);
           setCurrentStep("Checking if list is empty");
-          onAnimationUpdate && onAnimationUpdate(49, "Checking if list is empty", true);
+          onAnimationUpdate && onAnimationUpdate(96, "Checking if list is empty", true);
           break;
         case 2:
-          setCurrentLine(53);
+          setCurrentLine(101);
           setCurrentStep("Storing reference to head node");
-          onAnimationUpdate && onAnimationUpdate(53, "Storing reference to head node", true);
+          onAnimationUpdate && onAnimationUpdate(101, "Storing reference to head node", true);
           break;
         case 3:
-          setCurrentLine(54);
-          setCurrentStep("Moving head pointer to next node");
-          onAnimationUpdate && onAnimationUpdate(54, "Moving head pointer to next node", true);
+          if (nodes.length === 1) {
+            setCurrentLine(103);
+            setCurrentStep("Only one node - list will be empty");
+            onAnimationUpdate && onAnimationUpdate(103, "Only one node - list will be empty", true);
+          } else {
+            setCurrentLine(106);
+            setCurrentStep("Multiple nodes - updating pointers");
+            onAnimationUpdate && onAnimationUpdate(106, "Multiple nodes - updating pointers", true);
+          }
           break;
         case 4:
           if (nodes.length > 1) {
-            setCurrentLine(55);
-            setCurrentStep("Setting new head\'s prev to nullptr");
-            onAnimationUpdate && onAnimationUpdate(55, "Setting new head\'s prev to nullptr", true);
-          } else {
-            setCurrentLine(57);
-            setCurrentStep("List becomes empty");
-            onAnimationUpdate && onAnimationUpdate(57, "List becomes empty", true);
+            setCurrentLine(107);
+            setCurrentStep("Setting new head's prev to NULL");
+            onAnimationUpdate && onAnimationUpdate(107, "Setting new head's prev to NULL", true);
           }
           break;
         case 5:
-          setCurrentLine(59);
+          setCurrentLine(110);
           setCurrentStep("Freeing memory of deleted node");
-          onAnimationUpdate && onAnimationUpdate(59, "Freeing memory of deleted node", true);
+          onAnimationUpdate && onAnimationUpdate(110, "Freeing memory of deleted node", true);
           
           try {
+            const nodeToDelete = nodes[0];
             const updatedNodes = [...nodes];
-            const deletedNode = updatedNodes.shift();
-
+            updatedNodes.shift(); // Remove the first element
+            
             if (updatedNodes.length > 0) {
-              updatedNodes[0].prev = null;
+              updatedNodes[0].prev = null; // Update the new first node's prev to null
             }
-
-            freeMemory(deletedNode.memoryIndex);
+            
             onNodesChange(updatedNodes);
+            freeMemory(nodeToDelete.memoryIndex);
           } catch (err) {
             showError('Failed to delete node: ' + err.message);
           }
           break;
         case 6:
-          setCurrentLine(60);
-          setCurrentStep("Successfully deleted node from beginning");
-          onAnimationUpdate && onAnimationUpdate(60, "Successfully deleted node from beginning", true);
+          setCurrentLine(111);
+          setCurrentStep("Successfully deleted from beginning");
+          onAnimationUpdate && onAnimationUpdate(111, "Successfully deleted from beginning", true);
           setIsAnimating(false);
           setIsLoading(false);
           setTimeout(() => {
@@ -544,7 +565,7 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
 
   const deleteFromEnd = useCallback(() => {
     if (nodes.length === 0) {
-      showError('List is empty - nothing to delete');
+      showError('Cannot delete from an empty list');
       return;
     }
 
@@ -555,54 +576,64 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
     const animate = () => {
       switch(step) {
         case 0:
-          setCurrentLine(64);
+          setCurrentLine(115);
           setCurrentStep("Calling deleteFromEnd()");
-          onAnimationUpdate && onAnimationUpdate(64, "Calling deleteFromEnd()", true);
+          onAnimationUpdate && onAnimationUpdate(115, "Calling deleteFromEnd()", true);
           break;
         case 1:
-          setCurrentLine(65);
+          setCurrentLine(116);
           setCurrentStep("Checking if list is empty");
-          onAnimationUpdate && onAnimationUpdate(65, "Checking if list is empty", true);
+          onAnimationUpdate && onAnimationUpdate(116, "Checking if list is empty", true);
           break;
         case 2:
-          setCurrentLine(69);
-          setCurrentStep("Finding the last node");
-          onAnimationUpdate && onAnimationUpdate(69, "Finding the last node", true);
+          setCurrentLine(121);
+          setCurrentStep("Storing reference to tail node");
+          onAnimationUpdate && onAnimationUpdate(121, "Storing reference to tail node", true);
           break;
         case 3:
           if (nodes.length === 1) {
-            setCurrentLine(71);
-            setCurrentStep("List has only one node - will become empty");
-            onAnimationUpdate && onAnimationUpdate(71, "List has only one node - will become empty", true);
+            setCurrentLine(123);
+            setCurrentStep("Only one node - list will be empty");
+            onAnimationUpdate && onAnimationUpdate(123, "Only one node - list will be empty", true);
           } else {
-            setCurrentLine(73);
-            setCurrentStep("Setting second-to-last node\'s next to nullptr");
-            onAnimationUpdate && onAnimationUpdate(73, "Setting second-to-last node\'s next to nullptr", true);
+            setCurrentLine(126);
+            setCurrentStep("Multiple nodes - updating pointers");
+            onAnimationUpdate && onAnimationUpdate(126, "Multiple nodes - updating pointers", true);
           }
           break;
         case 4:
-          setCurrentLine(75);
+          if (nodes.length > 1) {
+            setCurrentLine(127);
+            setCurrentStep("Setting new tail's next to NULL");
+            onAnimationUpdate && onAnimationUpdate(127, "Setting new tail's next to NULL", true);
+          }
+          break;
+        case 5:
+          setCurrentLine(130);
           setCurrentStep("Freeing memory of deleted node");
-          onAnimationUpdate && onAnimationUpdate(75, "Freeing memory of deleted node", true);
+          onAnimationUpdate && onAnimationUpdate(130, "Freeing memory of deleted node", true);
           
           try {
+            const lastIndex = nodes.length - 1;
+            const nodeToDelete = nodes[lastIndex];
             const updatedNodes = [...nodes];
-            const deletedNode = updatedNodes.pop();
-
+            updatedNodes.pop(); // Remove the last element
+            
             if (updatedNodes.length > 0) {
-              updatedNodes[updatedNodes.length - 1].next = null;
+              const newLastIndex = updatedNodes.length - 1;
+              updatedNodes[newLastIndex].next = null; // Update the new last node's next to null
             }
-
-            freeMemory(deletedNode.memoryIndex);
+            
             onNodesChange(updatedNodes);
+            freeMemory(nodeToDelete.memoryIndex);
           } catch (err) {
             showError('Failed to delete node: ' + err.message);
           }
           break;
-        case 5:
-          setCurrentLine(76);
-          setCurrentStep("Successfully deleted node from end");
-          onAnimationUpdate && onAnimationUpdate(76, "Successfully deleted node from end", true);
+        case 6:
+          setCurrentLine(131);
+          setCurrentStep("Successfully deleted from end");
+          onAnimationUpdate && onAnimationUpdate(131, "Successfully deleted from end", true);
           setIsAnimating(false);
           setIsLoading(false);
           setTimeout(() => {
@@ -620,7 +651,7 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
   }, [nodes, freeMemory, onNodesChange, showError, animationSpeed, onAnimationUpdate]);
 
   const deleteFromPosition = useCallback(() => {
-    if (!isValidPosition || parseInt(positionInput) >= nodes.length) { // Ensure position is within bounds
+    if (!isValidPosition || parseInt(positionInput) >= nodes.length) {
       showError(`Please enter a valid position between 0 and ${nodes.length - 1}`);
       return;
     }
@@ -637,78 +668,70 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
       return;
     }
 
-    setIsAnimating(true); // Start animation
+    setIsAnimating(true);
     setIsLoading(true);
     let step = 0;
-    let deletedNodeData = ''; // To store data for the message
+    let deletedNodeData = '';
 
     const animate = () => {
       switch(step) {
         case 0:
-          setCurrentLine(98); // deleteFromPosition function declaration
+          setCurrentLine(135);
           setCurrentStep(`Calling deleteFromPosition(${position})`);
-          onAnimationUpdate && onAnimationUpdate(98, `Calling deleteFromPosition(${position})`, true);
+          onAnimationUpdate && onAnimationUpdate(135, `Calling deleteFromPosition(${position})`, true);
           break;
         case 1:
-          setCurrentLine(99); // Check if empty
-          setCurrentStep("Checking if list is empty or position is out of bounds");
-          onAnimationUpdate && onAnimationUpdate(99, "Checking if list is empty or position is out of bounds", true);
+          setCurrentLine(136);
+          setCurrentStep("Checking if list is empty");
+          onAnimationUpdate && onAnimationUpdate(136, "Checking if list is empty", true);
           break;
         case 2:
-          setCurrentLine(107); // Start traversal
-          setCurrentStep("Traversing to the node at the specified position");
-          onAnimationUpdate && onAnimationUpdate(107, "Traversing to the node at the specified position", true);
+          setCurrentLine(141);
+          setCurrentStep("Validating position");
+          onAnimationUpdate && onAnimationUpdate(141, "Validating position", true);
           break;
         case 3:
-          setCurrentLine(115); // Store reference
-          setCurrentStep("Storing reference to the node to be deleted");
-          onAnimationUpdate && onAnimationUpdate(115, "Storing reference to the node to be deleted", true);
-          deletedNodeData = nodes[position] ? nodes[position].data : '';
+          setCurrentLine(151);
+          setCurrentStep(`Traversing to position ${position}`);
+          onAnimationUpdate && onAnimationUpdate(151, `Traversing to position ${position}`, true);
           break;
         case 4:
-          setCurrentLine(117); // Update prev node's next
-          setCurrentStep("Updating previous node's next pointer");
-          onAnimationUpdate && onAnimationUpdate(117, "Updating previous node's next pointer", true);
+          setCurrentLine(165);
+          setCurrentStep("Updating pointers to bypass node");
+          onAnimationUpdate && onAnimationUpdate(165, "Updating pointers to bypass node", true);
           break;
         case 5:
-          setCurrentLine(121); // Update next node's prev
-          setCurrentStep("Updating next node's previous pointer");
-          onAnimationUpdate && onAnimationUpdate(121, "Updating next node's previous pointer", true);
+          setCurrentLine(166);
+          setCurrentStep("Updating next node's prev pointer");
+          onAnimationUpdate && onAnimationUpdate(166, "Updating next node's prev pointer", true);
           break;
         case 6:
-          setCurrentLine(126); // Free memory
-          setCurrentStep("Freeing memory of the deleted node");
-          onAnimationUpdate && onAnimationUpdate(126, "Freeing memory of the deleted node", true);
+          setCurrentLine(168);
+          setCurrentStep("Freeing memory of deleted node");
+          onAnimationUpdate && onAnimationUpdate(168, "Freeing memory of deleted node", true);
           
           try {
+            const nodeToDelete = nodes[position];
+            deletedNodeData = nodeToDelete.data;
             const updatedNodes = [...nodes];
-            const deletedNode = updatedNodes[position];
             
-            // Update previous node's next pointer
-            if (position > 0) {
-              updatedNodes[position - 1].next = deletedNode.next;
-            }
+            // Update the pointers of adjacent nodes
+            updatedNodes[position - 1].next = updatedNodes[position + 1].memoryIndex;
+            updatedNodes[position + 1].prev = updatedNodes[position - 1].memoryIndex;
             
-            // Update next node's prev pointer
-            if (position < updatedNodes.length - 1) {
-              updatedNodes[position + 1].prev = deletedNode.prev;
-            }
-            
-            // Remove the node from the array
+            // Remove the node at position
             updatedNodes.splice(position, 1);
-            
-            // Free the memory
-            freeMemory(deletedNode.memoryIndex);
             onNodesChange(updatedNodes);
+            freeMemory(nodeToDelete.memoryIndex);
             setPositionInput('');
           } catch (err) {
             showError('Failed to delete node: ' + err.message);
           }
           break;
         case 7:
-          setCurrentLine(127); // Success message
-          setCurrentStep(`Successfully deleted node ${deletedNodeData} from position ${position}`);
-          onAnimationUpdate && onAnimationUpdate(127, `Successfully deleted node ${deletedNodeData} from position ${position}`, true);
+          setCurrentLine(169);
+          setCurrentStep(`Successfully deleted node at position ${position}`);
+          onAnimationUpdate && onAnimationUpdate(169, `Successfully deleted node at position ${position}`, true);
           setIsAnimating(false);
           setIsLoading(false);
           setTimeout(() => {
@@ -734,11 +757,14 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
 
     setIsLoading(true);
     try {
-      // Free all memory slots used by nodes
+      // Free memory for all nodes
       nodes.forEach(node => {
         freeMemory(node.memoryIndex);
       });
+      
+      // Clear the list
       onNodesChange([]);
+      showError('List has been cleared');
     } catch (err) {
       showError('Failed to clear list: ' + err.message);
     } finally {
@@ -806,7 +832,6 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
           </div>
         )}
 
-        {/* Remove this block if not needed or replace with a more suitable indicator */}
         {isLoading && !isAnimating && (
           <div className="animation-status">
             <div className="spinner"></div>
@@ -829,46 +854,67 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
       )}
 
       <div className="visualization-area">
-        {/* Linked List Display */}
+        {/* Doubly Linked List Display */}
         <div className="linked-list-display">
           {nodes.length === 0 ? (
             <div className="placeholder">
-              <p>Insert something to visualize the linked list</p>
+              <p>Insert something to visualize the doubly linked list</p>
               <small>Use Insert at Beginning or Insert at End to add nodes</small>
             </div>
           ) : (
             (() => {
               // Build the actual linked list order based on pointers, starting from head
               const renderLinkedList = () => {
-                if (nodes.length === 0) return null;
+                const visited = new Set();
+                const result = [];
                 
-                // Find the head node (node with prev === null)
-                const headNode = nodes.find(node => node.prev === null);
-                if (!headNode) {
-                  // Fallback: if no clear head, use first node
-                  return nodes.map((node, index) => renderNode(node, index, index > 0, index < nodes.length - 1));
-                }
+                // Assuming the first node in the array is the head
+                let currentNode = nodes[0];
+                let index = 0;
                 
-                // Traverse the linked list from head to tail
-                const orderedNodes = [];
-                let currentNode = headNode;
-                const visited = new Set(); // Prevent infinite loops
+                // Display heading
+                result.push(
+                  <div key="head-label" className="list-direction-label">
+                    Head of list
+                  </div>
+                );
                 
+                // Traverse the list following next pointers
                 while (currentNode && !visited.has(currentNode.memoryIndex)) {
                   visited.add(currentNode.memoryIndex);
-                  orderedNodes.push(currentNode);
                   
-                  // Find next node
+                  // For first node (no left arrow)
+                  if (index === 0) {
+                    result.push(renderNode(currentNode, index, false, true));
+                  }
+                  // For middle nodes (both arrows)
+                  else if (index < nodes.length - 1) {
+                    result.push(renderNode(currentNode, index, true, true));
+                  }
+                  // For last node (no right arrow)
+                  else {
+                    result.push(renderNode(currentNode, index, true, false));
+                  }
+                  
+                  // Get next node
                   if (currentNode.next !== null && currentNode.next !== undefined) {
-                    currentNode = nodes.find(node => node.memoryIndex === currentNode.next);
+                    const nextNodeIndex = nodes.findIndex(node => node.memoryIndex === currentNode.next);
+                    currentNode = nextNodeIndex !== -1 ? nodes[nextNodeIndex] : null;
                   } else {
                     currentNode = null;
                   }
+                  
+                  index++;
                 }
                 
-                return orderedNodes.map((node, index) => 
-                  renderNode(node, index, index > 0, index < orderedNodes.length - 1)
+                // Add the tail label at the end
+                result.push(
+                  <div key="tail-label" className="list-direction-label">
+                    Tail of list
+                  </div>
                 );
+                
+                return result;
               };
               
               const renderNode = (node, index, showLeftArrow, showRightArrow) => (
@@ -883,9 +929,9 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
                     <div className="node-data">Data: {node.data}</div>
                     <div className="node-pointers">
                       <div>prev: {node.prev !== null && node.prev !== undefined ? 
-                        MEMORY_ADDRESSES[node.prev] || `Index[${node.prev}]` : 'nullptr'}</div>
+                        MEMORY_ADDRESSES[node.prev] || `Index[${node.prev}]` : 'NULL'}</div>
                       <div>next: {node.next !== null && node.next !== undefined ? 
-                        MEMORY_ADDRESSES[node.next] || `Index[${node.next}]` : 'nullptr'}</div>
+                        MEMORY_ADDRESSES[node.next] || `Index[${node.next}]` : 'NULL'}</div>
                     </div>
                   </div>
                   {showRightArrow && (
@@ -901,42 +947,53 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
           )}
         </div>
         
-        {/* Debug Section - Remove in production */}
+        {/* Debug Section */}
         {nodes.length > 0 && (
-          <div className="debug-section" style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '5px' }}>
-            <h4>Debug Information:</h4>
-            <div style={{ fontSize: '12px', fontFamily: 'monospace' }}>
-              <div style={{ marginBottom: '10px' }}>
-                <strong>Array Storage Order:</strong>
-                {nodes.map((node, index) => (
-                  <div key={index} style={{ marginLeft: '10px' }}>
-                    [{index}] data={node.data}, memoryIndex={node.memoryIndex}, prev={node.prev}, next={node.next}
-                  </div>
-                ))}
+          <div className="debug-section">
+            <h3>Debug Information</h3>
+            <div className="debug-content">
+              <div className="debug-subsection">
+                <h4>Array Storage Order:</h4>
+                <div className="debug-items">
+                  {nodes.map((node, index) => (
+                    <div key={index} className="debug-item">
+                      <span className="debug-index">[{index}]</span>
+                      <span className="debug-data">data={node.data}</span>
+                      <span className="debug-memory">memoryIndex={node.memoryIndex}</span>
+                      <span className="debug-prev">prev={node.prev}</span>
+                      <span className="debug-next">next={node.next}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div>
-                <strong>Linked List Traversal Order (following next pointers):</strong>
-                {(() => {
-                  const headNode = nodes.find(node => node.prev === null);
-                  if (!headNode) return <div style={{ marginLeft: '10px' }}>No clear head node found!</div>;
-                  
-                  const traversal = [];
-                  let currentNode = headNode;
-                  const visited = new Set();
-                  
-                  while (currentNode && !visited.has(currentNode.memoryIndex)) {
-                    visited.add(currentNode.memoryIndex);
-                    traversal.push(currentNode.data);
-                    
-                    if (currentNode.next !== null && currentNode.next !== undefined) {
-                      currentNode = nodes.find(node => node.memoryIndex === currentNode.next);
-                    } else {
-                      currentNode = null;
+              <div className="debug-subsection">
+                <h4>Linked List Traversal Order (following next pointers):</h4>
+                <div className="debug-traversal">
+                  {(() => {
+                    const headNode = nodes[0];
+                    if (!headNode) {
+                      return <div className="debug-path">Empty List</div>;
                     }
-                  }
-                  
-                  return <div style={{ marginLeft: '10px' }}>{traversal.join(' → ')}</div>;
-                })()}
+                    
+                    const traversal = [];
+                    let currentNode = headNode;
+                    const visited = new Set();
+                    
+                    while (currentNode && !visited.has(currentNode.memoryIndex)) {
+                      visited.add(currentNode.memoryIndex);
+                      traversal.push(currentNode.data);
+                      
+                      if (currentNode.next !== null && currentNode.next !== undefined) {
+                        const nextNodeIndex = nodes.findIndex(node => node.memoryIndex === currentNode.next);
+                        currentNode = nextNodeIndex !== -1 ? nodes[nextNodeIndex] : null;
+                      } else {
+                        currentNode = null;
+                      }
+                    }
+                    
+                    return <div className="debug-path">{traversal.join(' ⟷ ')}</div>;
+                  })()}
+                </div>
               </div>
             </div>
           </div>
@@ -972,4 +1029,4 @@ const DoublyLinkedListVisualizer = ({ nodes = [], onNodesChange, onMemoryPoolIni
   );
 };
 
-export default LinkedListVisualizer;
+export default DoublyLinkedListVisualizer;

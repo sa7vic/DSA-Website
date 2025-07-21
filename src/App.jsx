@@ -46,7 +46,7 @@ import CodeViewer from './features/common/components/CodeViewer'
 
 // Feature components - each handles its own visualization
 import LinkedListHome from './features/linkedList/components/LinkedListHome'
-import LinkedListVisualizer from './features/linkedList/components/LinkedListVisualizer'
+import DoublyLinkedListVisualizer from './features/linkedList/components/DoublyLinkedListVisualizer'
 import SinglyLinkedListVisualizer from './features/linkedList/components/SinglyLinkedListVisualizer'
 import SinglyLinkedListExplanation from './features/linkedList/components/SinglyLinkedListExplanation'
 import SinglyLinkedListCodeViewer from './features/linkedList/components/SinglyLinkedListCodeViewer'
@@ -55,6 +55,7 @@ import CircularLinkedListExplanation from './features/linkedList/components/Circ
 import CircularLinkedListCodeViewer from './features/linkedList/components/CircularLinkedListCodeViewer'
 import DiySection from './features/linkedList/components/DiySection'
 import DoublyLinkedListExplanation from './features/linkedList/components/DoublyLinkedListExplanation'
+import DoublyLinkedListCodeViewer from './features/linkedList/components/DoublyLinkedListCodeViewer'
 import HomePage from './features/home/components/HomePage'
 import AboutUs from './features/about/components/AboutUs'
 import SortingVisualizer from './features/sorting/components/SortingVisualizer'
@@ -90,6 +91,7 @@ import JobScheduling from './features/greedyAlgorithms/components/JobScheduling'
 import { generateCppCode } from './utils/codeGenerator'
 import { generateSinglyLinkedListCode } from './utils/singlyLinkedListCodeGenerator'
 import { generateCircularLinkedListCode } from './utils/circularLinkedListCodeGenerator'
+import { generateDoublyLinkedListCode } from './utils/doublyLinkedListCodeGenerator'
 import { setStorageItem, getStorageItem } from './utils/helpers'
 import { MEMORY_POOL_SIZE } from './constants'
 
@@ -99,12 +101,12 @@ import { MEMORY_POOL_SIZE } from './constants'
  * Manages animation synchronization and memory pool
  */
 function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, handleMemoryPoolInit, handleCodeChange, updateNodesAndCode }) {
-  // State for animation coordination between CodeViewer and LinkedListVisualizer
+  // State for animation coordination between CodeViewer and DoublyLinkedListVisualizer
   const [currentLine, setCurrentLine] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [currentStep, setCurrentStep] = useState('');
 
-  // Function to handle animation state updates from LinkedListVisualizer
+  // Function to handle animation state updates from DoublyLinkedListVisualizer
   const handleAnimationUpdate = useCallback((lineNumber, step, animating) => {
     setCurrentLine(lineNumber);
     setCurrentStep(step);
@@ -141,7 +143,7 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <h2>C Implementation</h2>
-          <CodeViewer 
+          <DoublyLinkedListCodeViewer 
             code={code} 
             onChange={handleCodeChange}
             currentLine={currentLine}
@@ -157,7 +159,7 @@ function LinkedListPage({ nodes, setNodes, code, setCode, memoryPoolAddresses, h
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <h2>Interactive Visualization</h2>
-          <LinkedListVisualizer 
+          <DoublyLinkedListVisualizer 
             nodes={nodes} 
             onNodesChange={updateNodesAndCode}
             onMemoryPoolInit={handleMemoryPoolInit}
@@ -346,7 +348,7 @@ function App() {
   
   const [code, setCode] = useState(() => {
     const saved = getStorageItem('linkedListCode', 'session');
-    return saved || generateCppCode([]);
+    return saved || generateDoublyLinkedListCode([]);
   });
 
   // State for singly linked list
@@ -436,8 +438,8 @@ function App() {
   // Function to update both nodes and code when using buttons
   const updateNodesAndCode = (newNodes) => {
     setNodes(newNodes);
-    // Update the code state which will trigger CodeViewer update
-    setCode(generateCppCode(newNodes));
+    // Update the code state which will trigger DoublyLinkedListCodeViewer update
+    setCode(generateDoublyLinkedListCode(newNodes));
   };
 
   // Helper functions for singly linked list

@@ -3,8 +3,9 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { FaPlay, FaStop, FaForward, FaBackward } from 'react-icons/fa';
 import Editor from "@monaco-editor/react";
+import { generateDoublyLinkedListCode } from '../../../utils/doublyLinkedListCodeGenerator';
 
-const CodeViewer = ({ code, onChange, nodes, onStepChange, currentLine = 0, isAnimating = false }) => {
+const DoublyLinkedListCodeViewer = ({ code, onChange, nodes, onStepChange, currentLine = 0, isAnimating = false }) => {
   const [showInteractiveCode, setShowInteractiveCode] = useState(true);
   const [animationSpeed, setAnimationSpeed] = useState(500);
 
@@ -16,16 +17,16 @@ const CodeViewer = ({ code, onChange, nodes, onStepChange, currentLine = 0, isAn
 // Node structure for doubly linked list
 struct Node {
     int data;                      // Data stored in the node
-    struct Node* next;             // Pointer to next node
     struct Node* prev;             // Pointer to previous node
+    struct Node* next;             // Pointer to next node
 };
 
 // Create a new node
 struct Node* createNode(int value) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
-    newNode->next = NULL;
     newNode->prev = NULL;
+    newNode->next = NULL;
     return newNode;
 }
 
@@ -48,13 +49,15 @@ void insertAtBeginning(struct DoublyLinkedList* list, int value) {
     struct Node* newNode = createNode(value);  // Allocate memory
     newNode->data = value;                     // Set data
     newNode->prev = NULL;                      // Set prev to null
+
     if (list->head == NULL) {                  // Check if empty
-        list->head = list->tail = newNode;     // Node becomes head and tail
+        list->head = newNode;                  // Node becomes head
+        list->tail = newNode;                  // Node also becomes tail
     } else {                                   // List has nodes
-        newNode->next = list->head;            // Link to current head
-        list->head->prev = newNode;            // Update head's prev
+        newNode->next = list->head;            // Point to current head
+        list->head->prev = newNode;            // Current head's prev points to new node
+        list->head = newNode;                  // Update head pointer
     }
-    list->head = newNode;                      // Update head pointer
     printf("Inserted %d\\n", value);
 }
 
@@ -63,13 +66,15 @@ void insertAtEnd(struct DoublyLinkedList* list, int value) {
     struct Node* newNode = createNode(value);  // Allocate memory
     newNode->data = value;                     // Set data
     newNode->next = NULL;                      // Set next to null
-    if (list->tail == NULL) {                  // Check if empty
-        list->head = list->tail = newNode;     // Node becomes head/tail
+    
+    if (list->head == NULL) {                  // Check if empty
+        list->head = newNode;                  // Node becomes head
+        list->tail = newNode;                  // Node also becomes tail
     } else {                                   // List has nodes
-        list->tail->next = newNode;            // Link tail to new node
-        newNode->prev = list->tail;            // Link new node to tail
+        newNode->prev = list->tail;            // New node's prev points to current tail
+        list->tail->next = newNode;            // Current tail's next points to new node
+        list->tail = newNode;                  // Update tail pointer
     }
-    list->tail = newNode;                      // Update tail pointer
     printf("Inserted %d\\n", value);
 }
 
@@ -89,16 +94,28 @@ void insertAtPosition(struct DoublyLinkedList* list, int value, int position) {
     newNode->data = value;                     // Set data
     
     struct Node* current = list->head;         // Start from head
-    for (int i = 0; i < position - 1 && current != NULL; i++) {
+    int i = 0;
+    while (i < position - 1 && current != NULL) {
         current = current->next;               // Traverse to position
+        i++;
     }
     
     if (current == NULL) {                     // Position beyond list
-        insertAtEnd(list, value);              // Insert at end
+        printf("Position out of range\\n");
+        free(newNode);
         return;
     }
     
-    current->next = newNode;                   // Update current's next
+    if (current->next == NULL) {               // Insert at end
+        insertAtEnd(list, value);
+        free(newNode);                         // Free the extra node since insertAtEnd creates one
+        return;
+    }
+    
+    newNode->next = current->next;             // Link new node to next node
+    newNode->prev = current;                   // Link new node to current node
+    current->next->prev = newNode;             // Update next node's prev pointer
+    current->next = newNode;                   // Update current node's next pointer
     printf("Inserted %d at position %d\\n", value, position);
 }
 
@@ -110,12 +127,15 @@ void deleteFromBeginning(struct DoublyLinkedList* list) {
     }
     
     struct Node* nodeToDelete = list->head;    // Store reference
-    list->head = list->head->next;             // Move head pointer
-    if (list->head != NULL) {                  // If new head exists
-        list->head->prev = NULL;               // Set prev to null
-    } else {                                   // List becomes empty
-        list->tail = NULL;                     // Update tail
+    
+    if (list->head == list->tail) {            // Only one node
+        list->head = NULL;                     // List becomes empty
+        list->tail = NULL;
+    } else {
+        list->head = list->head->next;         // Move head pointer
+        list->head->prev = NULL;               // New head's prev is NULL
     }
+    
     free(nodeToDelete);                        // Free memory
     printf("Deleted from beginning\\n");
 }
@@ -127,16 +147,16 @@ void deleteFromEnd(struct DoublyLinkedList* list) {
         return;
     }
     
+    struct Node* nodeToDelete = list->tail;    // Store reference
+    
     if (list->head == list->tail) {            // Only one node
-        free(list->head);                      // Free memory
-        list->head = list->tail = NULL;        // List becomes empty
-        printf("Deleted from end\\n");
-        return;
+        list->head = NULL;                     // List becomes empty
+        list->tail = NULL;
+    } else {
+        list->tail = list->tail->prev;         // Move tail pointer
+        list->tail->next = NULL;               // New tail's next is NULL
     }
     
-    struct Node* nodeToDelete = list->tail;    // Store reference
-    list->tail = list->tail->prev;             // Move tail backward
-    list->tail->next = NULL;                   // Set next to null
     free(nodeToDelete);                        // Free memory
     printf("Deleted from end\\n");
 }
@@ -168,26 +188,36 @@ void deleteFromPosition(struct DoublyLinkedList* list, int position) {
         return;
     }
     
-    if (current->prev != NULL) {               // Update prev node's next
-        current->prev->next = current->next;
+    if (current == list->tail) {               // Last node
+        deleteFromEnd(list);
+        return;
     }
     
-    if (current->next != NULL) {               // Update next node's prev
-        current->next->prev = current->prev;
-    } else {                                   // Deleting tail
-        list->tail = current->prev;
-    }
+    current->prev->next = current->next;       // Update previous node's next
+    current->next->prev = current->prev;       // Update next node's prev
     
     free(current);                             // Free memory
     printf("Deleted from position %d\\n", position);
 }
 
-// Display the list
-void display(struct DoublyLinkedList* list) {
+// Display the list from head to tail
+void displayForward(struct DoublyLinkedList* list) {
+    printf("List (forward): ");
     struct Node* current = list->head;
     while (current != NULL) {
         printf("%d <-> ", current->data);
         current = current->next;
+    }
+    printf("NULL\\n");
+}
+
+// Display the list from tail to head
+void displayBackward(struct DoublyLinkedList* list) {
+    printf("List (backward): ");
+    struct Node* current = list->tail;
+    while (current != NULL) {
+        printf("%d <-> ", current->data);
+        current = current->prev;
     }
     printf("NULL\\n");
 }`;
@@ -206,28 +236,32 @@ void display(struct DoublyLinkedList* list) {
   }, [nodes, isAnimating]);
 
   const handleEditorChange = useCallback((value) => {
-    if (!onChange) return;
+    if (!onChange) {
+      return;
+    }
 
     // Parse the code to extract operations (simplified)
     const lines = value.split('\n');
     const nodesData = [];
     
     try {
-      // Look for insertAtBeginning, insertAtEnd, etc. calls
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (trimmed.includes('insertAtBeginning') || trimmed.includes('insertAtEnd')) {
-          const matches = trimmed.match(/\d+/);
-          if (matches) {
-            const val = parseInt(matches[0]);
-            nodesData.push({ data: val.toString() });
-          }
+      // Simple pattern matching for insertAtBeginning and insertAtEnd calls
+      lines.forEach(line => {
+        const insertBeginMatch = line.match(/insertAtBeginning\s*\(\s*list\s*,\s*(\d+)\s*\)/);
+        const insertEndMatch = line.match(/insertAtEnd\s*\(\s*list\s*,\s*(\d+)\s*\)/);
+        
+        if (insertBeginMatch) {
+          const value = parseInt(insertBeginMatch[1]);
+          nodesData.unshift({ data: value }); // Add to beginning
+        } else if (insertEndMatch) {
+          const value = parseInt(insertEndMatch[1]);
+          nodesData.push({ data: value }); // Add to end
         }
-      }
+      });
       
       onChange(nodesData);
     } catch (error) {
-      console.error('Error parsing code:', error);
+      console.warn('Error parsing code:', error);
     }
   }, [onChange]);
 
@@ -245,8 +279,40 @@ void display(struct DoublyLinkedList* list) {
           className={`mode-button ${showInteractiveCode ? 'active' : ''}`}
           onClick={() => setShowInteractiveCode(true)}
         >
-          Highlighted Code Demo
+          🎯 Highlighted Code
         </button>
+      </div>
+
+      {/* Animation Controls */}
+      <div className="animation-controls">
+        <div className="control-btn-group">
+          <button 
+            className="control-btn"
+            disabled={isAnimating}
+            onClick={() => onStepChange && onStepChange('reset')}
+          >
+            🔄 Reset Highlight
+          </button>
+        </div>
+        
+        <div className="speed-control">
+          <label>Highlight Speed:</label>
+          <input 
+            type="range" 
+            min="100" 
+            max="2000" 
+            value={animationSpeed}
+            onChange={(e) => setAnimationSpeed(parseInt(e.target.value))}
+          />
+          <span>{animationSpeed}ms</span>
+        </div>
+
+        {isAnimating && (
+          <div className="animation-status">
+            <div className="spinner"></div>
+            <span>Code Highlighting Active</span>
+          </div>
+        )}
       </div>
 
       {showInteractiveCode ? (
@@ -285,7 +351,7 @@ void display(struct DoublyLinkedList* list) {
           <Editor
             height="70vh"
             defaultLanguage="c"
-            defaultValue={code}
+            defaultValue={code || generateDoublyLinkedListCode(nodes)}
             theme="vs-dark"
             options={{
               fontSize: 16,
@@ -316,4 +382,4 @@ void display(struct DoublyLinkedList* list) {
   );
 };
 
-export default CodeViewer;
+export default DoublyLinkedListCodeViewer;
