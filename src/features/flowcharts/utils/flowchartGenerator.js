@@ -226,8 +226,24 @@ export const generateFlowchartData = (blocks, onPlaceholderClick) => {
     nodeIdCounter++;
     const nodeId = `placeholder-${nodeIdCounter}`;
     
+    // Create better labels based on placeholder context
+    let label;
+    switch (placeholderType) {
+      case 'if-true':
+        label = 'Click to add block to TRUE branch';
+        break;
+      case 'if-false':
+        label = 'Click to add block to FALSE branch';
+        break;
+      case 'while-body':
+        label = 'Click to add block to LOOP body';
+        break;
+      default:
+        label = `Click to add ${branchType} block`;
+    }
+    
     const data = {
-      label: `Click to add ${branchType} block`,
+      label,
       placeholderType,
       parentBlockId,
       branchType
@@ -238,16 +254,18 @@ export const generateFlowchartData = (blocks, onPlaceholderClick) => {
       color: '#9ca3af',
       border: '2px dashed #6b7280',
       borderRadius: '8px',
-      width: 160,
+      width: 180,
       height: 60,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: '11px',
+      fontSize: '10px',
       fontStyle: 'italic',
       cursor: 'pointer',
-      opacity: 0.7,
-      transition: 'all 0.2s ease'
+      opacity: 0.8,
+      transition: 'all 0.2s ease',
+      textAlign: 'center',
+      padding: '4px'
     };
 
     const node = {
@@ -342,6 +360,11 @@ export const generateFlowchartData = (blocks, onPlaceholderClick) => {
         const lastTrueNode = trueBranchNodes[trueBranchNodes.length - 1];
         const lastTrueNodeY = nodes.find(n => n.id === lastTrueNode)?.position.y || startY;
         maxY = Math.max(maxY, lastTrueNodeY + NODE_SPACING);
+        
+        // Add placeholder at the end of true branch for adding more blocks
+        const truePlaceholder = createPlaceholderNode('if-true', block.id, 'true', 150, lastTrueNodeY + NODE_SPACING);
+        createEdge(lastTrueNode, truePlaceholder.nodeId);
+        maxY = Math.max(maxY, truePlaceholder.nextY);
       }
     } else {
       // Create placeholder for true branch
@@ -358,6 +381,11 @@ export const generateFlowchartData = (blocks, onPlaceholderClick) => {
         const lastFalseNode = falseBranchNodes[falseBranchNodes.length - 1];
         const lastFalseNodeY = nodes.find(n => n.id === lastFalseNode)?.position.y || startY;
         maxY = Math.max(maxY, lastFalseNodeY + NODE_SPACING);
+        
+        // Add placeholder at the end of false branch for adding more blocks
+        const falsePlaceholder = createPlaceholderNode('if-false', block.id, 'false', 450, lastFalseNodeY + NODE_SPACING);
+        createEdge(lastFalseNode, falsePlaceholder.nodeId);
+        maxY = Math.max(maxY, falsePlaceholder.nextY);
       }
     } else {
       // Create placeholder for false branch
@@ -379,13 +407,17 @@ export const generateFlowchartData = (blocks, onPlaceholderClick) => {
       if (loopBodyNodes.length > 0) {
         createEdge(whileNodeId, loopBodyNodes[0], 'True');
         
-        // Connect last node back to while condition
         const lastLoopNode = loopBodyNodes[loopBodyNodes.length - 1];
         const lastLoopNodeY = nodes.find(n => n.id === lastLoopNode)?.position.y || startY;
         maxY = Math.max(maxY, lastLoopNodeY + NODE_SPACING);
         
-        // Create loop back edge
-        createEdge(lastLoopNode, whileNodeId, 'Loop Back');
+        // Add placeholder at the end of loop body for adding more blocks
+        const bodyPlaceholder = createPlaceholderNode('while-body', block.id, 'body', 300, lastLoopNodeY + NODE_SPACING);
+        createEdge(lastLoopNode, bodyPlaceholder.nodeId);
+        
+        // Create loop back edge from placeholder to while condition
+        createEdge(bodyPlaceholder.nodeId, whileNodeId, 'Loop Back');
+        maxY = Math.max(maxY, bodyPlaceholder.nextY);
       }
     } else {
       // Create placeholder for loop body

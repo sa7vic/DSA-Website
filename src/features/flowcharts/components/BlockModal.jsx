@@ -2,70 +2,135 @@ import { useState, useCallback } from 'react';
 import { FaTimes, FaCheck } from 'react-icons/fa';
 import { BLOCK_TYPES } from '../types';
 
+// Predefined options for each block type
+const PREDEFINED_OPTIONS = {
+  [BLOCK_TYPES.ASSIGN]: {
+    variables: ['x', 'y', 'z', 'i', 'j', 'count', 'sum', 'temp', 'result', 'num'],
+    types: ['int', 'float', 'double', 'char'],
+    operations: ['+', '-', '*', '/', '%'],
+    values: ['0', '1', '2', '5', '10', '100']
+  },
+  [BLOCK_TYPES.INCREMENT]: {
+    variables: ['x', 'y', 'z', 'i', 'j', 'count', 'index', 'counter']
+  },
+  [BLOCK_TYPES.DECREMENT]: {
+    variables: ['x', 'y', 'z', 'i', 'j', 'count', 'index', 'counter']
+  },
+  [BLOCK_TYPES.INPUT]: {
+    variables: ['x', 'y', 'num', 'value', 'input', 'number', 'data']
+  },
+  [BLOCK_TYPES.PRINT]: {
+    variables: ['x', 'y', 'result', 'sum', 'count'],
+    messages: ['"Hello World"', '"Result: "', '"Enter a number: "', '"The answer is: "']
+  },
+  [BLOCK_TYPES.IF]: {
+    variables: ['x', 'y', 'count', 'num', 'i'],
+    operators: ['==', '!=', '<', '>', '<=', '>='],
+    values: ['0', '1', '5', '10', '100']
+  },
+  [BLOCK_TYPES.WHILE]: {
+    variables: ['x', 'y', 'count', 'num', 'i'],
+    operators: ['==', '!=', '<', '>', '<=', '>='],
+    values: ['0', '1', '5', '10', '100']
+  }
+};
+
 const BlockModal = ({ blockType, onCreateBlock, onCancel, placeholder, availableTypes }) => {
-  const [value, setValue] = useState('');
   const [error, setError] = useState('');
   const [selectedType, setSelectedType] = useState(blockType);
+  
+  // State for different input types
+  const [assignmentType, setAssignmentType] = useState('declaration'); // 'declaration' or 'assignment'
+  const [varType, setVarType] = useState('int');
+  const [variable, setVariable] = useState('');
+  const [operator, setOperator] = useState('==');
+  const [value, setValue] = useState('');
+  const [rightVar, setRightVar] = useState('');
+  const [operation, setOperation] = useState('+');
+  const [printType, setPrintType] = useState('variable'); // 'variable' or 'message'
+
+  // Generate the final value based on selections
+  const generateValue = useCallback(() => {
+    const targetType = selectedType || blockType;
+    
+    switch (targetType) {
+      case BLOCK_TYPES.ASSIGN:
+        if (assignmentType === 'declaration') {
+          return `${varType} ${variable}`;
+        } else {
+          if (rightVar) {
+            return `${variable} = ${rightVar} ${operation} ${value}`;
+          }
+          return `${variable} = ${value}`;
+        }
+        
+      case BLOCK_TYPES.INCREMENT:
+      case BLOCK_TYPES.DECREMENT:
+      case BLOCK_TYPES.INPUT:
+        return variable;
+        
+      case BLOCK_TYPES.PRINT:
+        if (printType === 'variable') {
+          return variable;
+        } else {
+          return value;
+        }
+        
+      case BLOCK_TYPES.IF:
+      case BLOCK_TYPES.WHILE:
+        return `${variable} ${operator} ${value}`;
+        
+      default:
+        return '';
+    }
+  }, [selectedType, blockType, assignmentType, varType, variable, operator, value, rightVar, operation, printType]);
 
   // Validation with enhanced rules
   const validateInput = useCallback(() => {
     setError('');
     
-    switch (selectedType) {
+    const targetType = selectedType || blockType;
+    
+    switch (targetType) {
       case BLOCK_TYPES.START:
       case BLOCK_TYPES.STOP:
         return true;
       
       case BLOCK_TYPES.ASSIGN:
-        if (!value.trim()) {
-          setError('Please enter a variable declaration or assignment (e.g., int x or x = 5)');
+        if (!variable) {
+          setError('Please select a variable name');
           return false;
         }
-        // Allow both declarations (int x) and assignments (x = 5)
-        const trimmedValue = value.trim();
-        const isDeclaration = /^(int|float|double|char|string)\s+[a-zA-Z_][a-zA-Z0-9_]*$/.test(trimmedValue);
-        const isAssignment = trimmedValue.includes('=');
-        
-        if (!isDeclaration && !isAssignment) {
-          setError('Enter either a variable declaration (e.g., int x) or assignment (e.g., x = 5)');
+        if (assignmentType === 'assignment' && !value) {
+          setError('Please select a value');
           return false;
         }
         return true;
       
       case BLOCK_TYPES.INCREMENT:
       case BLOCK_TYPES.DECREMENT:
-        if (!value.trim()) {
-          setError('Please enter a variable name (e.g., x, count)');
-          return false;
-        }
-        if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value.trim())) {
-          setError('Variable name must be valid (letters, numbers, underscore only)');
+      case BLOCK_TYPES.INPUT:
+        if (!variable) {
+          setError('Please select a variable name');
           return false;
         }
         return true;
-      
-      case BLOCK_TYPES.INPUT:
-        if (!value.trim()) {
-          setError('Please enter a variable name (e.g., x, number)');
+        
+      case BLOCK_TYPES.PRINT:
+        if (printType === 'variable' && !variable) {
+          setError('Please select a variable to print');
           return false;
         }
-        if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value.trim())) {
-          setError('Variable name must be valid (letters, numbers, underscore only)');
+        if (printType === 'message' && !value) {
+          setError('Please select a message to print');
           return false;
         }
         return true;
       
       case BLOCK_TYPES.IF:
       case BLOCK_TYPES.WHILE:
-        if (!value.trim()) {
-          setError('Please enter a condition (e.g., x < 10)');
-          return false;
-        }
-        return true;
-      
-      case BLOCK_TYPES.PRINT:
-        if (!value.trim()) {
-          setError('Please enter a value to print (e.g., x or "Hello")');
+        if (!variable || !value) {
+          setError('Please select variable and value for condition');
           return false;
         }
         return true;
@@ -73,7 +138,7 @@ const BlockModal = ({ blockType, onCreateBlock, onCancel, placeholder, available
       default:
         return false;
     }
-  }, [selectedType, value]);
+  }, [selectedType, blockType, variable, value, assignmentType, printType]);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
@@ -82,9 +147,10 @@ const BlockModal = ({ blockType, onCreateBlock, onCancel, placeholder, available
       return;
     }
 
+    const finalValue = generateValue();
     const blockData = {
       type: selectedType,
-      value: value.trim(),
+      value: finalValue,
       children: [],
       elseChildren: selectedType === BLOCK_TYPES.IF ? [] : undefined
     };
@@ -100,7 +166,7 @@ const BlockModal = ({ blockType, onCreateBlock, onCancel, placeholder, available
     }
 
     onCreateBlock(blockData);
-  }, [selectedType, value, validateInput, onCreateBlock]);
+  }, [selectedType, generateValue, validateInput, onCreateBlock]);
 
   const getModalTitle = () => {
     if (placeholder) {
@@ -173,6 +239,7 @@ const BlockModal = ({ blockType, onCreateBlock, onCancel, placeholder, available
     }
   };
 
+  // Check if input is needed for the current block type
   const needsInput = ![
     BLOCK_TYPES.START, 
     BLOCK_TYPES.STOP
@@ -209,7 +276,12 @@ const BlockModal = ({ blockType, onCreateBlock, onCancel, placeholder, available
                 value={selectedType || ''}
                 onChange={(e) => {
                   setSelectedType(e.target.value);
+                  // Reset all form values when changing type
+                  setVariable('');
                   setValue('');
+                  setVarType('int');
+                  setAssignmentType('declaration');
+                  setPrintType('variable');
                   setError('');
                 }}
                 required
@@ -224,27 +296,237 @@ const BlockModal = ({ blockType, onCreateBlock, onCancel, placeholder, available
             </div>
           )}
           
-          {needsInput && selectedType && (
+          {/* Dynamic form inputs based on block type */}
+          {selectedType === BLOCK_TYPES.ASSIGN && (
+            <>
+              <div className="input-group">
+                <label htmlFor="assignment-type">Assignment Type</label>
+                <select 
+                  id="assignment-type"
+                  value={assignmentType}
+                  onChange={(e) => setAssignmentType(e.target.value)}
+                  required
+                >
+                  <option value="declaration">Variable Declaration (int x)</option>
+                  <option value="assignment">Variable Assignment (x = 5)</option>
+                </select>
+              </div>
+              
+              {assignmentType === 'declaration' && (
+                <>
+                  <div className="input-group">
+                    <label htmlFor="var-type">Variable Type</label>
+                    <select 
+                      id="var-type"
+                      value={varType}
+                      onChange={(e) => setVarType(e.target.value)}
+                      required
+                    >
+                      {PREDEFINED_OPTIONS[BLOCK_TYPES.ASSIGN].types.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="input-group">
+                    <label htmlFor="variable">Variable Name</label>
+                    <select 
+                      id="variable"
+                      value={variable}
+                      onChange={(e) => setVariable(e.target.value)}
+                      required
+                    >
+                      <option value="">Select variable...</option>
+                      {PREDEFINED_OPTIONS[BLOCK_TYPES.ASSIGN].variables.map(v => (
+                        <option key={v} value={v}>{v}</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+              
+              {assignmentType === 'assignment' && (
+                <>
+                  <div className="input-group">
+                    <label htmlFor="variable">Variable Name</label>
+                    <select 
+                      id="variable"
+                      value={variable}
+                      onChange={(e) => setVariable(e.target.value)}
+                      required
+                    >
+                      <option value="">Select variable...</option>
+                      {PREDEFINED_OPTIONS[BLOCK_TYPES.ASSIGN].variables.map(v => (
+                        <option key={v} value={v}>{v}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="input-group">
+                    <label htmlFor="assignment-value">Assignment Value</label>
+                    <div className="assignment-builder">
+                      <select 
+                        value={rightVar}
+                        onChange={(e) => setRightVar(e.target.value)}
+                      >
+                        <option value="">Direct value</option>
+                        {PREDEFINED_OPTIONS[BLOCK_TYPES.ASSIGN].variables.map(v => (
+                          <option key={v} value={v}>{v}</option>
+                        ))}
+                      </select>
+                      {rightVar && (
+                        <select 
+                          value={operation}
+                          onChange={(e) => setOperation(e.target.value)}
+                        >
+                          {PREDEFINED_OPTIONS[BLOCK_TYPES.ASSIGN].operations.map(op => (
+                            <option key={op} value={op}>{op}</option>
+                          ))}
+                        </select>
+                      )}
+                      <select 
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                        required
+                      >
+                        <option value="">Select value...</option>
+                        {PREDEFINED_OPTIONS[BLOCK_TYPES.ASSIGN].values.map(v => (
+                          <option key={v} value={v}>{v}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+
+          {(selectedType === BLOCK_TYPES.INCREMENT || selectedType === BLOCK_TYPES.DECREMENT || selectedType === BLOCK_TYPES.INPUT) && (
             <div className="input-group">
-              <label htmlFor="block-value">
-                {getInputLabel()}
-              </label>
-              <input
-                id="block-value"
-                type="text"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder={getPlaceholder()}
-                autoFocus
-                required={needsInput}
-              />
+              <label htmlFor="variable">Variable Name</label>
+              <select 
+                id="variable"
+                value={variable}
+                onChange={(e) => setVariable(e.target.value)}
+                required
+              >
+                <option value="">Select variable...</option>
+                {PREDEFINED_OPTIONS[selectedType].variables.map(v => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
+              </select>
             </div>
           )}
 
-          {!needsInput && (
+          {selectedType === BLOCK_TYPES.PRINT && (
+            <>
+              <div className="input-group">
+                <label htmlFor="print-type">Print Type</label>
+                <select 
+                  id="print-type"
+                  value={printType}
+                  onChange={(e) => setPrintType(e.target.value)}
+                  required
+                >
+                  <option value="variable">Print Variable</option>
+                  <option value="message">Print Message</option>
+                </select>
+              </div>
+              
+              {printType === 'variable' && (
+                <div className="input-group">
+                  <label htmlFor="variable">Variable to Print</label>
+                  <select 
+                    id="variable"
+                    value={variable}
+                    onChange={(e) => setVariable(e.target.value)}
+                    required
+                  >
+                    <option value="">Select variable...</option>
+                    {PREDEFINED_OPTIONS[BLOCK_TYPES.PRINT].variables.map(v => (
+                      <option key={v} value={v}>{v}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              
+              {printType === 'message' && (
+                <div className="input-group">
+                  <label htmlFor="message">Message to Print</label>
+                  <select 
+                    id="message"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    required
+                  >
+                    <option value="">Select message...</option>
+                    {PREDEFINED_OPTIONS[BLOCK_TYPES.PRINT].messages.map(msg => (
+                      <option key={msg} value={msg}>{msg}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </>
+          )}
+
+          {(selectedType === BLOCK_TYPES.IF || selectedType === BLOCK_TYPES.WHILE) && (
+            <>
+              <div className="input-group">
+                <label htmlFor="condition-variable">Condition Variable</label>
+                <select 
+                  id="condition-variable"
+                  value={variable}
+                  onChange={(e) => setVariable(e.target.value)}
+                  required
+                >
+                  <option value="">Select variable...</option>
+                  {PREDEFINED_OPTIONS[selectedType].variables.map(v => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="input-group">
+                <label htmlFor="operator">Comparison Operator</label>
+                <select 
+                  id="operator"
+                  value={operator}
+                  onChange={(e) => setOperator(e.target.value)}
+                  required
+                >
+                  {PREDEFINED_OPTIONS[selectedType].operators.map(op => (
+                    <option key={op} value={op}>{op}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="input-group">
+                <label htmlFor="condition-value">Comparison Value</label>
+                <select 
+                  id="condition-value"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  required
+                >
+                  <option value="">Select value...</option>
+                  {PREDEFINED_OPTIONS[selectedType].values.map(v => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
+
+          {(selectedType === BLOCK_TYPES.START || selectedType === BLOCK_TYPES.STOP) && (
             <div className="block-preview">
-              <p>This block doesn't require any input.</p>
-              <small>{getBlockDescription()}</small>
+              <p>This block doesn't require any configuration.</p>
+              <small>{selectedType === BLOCK_TYPES.START ? 'Marks the beginning of your algorithm.' : 'Marks the end of your algorithm.'}</small>
+            </div>
+          )}
+
+          {/* Live preview */}
+          {selectedType && needsInput && (
+            <div className="live-preview">
+              <label>Preview:</label>
+              <code>{generateValue() || 'Select options above...'}</code>
             </div>
           )}
 
@@ -264,45 +546,15 @@ const BlockModal = ({ blockType, onCreateBlock, onCancel, placeholder, available
           </div>
         </form>
 
-        {/* Enhanced help section */}
+        {/* Simplified help section for dropdown interface */}
         <div className="modal-help">
-          <h4>Examples:</h4>
-          {blockType === BLOCK_TYPES.ASSIGN && (
-            <ul>
-              <li><code>x = 5</code> - Assign constant value</li>
-              <li><code>count = count + 1</code> - Increment variable</li>
-              <li><code>sum = a + b</code> - Assign expression result</li>
-            </ul>
-          )}
-          {(blockType === BLOCK_TYPES.INCREMENT || blockType === BLOCK_TYPES.DECREMENT) && (
-            <ul>
-              <li><code>x</code> - Simple variable name</li>
-              <li><code>count</code> - Counter variable</li>
-              <li><code>index</code> - Loop index variable</li>
-            </ul>
-          )}
-          {blockType === BLOCK_TYPES.INPUT && (
-            <ul>
-              <li><code>x</code> - Store input in variable x</li>
-              <li><code>userInput</code> - Store in userInput variable</li>
-              <li><code>number</code> - Store in number variable</li>
-            </ul>
-          )}
-          {(blockType === BLOCK_TYPES.IF || blockType === BLOCK_TYPES.WHILE) && (
-            <ul>
-              <li><code>x &lt; 10</code> - Less than comparison</li>
-              <li><code>count != 0</code> - Not equal comparison</li>
-              <li><code>x &gt;= y</code> - Greater than or equal</li>
-              <li><code>x == 5</code> - Equality comparison</li>
-            </ul>
-          )}
-          {blockType === BLOCK_TYPES.PRINT && (
-            <ul>
-              <li><code>x</code> - Print variable value</li>
-              <li><code>"Hello World"</code> - Print text</li>
-              <li><code>result</code> - Print variable result</li>
-            </ul>
-          )}
+          <h4>💡 Tips:</h4>
+          <ul>
+            <li><strong>Guided Creation:</strong> Use the dropdowns to build your statement step by step</li>
+            <li><strong>Live Preview:</strong> See exactly what your code will look like as you select options</li>
+            <li><strong>No Syntax Errors:</strong> Dropdowns ensure your code is always valid</li>
+            <li><strong>Common Patterns:</strong> All options are based on programming best practices</li>
+          </ul>
         </div>
       </div>
     </div>

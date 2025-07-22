@@ -1825,3 +1825,143 @@
   align-items: center;
   gap: 1rem;
 }
+
+/* Enhanced Modal Dropdown Interface */
+.assignment-builder {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.assignment-builder select {
+  min-width: 80px;
+  flex: 1;
+}
+
+.live-preview {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+}
+
+.live-preview label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.live-preview code {
+  display: block;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+  color: #22c55e;
+  background: #111827;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #374151;
+  min-height: 1.5rem;
+  line-height: 1.5;
+}
+
+.modal-body select {
+  background: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 6px;
+  color: #f9fafb;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.modal-body select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modal-body select:hover {
+  border-color: #6b7280;
+}
+
+.modal-body select option {
+  background: #374151;
+  color: #f9fafb;
+  padding: 0.5rem;
+}
+
+.block-preview {
+  padding: 1.5rem;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.block-preview p {
+  margin: 0 0 0.5rem 0;
+  color: #f9fafb;
+  font-weight: 500;
+}
+
+.block-preview small {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.modal-help {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+}
+
+.modal-help h4 {
+  margin: 0 0 0.75rem 0;
+  color: #f9fafb;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.modal-help ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style-type: disc;
+}
+
+.modal-help li {
+  color: #d1d5db;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+}
+
+.modal-help li strong {
+  color: #f9fafb;
+  font-weight: 600;
+}
+
+/* Responsive adjustments for dropdowns */
+@media (max-width: 768px) {
+  .assignment-builder {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .assignment-builder select {
+    min-width: auto;
+  }
+  
+  .modal-body select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
