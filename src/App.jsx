@@ -38,6 +38,7 @@ import './features/recursion/styles/RecursionVisualizer.css'
 import './features/hashTable/styles/HashTableVisualizer.css'
 import './features/greedyAlgorithms/styles/GreedyAlgorithmsList.css'
 import './features/greedyAlgorithms/styles/GreedyVisualizerTemplate.css'
+import './features/flowcharts/styles/BlockBuilder.css'
 
 
 // Shared components
@@ -86,6 +87,9 @@ import GreedyAlgorithmsList from './features/greedyAlgorithms/components/GreedyA
 import BoyerMooreMajority from './features/greedyAlgorithms/components/BoyerMooreMajority';
 import StableMatching from './features/greedyAlgorithms/components/StableMatching';
 import JobScheduling from './features/greedyAlgorithms/components/JobScheduling';
+
+// Flowchart algorithm builder component
+import { BlockBasedAlgorithmBuilder } from './features/flowcharts';
 
 
 // Utility functions
@@ -611,6 +615,8 @@ function App() {
           <Route path="/greedy/boyer-moore" element={<ErrorBoundary><BoyerMooreMajority /></ErrorBoundary>} />
           <Route path="/greedy/stable-matching" element={<ErrorBoundary><StableMatching /></ErrorBoundary>} />
           <Route path="/greedy/job-scheduling" element={<ErrorBoundary><JobScheduling /></ErrorBoundary>} />
+          {/* Flowchart Algorithm Builder Route */}
+          <Route path="/flowcharts" element={<ErrorBoundary><BlockBasedAlgorithmBuilder /></ErrorBoundary>} />
           {/* Redirect old routes */}
           <Route path="/trees" element={<Navigate replace to="/tree" />} />
           <Route path="/pathfinding-visualizer" element={<Navigate replace to="/pathfinding" />} />

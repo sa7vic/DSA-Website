@@ -96,6 +96,13 @@ const HomePage = () => {
   
   const algorithmCards = [
     {
+      title: 'Flowcharts',
+      link: '/flowcharts',
+      icon: <FaProjectDiagram size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-1',
+      enabled: true
+    },
+    {
       title: 'Sorting Algorithms',
       link: '/sorting',
       icon: <FaSortNumericDown size={40} color="#FFFFFF" />, 
