@@ -68,6 +68,18 @@ npm run build
 npm run preview
 ```
 
+You can also build a docker image and run the build isolately, without any setup overhead.
+```bash
+# After cloning and changing directory
+docker build -t algorithima:latest .
+
+# To run the image
+docker run -d --name dsa_website \
+           -p 1234:80 \
+           algorithima:latest
+# Build will be running on port localhost:1234, if the port is busy, put another port in docker run command.
+``` 
+
 ---
 
 ## 🏗️ Tech Stack
