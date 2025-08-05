@@ -17,7 +17,6 @@ import manchanImg from '../../../assets/manchan.jpeg';
 import prajwalImg from '../../../assets/prajwal.webp';
 import shaunImg from '../../../assets/shaun.png';
 import nikhilImg from '../../../assets/nikhil.webp';
-import anupamImg from '../../../assets/anupam.webp';
 import couldBeYouImg from '../../../assets/couldbeyou.jpg';
 import manuImg from '../../../assets/manu.jpeg';
 import anupamImg from '../../../assets/1c8b8e32-01c1-40b1-8a26-27c1f6af5add.jpeg';
