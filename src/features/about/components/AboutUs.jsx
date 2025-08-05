@@ -19,6 +19,7 @@ import shaunImg from '../../../assets/shaun.png';
 import nikhilImg from '../../../assets/nikhil.webp';
 import couldBeYouImg from '../../../assets/couldbeyou.jpg';
 import manuImg from '../../../assets/manu.jpeg';
+import anupamImg from '../../../assets/1c8b8e32-01c1-40b1-8a26-27c1f6af5add.jpeg';
 
 const AboutUs = () => {
   // Intersection observers for scroll animations
@@ -34,6 +35,7 @@ const AboutUs = () => {
 
   // Developer data
   const developers = [
+
     {
       name: "Manvith Kumar",
       education: "Computer Science, IIIT Kottayam",
@@ -66,6 +68,14 @@ const AboutUs = () => {
       note: "Ensuring smooth deployment and system reliability",
       github: "/nikhilanil87",
       image: nikhilImg
+    },
+        {
+      name: "Anupam Mishra",
+      education: "Cyber Security, IIIT Kottayam",
+      role: "Security Analyst",
+      note: "You arent stealing shi,   lil bro",
+      linkedin: "www.linkedin.com/in/anupam-mishra-223583324",
+      image: anupamImg
     },
     {
       name: "This could be you!",
