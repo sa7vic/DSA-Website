@@ -63,10 +63,22 @@ const KleeCanvas = ({
 
   // Get color for a segment based on its state
   const getSegmentColor = (segmentId) => {
+    // Colors for different segments
+    const segmentColors = [
+      '#2196F3', // Blue
+      '#FF9800', // Orange
+      '#9C27B0', // Purple
+      '#00BCD4', // Cyan
+      '#F44336', // Red
+      '#FFEB3B', // Yellow
+      '#795548', // Brown
+      '#607D8B'  // Blue Grey
+    ];
+    
     if (mode === 'visualizing' && activeSegments && activeSegments.has(segmentId)) {
       return '#4CAF50'; // Green for active segments
     }
-    return '#2196F3'; // Blue for inactive segments
+    return segmentColors[segmentId % segmentColors.length];
   };
 
   // Render coordinate system
@@ -220,6 +232,18 @@ const KleeCanvas = ({
 
     const elements = [];
     const unionY = DRAWING_Y + 200; // Position union visualization below segments
+    
+    // Colors for different union intervals
+    const intervalColors = [
+      '#4CAF50', // Green
+      '#2196F3', // Blue  
+      '#FF9800', // Orange
+      '#9C27B0', // Purple
+      '#F44336', // Red
+      '#00BCD4', // Cyan
+      '#FFEB3B', // Yellow
+      '#795548'  // Brown
+    ];
 
     // Add union axis label
     elements.push(
@@ -234,32 +258,70 @@ const KleeCanvas = ({
       />
     );
 
-    // Render union intervals as green rectangles
+    // Render union intervals with different colors and better text positioning
     currentStep.unionIntervals.forEach((interval, index) => {
+      const color = intervalColors[index % intervalColors.length];
+      const midX = (interval.start + interval.end) / 2;
+      const intervalWidth = interval.end - interval.start;
+      
+      // Render the interval rectangle
       elements.push(
         <Rect
           key={`union-${index}`}
           x={interval.start}
           y={unionY}
-          width={interval.end - interval.start}
+          width={intervalWidth}
           height={30}
-          fill="#4CAF50"
-          opacity={0.7}
+          fill={color}
+          opacity={0.8}
           cornerRadius={4}
+          stroke="#fff"
+          strokeWidth={1}
         />
       );
       
-      // Add length label for each interval
-      const midX = (interval.start + interval.end) / 2;
+      // Add interval index label inside the rectangle (if wide enough)
+      if (intervalWidth > 60) {
+        elements.push(
+          <Text
+            key={`union-index-${index}`}
+            x={midX}
+            y={unionY + 20}
+            text={`I${index + 1}`}
+            fontSize={16}
+            fill="#000"
+            align="center"
+            fontStyle="bold"
+          />
+        );
+      }
+      
+      // Add length label below with proper spacing to avoid overlap
+      const textY = unionY + 50 + (index % 2) * 25; // Alternate text positions
       elements.push(
         <Text
           key={`union-length-${index}`}
-          x={midX - 30}
-          y={unionY + 40}
-          text={interval.length.toFixed(1)}
-          fontSize={20}
-          fill="#4CAF50"
+          x={midX}
+          y={textY}
+          text={`${interval.length.toFixed(1)}`}
+          fontSize={18}
+          fill={color}
           align="center"
+          fontStyle="bold"
+        />
+      );
+      
+      // Add interval range text above the rectangle
+      elements.push(
+        <Text
+          key={`union-range-${index}`}
+          x={midX}
+          y={unionY - 10}
+          text={`[${interval.start.toFixed(1)}, ${interval.end.toFixed(1)}]`}
+          fontSize={14}
+          fill={color}
+          align="center"
+          fontStyle="bold"
         />
       );
     });
