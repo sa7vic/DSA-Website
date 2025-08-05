@@ -143,6 +143,14 @@ const HomePage = () => {
       enabled: false
     }
   ];
+    // Add Klee's algorithm card
+    algorithmCards.splice(5, 0, {
+      title: "Klee's Algorithm",
+      link: "/klee",
+      icon: <FaChartLine size={40} color="#FFFFFF" />,
+      gradientClass: 'homepage-card-gradient-2',
+      enabled: true
+    });
 
   return (
     <div className="homepage">

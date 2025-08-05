@@ -71,6 +71,7 @@ import ArchiveLanding from './features/archive/components/landingpage'
 import Archive from './features/archive/components/Archive'
 import SearchAlgos from './features/searchAlgos/components/SearchAlgos';
 import PointersPage from './features/pointers/PointersPage';
+import KleeAlgorithm from './features/klee/KleeAlgorithm';
 
 // Graph algorithm components
 import {
@@ -612,6 +613,7 @@ function App() {
           <Route path="/graphs/kruskal" element={<ErrorBoundary><KruskalPage /></ErrorBoundary>} />
           {/* Greedy Algorithm Routes */}
           <Route path="/greedy" element={<ErrorBoundary><GreedyAlgorithmsList /></ErrorBoundary>} />
+          <Route path="/klee" element={<ErrorBoundary><KleeAlgorithm /></ErrorBoundary>} />
           <Route path="/greedy/boyer-moore" element={<ErrorBoundary><BoyerMooreMajority /></ErrorBoundary>} />
           <Route path="/greedy/stable-matching" element={<ErrorBoundary><StableMatching /></ErrorBoundary>} />
           <Route path="/greedy/job-scheduling" element={<ErrorBoundary><JobScheduling /></ErrorBoundary>} />
