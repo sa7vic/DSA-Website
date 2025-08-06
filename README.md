@@ -2,7 +2,7 @@
 
 **Interactive Data Structures & Algorithms Learning Platform** - Making computer science concepts accessible through beautiful, step-by-step visualizations.
 
-🌐 **Live Demo:** https://visualalgo-ov.web.app/
+🌐 **Live Demo:** https://algorithima.web.app/
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://visualalgo-ov.web.app/)
 [![React](https://img.shields.io/badge/React-19+-blue)](https://reactjs.org/)
