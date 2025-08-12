@@ -515,9 +515,9 @@ const TreeDisplay = ({ tree, highlightedNode, currentStep }) => {
     return 1 + Math.max(getTreeHeight(node.left), getTreeHeight(node.right));
   };
   const treeHeight = getTreeHeight(tree.root);
-  const svgWidth = 760;
+  const svgWidth = '100%';
   const svgHeight = Math.min(460, Math.max(treeHeight * 70 + 100, 300));
-  const treeLayout = calculateNodePositions(tree.root, 0, 50, svgWidth - 50);
+  const treeLayout = calculateNodePositions(tree.root, 0, 50, 760 - 50);
   const renderTreeFromLayout = (layout) => {
     if (!layout) return [];
     const { node, x, y, leftChild, rightChild } = layout;
@@ -595,7 +595,7 @@ const TreeDisplay = ({ tree, highlightedNode, currentStep }) => {
         width={svgWidth}
         height={svgHeight}
         className="tree-svg"
-        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        viewBox={`0 0 760 ${svgHeight}`}
         preserveAspectRatio="xMidYMid meet"
       >
         {renderTreeFromLayout(treeLayout)}

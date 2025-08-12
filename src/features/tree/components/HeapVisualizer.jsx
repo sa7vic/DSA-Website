@@ -5,7 +5,7 @@ import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { FaHome, FaPlus, FaSignOutAlt, FaRandom, FaTimes, FaPlay, FaPause, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import '../styles/TreeVisualizer.css';
 import HeapExplanation from './HeapExplanation';
-import TreeDiySection from './TreeDiySection';
+import HeapDiySection from './HeapDiySection';
 
 // Min/Max Heap class with animations
 class Heap {
@@ -732,7 +732,7 @@ int main() {
             {nodes.length > 0 ? (() => {
               // Calculate proper SVG dimensions like BST
               const heapHeight = Math.floor(Math.log2(heap.heap.length)) + 1;
-              const svgWidth = 760;
+              const svgWidth = '100%';
               const svgHeight = Math.min(460, Math.max(heapHeight * 80 + 100, 300));
               
               return (
@@ -740,7 +740,7 @@ int main() {
                   width={svgWidth} 
                   height={svgHeight} 
                   className="tree-svg"
-                  viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+                  viewBox={`0 0 760 ${svgHeight}`}
                   preserveAspectRatio="xMidYMid meet"
                 >
                   {edges.map((edge, index) => (
@@ -820,7 +820,7 @@ int main() {
           )}
 
           <HeapExplanation />
-          <TreeDiySection />
+          <HeapDiySection />
         </section>
       </main>
     </div>

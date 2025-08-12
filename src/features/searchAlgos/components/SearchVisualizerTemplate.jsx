@@ -24,7 +24,7 @@ const SearchVisualizerTemplate = ({
             <FaHome size={16} />
             <span>Home</span>
           </Link>
-          <Link to="/search-algorithms" className="nav-button">
+          <Link to="/search" className="nav-button">
             <FaArrowLeft size={16} />
             <span>Back to Search Algorithms</span>
           </Link>

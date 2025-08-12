@@ -133,6 +133,41 @@
 
 /* Code Panel - Remove specific styles that might interfere with flex */
 
+/* FORCE 50/50 split with maximum specificity */
+.tree-app main.split-view {
+  display: flex !important;
+  flex: 1 !important;
+  gap: 2rem !important;
+  padding: 2rem !important;
+  position: relative !important;
+  z-index: 1 !important;
+  height: calc(100vh - 140px) !important;
+  overflow: hidden !important;
+}
+
+.tree-app main.split-view section.panel {
+  flex: 1 1 50% !important;
+  width: calc(50% - 1rem) !important;
+  max-width: calc(50% - 1rem) !important;
+  min-width: calc(50% - 1rem) !important;
+  background: rgba(22, 27, 34, 0.8) !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2rem !important;
+  transition: all 0.3s ease !important;
+  overflow-y: auto !important;
+  max-height: 100% !important;
+}
+
+.tree-app .panel:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
 /* Tree controls styling */
 
 .controls {
@@ -544,7 +579,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
+@media (max-width: 900px) {
   .tree-app .split-view {
     flex-direction: column;
     height: auto;

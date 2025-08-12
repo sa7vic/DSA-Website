@@ -23,7 +23,7 @@ export const generateFlowchartData = (blocks, onPlaceholderClick) => {
     let style = {};
     let data = { label: '' };
 
-    // Dark theme colors
+    // Dark theme colors with better contrast
     const darkColors = {
       start: '#22c55e',
       stop: '#ef4444', 
@@ -34,6 +34,37 @@ export const generateFlowchartData = (blocks, onPlaceholderClick) => {
       background: '#1f2937',
       text: '#f9fafb'
     };
+
+    // Responsive sizing function for better zoom compatibility
+    const getNodeDimensions = (type) => {
+      const baseWidth = Math.max(120, Math.min(200, window.innerWidth * 0.12));
+      const baseHeight = Math.max(60, Math.min(100, window.innerHeight * 0.08));
+      
+      switch (type) {
+        case BLOCK_TYPES.START:
+        case BLOCK_TYPES.STOP:
+          return {
+            width: Math.max(100, baseWidth * 0.8),
+            height: Math.max(60, baseHeight),
+            borderRadius: '50%'
+          };
+        case BLOCK_TYPES.IF:
+          return {
+            width: Math.max(120, baseWidth),
+            height: Math.max(120, baseWidth), // Square for diamond shape
+            clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)'
+          };
+        default:
+          return {
+            width: Math.max(140, baseWidth * 1.1),
+            height: Math.max(60, baseHeight),
+            borderRadius: '8px'
+          };
+      }
+    };
+
+    const dimensions = getNodeDimensions(block.type);
+    const fontSize = Math.max(10, Math.min(14, dimensions.width * 0.08));
 
     switch (block.type) {
       case BLOCK_TYPES.START:

@@ -388,7 +388,7 @@ const BlockBasedAlgorithmBuilder = () => {
       {/* Header */}
       <div className="builder-header">
         <div className="header-left">
-          <button className="home-btn" onClick={handleGoHome} title="Go to Home">
+          <button className="flowchart-home-btn" onClick={handleGoHome} title="Go to Home">
             <FaHome /> Home
           </button>
           <h1>Block-Based Algorithm Builder</h1>

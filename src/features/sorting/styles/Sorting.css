@@ -724,7 +724,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .sorting-content {
     padding: 0.5rem;
     gap: 0.5rem;

@@ -5,7 +5,9 @@ import { Link } from 'react-router-dom';
 import BinarySearchVisualizer from './BinarySearchVisualizer';
 import LinearSearchVisualizer from './LinearSearchVisualizer';
 import JumpSearchVisualizer from './JumpSearchVisualizer';
+import SearchHomepage from './SearchHomepage';
 import '../styles/SearchAlgos.css';
+import '../styles/SearchHomepage.css';
 
 const SearchAlgos = () => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('overview');
@@ -52,87 +54,9 @@ const SearchAlgos = () => {
       case 'jump':
         return <JumpSearchVisualizer />;
       default:
-        return (
-          <motion.div 
-            className="linkedlist-home-container"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="linkedlist-home-bg-overlay"></div>
-            <motion.header 
-              className="linkedlist-home-header"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <Link to="/" className="home-button">
-                <FaHome size={18} />
-                <span>Home</span>
-              </Link>
-              <div className="header-content">
-                <h1>Search Algorithms Visualizer</h1>
-                <p>Interactive visualizations for different search algorithms</p>
-              </div>
-            </motion.header>
-            <motion.div 
-              className="linkedlist-cards-grid"
-              initial="hidden"
-              animate="visible"
-            >
-              {algorithms.map((algo, index) => (
-                <motion.div
-                  key={algo.id}
-                  className="linkedlist-card"
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  style={{ background: algo.gradient }}
-                  onClick={() => setSelectedAlgorithm(algo.id)}
-                >
-                  <div className="linkedlist-card-link" style={{ height: '100%' }}>
-                    <div className="linkedlist-card-header">
-                      <div className="linkedlist-card-icon" style={{ color: '#f8fafc', textShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>
-                        {React.cloneElement(algo.icon, { color: '#f8fafc', size: 48 })}
-                      </div>
-                      <div className="linkedlist-card-badges">
-                        <span className="difficulty-badge">Search</span>
-                        <span className="complexity-badge">{algo.complexity}</span>
-                      </div>
-                    </div>
-                    <div className="linkedlist-card-body">
-                      <h3 className="linkedlist-card-title">{algo.title}</h3>
-                      <p className="linkedlist-card-description">{algo.description}</p>
-                      <div className="linkedlist-card-features">
-                        {algo.features.map((feature, idx) => (
-                          <span key={idx} className="feature-tag">{feature}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="linkedlist-card-footer">
-                      <div className="learn-more-btn">
-                        <FaCode size={14} />
-                        Learn & Visualize
-                        <FaArrowRight size={12} />
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-            <motion.div 
-              className="linkedlist-home-footer"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-            >
-              <p>Choose a search algorithm to start your interactive learning journey</p>
-            </motion.div>
-          </motion.div>
-        );
+        return <SearchHomepage onAlgorithmSelect={setSelectedAlgorithm} />;
     }
-  };
-
-  return (
+  };  return (
     <div>
       {selectedAlgorithm !== 'overview' && (
         <motion.div 
@@ -162,9 +86,13 @@ const SearchAlgos = () => {
           </div>
         </motion.div>
       )}
-      <main className="main-content">
-        {renderAlgorithmView()}
-      </main>
+      {selectedAlgorithm === 'overview' ? (
+        renderAlgorithmView()
+      ) : (
+        <main className="main-content">
+          {renderAlgorithmView()}
+        </main>
+      )}
     </div>
   );
 };

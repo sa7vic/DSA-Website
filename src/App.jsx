@@ -33,6 +33,9 @@ import './features/quiz/styles/landingpage.css'
 import './features/archive/styles/landingpage.css'
 import './features/archive/styles/Archive.css'
 import './features/searchAlgos/styles/SearchAlgos.css'
+import './features/searchAlgos/styles/SearchHomepage.css'
+import './features/klee/styles/KleeAlgorithm.css'
+import './features/ds2/styles/DS2HomePage.css'
 import './features/graphs/styles/GraphAlgorithmsList.css'
 import './features/graphs/styles/GraphVisualizerTemplate.css'
 import './features/recursion/styles/RecursionVisualizer.css'
@@ -40,6 +43,7 @@ import './features/hashTable/styles/HashTableVisualizer.css'
 import './features/greedyAlgorithms/styles/GreedyAlgorithmsList.css'
 import './features/greedyAlgorithms/styles/GreedyVisualizerTemplate.css'
 import './features/flowcharts/styles/BlockBuilder.css'
+import './features/pointers/styles/PointerVisualization.css'
 
 
 // Shared components
@@ -75,7 +79,9 @@ import Quiz from './features/quiz/components/Quiz';
 import ArchiveLanding from './features/archive/components/landingpage'
 import Archive from './features/archive/components/Archive'
 import SearchAlgos from './features/searchAlgos/components/SearchAlgos';
+import KleeAlgorithm from './features/klee/KleeAlgorithm';
 import PointersPage from './features/pointers/PointersPage';
+import DS2HomePage from './features/ds2/components/DS2HomePage';
 
 // Graph algorithm components
 import {
@@ -638,6 +644,8 @@ function App() {
           <Route path="/quiz" element={<LandingPage />} />
           <Route path="/quiz/:topic" element={<ErrorBoundary><Quiz /></ErrorBoundary>} />
           <Route path="/search" element={<ErrorBoundary><SearchAlgos /></ErrorBoundary>} />
+          <Route path="/ds2" element={<ErrorBoundary><DS2HomePage /></ErrorBoundary>} />
+          <Route path="/klee" element={<ErrorBoundary><KleeAlgorithm /></ErrorBoundary>} />
           <Route path="/pointers" element={<PointersPage />} />
         </Routes>
       </Router>

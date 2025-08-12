@@ -468,7 +468,7 @@
   background: #161b22;
   border: 1px solid #30363d;
   border-radius: 6px;
-  overflow: hidden;
+  overflow: visible; /* allow tabs/panels to render fully */
 }
 
 .education-header {
@@ -496,6 +496,7 @@
 
 .education-content {
   padding: 20px;
+  display: block;
 }
 
 .education-tabs {
@@ -527,8 +528,10 @@
 }
 
 .tab.active {
-  color: #ffffff;
-  background: #58a6ff;
+  color: #ffffff !important;
+  background: #0969da !important;
+  font-weight: 600 !important;
+  border: 1px solid #1f6feb !important;
 }
 
 .education-panel {

@@ -104,8 +104,7 @@
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   cursor: pointer;
-  padding-left: 10%;
-  width: 500%;
+  width: 100%;
   max-width: 600px;
   min-height: 400px;
   display: flex;

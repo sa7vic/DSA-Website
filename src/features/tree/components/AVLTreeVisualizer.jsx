@@ -4,7 +4,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { FaHome, FaPlus, FaSearch, FaTrash, FaRandom, FaPlay, FaPause, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import AVLExplanation from './AVLExplanation';
-import TreeDiySection from './TreeDiySection';
+import AVLDiySection from './AVLDiySection';
 import '../styles/TreeVisualizer.css';
 
 // AVL Node class
@@ -820,7 +820,7 @@ const AVLTreeVisualizer = () => {
 								return 1 + Math.max(getTreeHeight(node.left), getTreeHeight(node.right));
 							};
 							const treeHeight = getTreeHeight(avlTree.root);
-							const svgWidth = 760;
+							const svgWidth = '100%';
 							const svgHeight = Math.min(460, Math.max(treeHeight * 70 + 100, 300));
 							
 							return (
@@ -828,7 +828,7 @@ const AVLTreeVisualizer = () => {
 									width={svgWidth} 
 									height={svgHeight} 
 									className="tree-svg"
-									viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+									viewBox={`0 0 760 ${svgHeight}`}
 									preserveAspectRatio="xMidYMid meet"
 								>
 									{/* Draw edges */}
@@ -949,9 +949,9 @@ const AVLTreeVisualizer = () => {
 						</div>
 					)}
 
-					{/* AVL-specific explanation and shared DIY section */}
+					{/* AVL-specific explanation and DIY section */}
 					<AVLExplanation />
-					<TreeDiySection />
+					<AVLDiySection />
 				</section>
 			</main>
 		</div>

@@ -143,7 +143,8 @@
 .main-content {
   padding: 2rem;
   position: relative;
-  z-index: 1;
+  z-index: 5;
+  min-height: calc(100vh - 200px);
 }
 
 /* ==========================================================================
@@ -151,8 +152,8 @@
    ========================================================================== */
 
 .overview-section {
-  max-width: 1200px;
   margin: 0 auto;
+  padding: 0 2rem;
 }
 
 .hero-section {
@@ -193,8 +194,9 @@
   justify-content: center;
   gap: 2rem;
   width: 100%;
-  max-width: 1000px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
 .algorithm-card {
@@ -264,7 +266,6 @@
 
 .binary-search-container,
 .linear-search-container {
-  max-width: 1200px;
   margin: 0 auto;
   background: rgba(22, 27, 34, 0.6);
   backdrop-filter: blur(10px);
@@ -593,6 +594,278 @@
 
   .hero-section {
     min-height: 40vh;
+  }
+}
+
+/* ==========================================================================
+   Search Homepage Styles
+   ========================================================================== */
+
+.search-home-container {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
+  color: #f8fafc;
+  overflow-x: hidden;
+  font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Animated gradient background overlay */
+.search-home-bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 60% 60%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+  animation: floatingGradient 20s ease-in-out infinite;
+}
+
+@keyframes floatingGradient {
+  0%, 100% {
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 60% 60%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+  }
+  25% {
+    background: 
+      radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 60% 60%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+  }
+  50% {
+    background: 
+      radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 60% 60%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+  }
+  75% {
+    background: 
+      radial-gradient(circle at 60% 60%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+  }
+}
+
+/* Header styles */
+.search-home-header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 2rem 1rem;
+  width: 100%;
+  margin: 0;
+}
+
+/* Cards grid - FULL WIDTH */
+.search-cards-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4rem;
+  margin: 4rem 0;
+  padding: 0 4rem;
+  width: 100%;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 1200px) {
+  .search-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .search-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+}
+
+/* Card styles */
+.search-card {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+.search-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    rgba(255, 255, 255, 0.05) 50%, 
+    rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.1) 0%, 
+    rgba(147, 51, 234, 0.05) 50%, 
+    rgba(16, 185, 129, 0.08) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 1.5rem;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.search-card:hover::after {
+  opacity: 1;
+}
+
+.search-card:hover {
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 30px rgba(59, 130, 246, 0.1);
+}
+
+.search-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.search-card-content-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+/* Card content */
+.search-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 2rem 2rem 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.search-card-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.search-card-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.search-card-body {
+  padding: 0 2rem 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.search-card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  color: #f8fafc;
+}
+
+.search-card-description {
+  font-size: 1rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+.search-card-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.search-card-footer {
+  padding: 1rem 2rem 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Footer */
+.search-home-footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.search-home-footer p {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Responsive design for search cards */
+@media (max-width: 1200px) {
+  .search-cards-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    padding: 0 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    margin: 2rem 0;
+  }
+  
+  .search-home-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-card-header,
+  .search-card-body,
+  .search-card-footer {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
 

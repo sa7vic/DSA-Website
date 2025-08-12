@@ -96,6 +96,13 @@ const HomePage = () => {
   
   const algorithmCards = [
     {
+      title: 'DS-2 (ICS 215)',
+      link: '/ds2',
+      icon: <FaCode size={40} color="#FFFFFF" />, 
+      gradientClass: 'homepage-card-gradient-2',
+      enabled: true
+    },
+    {
       title: 'Flowcharts',
       link: '/flowcharts',
       icon: <FaProjectDiagram size={40} color="#FFFFFF" />,
