@@ -9,7 +9,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible; /* don't block inner scroll areas */
 }
 
 /* Background effects matching other visualizers */
@@ -108,94 +108,32 @@
   50% { background-position: 100% 50%; }
 }
 
-/* Main layout structure - EXACT match with Stack/Queue */
-.split-view {
-  display: flex;
-  flex: 1;
-  gap: 2rem;
-  padding: 2rem;
-  position: relative;
-  z-index: 1;
-  height: calc(100vh - 140px);
-  overflow: hidden;
-}
+/* Tree specific styling - avoid overriding base layout */
 
-.panel {
-  flex: 1;
-  background: rgba(22, 27, 34, 0.8);
-  border-radius: 1rem;
-  padding: 2rem;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  transition: all 0.3s ease;
-  overflow-y: auto;
-  max-height: 100%;
-}
-
-.panel:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-}
-
-.panel h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin: 0 0 1.5rem 0;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-  color: #84d8f1;
-}
-
-/* Bulletproof 50/50 split - override any conflicting styles */
-.split-view .panel {
-  flex: 1 1 50% !important;
-  width: 50% !important;
-  max-width: 50% !important;
-  min-width: 0 !important; /* Allow flexbox to work properly */
-  box-sizing: border-box !important;
-}
-
-.split-view .panel.code-panel,
-.split-view .panel.viz-panel {
-  flex: 1 1 50% !important;
-  width: 50% !important;
-  max-width: 50% !important;
-}
+/* Tree specific styling - avoid overriding base layout */
 
 /* Custom scrollbar for panels */
-.panel::-webkit-scrollbar {
+.tree-app .panel::-webkit-scrollbar {
   width: 8px;
 }
 
-.panel::-webkit-scrollbar-track {
+.tree-app .panel::-webkit-scrollbar-track {
   background: rgba(22, 27, 34, 0.5);
   border-radius: 4px;
 }
 
-.panel::-webkit-scrollbar-thumb {
+.tree-app .panel::-webkit-scrollbar-thumb {
   background: rgba(168, 168, 255, 0.5);
   border-radius: 4px;
 }
 
-.panel::-webkit-scrollbar-thumb:hover {
+.tree-app .panel::-webkit-scrollbar-thumb:hover {
   background: rgba(168, 168, 255, 0.7);
 }
 
 /* Code Panel - Remove specific styles that might interfere with flex */
 
-/* Code viewer */
-.code-viewer {
-  flex: 1;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Visualization Panel - Remove specific styles that might interfere with flex */
+/* Tree controls styling */
 
 .controls {
   background: linear-gradient(135deg, rgba(22, 27, 34, 0.9), rgba(13, 17, 23, 0.8));
@@ -461,7 +399,7 @@
   background: linear-gradient(135deg, rgba(22, 27, 34, 0.8), rgba(13, 17, 23, 0.9));
   border-radius: 12px;
   border: 2px solid rgba(88, 166, 255, 0.2);
-  overflow: hidden; /* No scrollbars on tree container itself */
+  overflow: visible; /* allow inner elements to manage their own scrolling */
   position: relative;
   min-height: 500px;
   max-height: 700px;
@@ -527,6 +465,9 @@
 /* Simple tree node and edge styles - clean color-based highlighting */
 .tree-node {
   transition: all 0.3s ease;
+  fill: rgba(30, 41, 59, 0.9);
+  stroke: rgba(88, 166, 255, 0.6);
+  stroke-width: 0.4;
 }
 
 .node-circle {
@@ -538,8 +479,27 @@
   font-weight: 700;
   pointer-events: none;
   user-select: none;
-  font-size: 16px;
+  fill: #e2e8f0;
   transition: all 0.3s ease;
+}
+
+/* Use proper font sizes for tree visualization */
+.tree-svg .node-text { 
+  font-size: 16px; 
+  font-weight: bold;
+  fill: #e2e8f0;
+}
+.tree-svg .node-info { 
+  font-size: 12px; 
+  fill: #94a3b8;
+}
+.tree-svg .height-text { 
+  font-size: 12px; 
+  fill: #87ceeb;
+}
+.tree-svg .balance-factor { 
+  font-size: 12px; 
+  fill: #ffd700;
 }
 
 .tree-edge {
@@ -552,6 +512,29 @@
   stroke-width: 4;
 }
 
+/* Tree node state styles */
+.tree-node.highlighted {
+  fill: rgba(88, 166, 255, 0.35);
+  stroke: #58a6ff;
+  stroke-width: 0.6;
+}
+
+.tree-node.inserted {
+  fill: rgba(168, 85, 247, 0.35);
+  stroke: #a855f7;
+  stroke-width: 0.6;
+}
+
+.tree-node.found {
+  fill: rgba(34, 197, 94, 0.35);
+  stroke: #22c55e;
+  stroke-width: 0.6;
+}
+
+.node-info {
+  fill: #94a3b8;
+}
+
 /* Enhanced message styling for tree limit warnings */
 .message.warning {
   background: linear-gradient(135deg, rgba(248, 81, 73, 0.15), rgba(218, 54, 51, 0.1));
@@ -562,13 +545,13 @@
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .split-view {
+  .tree-app .split-view {
     flex-direction: column;
     height: auto;
     min-height: calc(100vh - 140px);
   }
   
-  .panel {
+  .tree-app .panel {
     width: 100%;
     min-height: 50vh;
   }
@@ -584,20 +567,20 @@
 }
 
 @media (max-width: 768px) {
-  .header {
+  .tree-app .header {
     padding: 1rem;
   }
   
-  .split-view {
+  .tree-app .split-view {
     padding: 1rem;
     gap: 1rem;
   }
   
-  .panel {
+  .tree-app .panel {
     padding: 1rem;
   }
   
-  .header h1 {
+  .tree-app .header h1 {
     font-size: 1.5rem;
   }
   
@@ -616,13 +599,13 @@
 }
 
 @media (max-width: 480px) {
-  .home-btn {
+  .tree-app .home-btn {
     position: static;
     transform: none;
     margin-bottom: 1rem;
   }
   
-  .header {
+  .tree-app .header {
     flex-direction: column;
     align-items: center;
     text-align: center;
@@ -657,4 +640,186 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   border: 2px solid #58a6ff;
   transition: background 0.2s;
+}
+
+/* AVL Tree Specific Styles */
+.balance-factor {
+  fill: #ffd700;
+  font-weight: bold;
+}
+
+.height-text {
+  fill: #87ceeb;
+  font-weight: normal;
+}
+
+.tree-node.rotating {
+  fill: #ff6b6b;
+  stroke: #ff4757;
+  stroke-width: 0.5;
+  animation: rotation-pulse 1s ease-in-out;
+}
+
+@keyframes rotation-pulse {
+  0%, 100% { r: 3; }
+  50% { r: 4; }
+}
+
+.rotation-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 107, 107, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+/* Heap Specific Styles */
+.array-representation {
+  margin: 2rem;
+  padding: 1.5rem;
+  background: rgba(13, 17, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  position: relative;
+  z-index: 5;
+}
+
+.array-representation h3 {
+  color: #58a6ff;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.array-display {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.array-element {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  min-width: 3rem;
+  transition: all 0.3s ease;
+}
+
+.array-element.highlighted {
+  background: rgba(88, 166, 255, 0.3);
+  border-color: #58a6ff;
+  box-shadow: 0 0 20px rgba(88, 166, 255, 0.4);
+}
+
+.array-index {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-bottom: 0.25rem;
+}
+
+.array-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #f8fafc;
+}
+
+.btn-toggle {
+  background: linear-gradient(145deg, #2563eb, #1d4ed8);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-toggle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #dc2626, #b91c1c);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-toggle:hover::before {
+  opacity: 1;
+}
+
+/* Tree Properties Display */
+.tree-properties {
+  margin: 2rem;
+  padding: 1.5rem;
+  background: rgba(13, 17, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  position: relative;
+  z-index: 5;
+}
+
+.tree-properties h3 {
+  color: #58a6ff;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.property {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+.property span:first-child {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.property span:last-child {
+  color: #f8fafc;
+  font-weight: bold;
+}
+
+/* Search Result Display */
+.search-result {
+  margin: 1rem 2rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-weight: bold;
+  animation: fadeIn 0.5s ease;
+}
+
+.search-result.found {
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #22c55e;
+}
+
+.search-result.not-found {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

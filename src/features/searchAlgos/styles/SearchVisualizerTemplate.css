@@ -485,37 +485,38 @@
   color: transparent;
 }
 
-.code-viewer {
+/* Scope code viewer rules to this feature to avoid global conflicts */
+.search-visualizer-container .code-viewer {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.code-viewer pre {
+.search-visualizer-container .code-viewer pre {
   margin: 0 !important;
   flex: 1;
-  overflow: visible !important;
+  overflow: auto; /* allow scroll within code blocks */
 }
 
-.code-viewer code {
+.search-visualizer-container .code-viewer code {
   display: block !important;
 }
 
 /* Custom scrollbar for code viewer */
-.code-viewer pre::-webkit-scrollbar {
+.search-visualizer-container .code-viewer pre::-webkit-scrollbar {
   width: 8px;
 }
 
-.code-viewer pre::-webkit-scrollbar-track {
+.search-visualizer-container .code-viewer pre::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.code-viewer pre::-webkit-scrollbar-thumb {
+.search-visualizer-container .code-viewer pre::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
 }
 
-.code-viewer pre::-webkit-scrollbar-thumb:hover {
+.search-visualizer-container .code-viewer pre::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 

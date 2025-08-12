@@ -232,7 +232,7 @@
 }
 
 /* Code viewer */
-.code-viewer {
+.stack-queue-container .code-viewer, .code-viewer {
   flex: 1;
   border-radius: 0.75rem;
   overflow: hidden;

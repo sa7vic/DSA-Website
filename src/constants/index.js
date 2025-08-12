@@ -111,7 +111,10 @@ export const ROUTES = {
   LINKED_LIST: '/linked-list',
   SORTING: '/sorting',
   STACKS_QUEUES: '/stacks-queues',
-  TREES: '/tree',
+  TREES: '/trees',
+  TREES_BST: '/trees/bst',
+  TREES_AVL: '/trees/avl',
+  TREES_HEAP: '/trees/heap',
   PATHFINDING: '/pathfinding',
   ABOUT: '/about'
 };

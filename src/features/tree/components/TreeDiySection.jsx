@@ -357,32 +357,50 @@ Total nodes after deletions: 5
       {isExpanded && (
         <div className="diy-content">
           <p>
-            Want to implement and experiment with Binary Search Trees yourself? 
-            Here's a complete, runnable C implementation that you can compile and test on your machine!
+            Want to implement and experiment with Binary Trees yourself? Below are runnable C examples.
+            For BST/AVL/Heap, save the appropriate file and compile it as shown.
           </p>
-          
+
           <h4>🚀 Quick Start:</h4>
           <ol>
             <li>Copy the code below</li>
-            <li>Save it as <code>bst.c</code></li>
-            <li>Compile: <code>gcc -o bst bst.c</code></li>
-            <li>Run: <code>./bst</code></li>
+            <li>
+              Save as <code>bst.c</code> for Binary Search Tree, <code>avl.c</code> for AVL Tree, or <code>heap.c</code> for Heaps
+            </li>
+            <li>
+              Compile:
+              <ul>
+                <li>BST: <code>gcc -o bst bst.c</code></li>
+                <li>AVL: <code>gcc -o avl avl.c</code></li>
+                <li>Heap: <code>gcc -o heap heap.c</code></li>
+              </ul>
+            </li>
+            <li>
+              Run:
+              <ul>
+                <li>BST: <code>./bst</code></li>
+                <li>AVL: <code>./avl</code></li>
+                <li>Heap: <code>./heap</code></li>
+              </ul>
+            </li>
           </ol>
-          
+
           <h4>💡 Try These Experiments:</h4>
           <ul>
-            <li>Insert different sequences and observe the tree structure</li>
-            <li>Try inserting values that would exceed the depth limit</li>
-            <li>Compare traversal outputs for different tree shapes</li>
-            <li>Test edge cases: empty tree, single node, duplicate values</li>
-            <li>Modify the MAX_DEPTH and see how it affects insertions</li>
+            <li>BST/AVL: insert different sequences and compare final shapes</li>
+            <li>AVL: cause each rotation type (LL, RR, LR, RL) and verify heights/balance</li>
+            <li>Heap: build from array, then test sequences of insert and extract root</li>
+            <li>Try inserting values that would exceed the depth limit (BST sample)</li>
+            <li>Compare traversal outputs (inorder, preorder, postorder)</li>
+            <li>Test edge cases: empty structure, single node, duplicates</li>
           </ul>
-          
+
           <h4>🔧 Code Features:</h4>
           <ul>
-            <li>Depth-limited insertion (prevents visualization overflow)</li>
-            <li>All three traversal methods (inorder, preorder, postorder)</li>
-            <li>Complete delete operation with all three cases</li>
+            <li>BST: depth-limited insertion (prevents visualization overflow)</li>
+            <li>AVL: height and balance factor tracking with rotations</li>
+            <li>Heap: array-based complete tree with sift up/down and O(n) build-heap</li>
+            <li>Traversals for trees (inorder, preorder, postorder)</li>
             <li>Memory management and error handling</li>
             <li>Detailed step-by-step output for learning</li>
           </ul>

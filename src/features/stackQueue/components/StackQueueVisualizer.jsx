@@ -644,7 +644,7 @@ int main() {
   };
 
   return (
-    <div className="app-container">
+    <div className="stack-queue-container app-container">
       
       <motion.header 
         className="app-header"

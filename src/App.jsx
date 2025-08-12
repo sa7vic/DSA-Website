@@ -21,11 +21,12 @@ import { FaHome } from 'react-icons/fa'
 
 // Global styles - imported in order of specificity
 import './App.css'
-import './features/common/styles/common.css'
+
 import './features/linkedList/styles/LinkedListHome.css'
 import './features/linkedList/styles/LinkedList.css'
 import './features/sorting/styles/Sorting.css'
 import './features/tree/styles/TreeVisualizer.css'
+import './features/tree/styles/TreeHome.css'
 import './features/pathfinding/styles/Pathfinding.css'
 import './features/quiz/styles/Quiz.css'
 import './features/quiz/styles/landingpage.css'
@@ -61,7 +62,11 @@ import HomePage from './features/home/components/HomePage'
 import AboutUs from './features/about/components/AboutUs'
 import SortingVisualizer from './features/sorting/components/SortingVisualizer'
 import StackQueueVisualizer from './features/stackQueue/components/StackQueueVisualizer'
+import TreeHome from './features/tree/components/TreeHome'
 import TreeVisualizer from './features/tree/components/TreeVisualizer'
+import BSTVisualizer from './features/tree/components/BSTVisualizer'
+import HeapVisualizer from './features/tree/components/HeapVisualizer'
+import AVLTreeVisualizer from './features/tree/components/AVLTreeVisualizer'
 import RecursionVisualizer from './features/recursion/components/RecursionVisualizer'
 import HashTableVisualizer from './features/hashTable/components/HashTableVisualizer'
 import PathfindingVisualizer from './features/pathfinding/components/PathfindingVisualizer'
@@ -71,7 +76,6 @@ import ArchiveLanding from './features/archive/components/landingpage'
 import Archive from './features/archive/components/Archive'
 import SearchAlgos from './features/searchAlgos/components/SearchAlgos';
 import PointersPage from './features/pointers/PointersPage';
-import KleeAlgorithm from './features/klee/KleeAlgorithm';
 
 // Graph algorithm components
 import {
@@ -599,7 +603,14 @@ function App() {
           />
           <Route path="/sorting" element={<ErrorBoundary><SortingVisualizer /></ErrorBoundary>} />
           <Route path="/stacks-queues" element={<ErrorBoundary><StackQueueVisualizer /></ErrorBoundary>} />
-          <Route path="/tree" element={<ErrorBoundary><TreeVisualizer /></ErrorBoundary>} />
+          
+          {/* Tree Routes */}
+          <Route path="/trees" element={<ErrorBoundary><TreeHome /></ErrorBoundary>} />
+          <Route path="/trees/bst" element={<ErrorBoundary><BSTVisualizer /></ErrorBoundary>} />
+          <Route path="/trees/heap" element={<ErrorBoundary><HeapVisualizer /></ErrorBoundary>} />
+          <Route path="/trees/avl" element={<ErrorBoundary><AVLTreeVisualizer /></ErrorBoundary>} />
+          <Route path="/tree" element={<Navigate replace to="/trees" />} />
+          
           <Route path="/recursion" element={<ErrorBoundary><RecursionVisualizer /></ErrorBoundary>} />
           <Route path="/hashtable" element={<ErrorBoundary><HashTableVisualizer /></ErrorBoundary>} />
           <Route path="/pathfinding" element={<ErrorBoundary><PathfindingRedirect /></ErrorBoundary>} />
@@ -613,14 +624,12 @@ function App() {
           <Route path="/graphs/kruskal" element={<ErrorBoundary><KruskalPage /></ErrorBoundary>} />
           {/* Greedy Algorithm Routes */}
           <Route path="/greedy" element={<ErrorBoundary><GreedyAlgorithmsList /></ErrorBoundary>} />
-          <Route path="/klee" element={<ErrorBoundary><KleeAlgorithm /></ErrorBoundary>} />
           <Route path="/greedy/boyer-moore" element={<ErrorBoundary><BoyerMooreMajority /></ErrorBoundary>} />
           <Route path="/greedy/stable-matching" element={<ErrorBoundary><StableMatching /></ErrorBoundary>} />
           <Route path="/greedy/job-scheduling" element={<ErrorBoundary><JobScheduling /></ErrorBoundary>} />
           {/* Flowchart Algorithm Builder Route */}
           <Route path="/flowcharts" element={<ErrorBoundary><BlockBasedAlgorithmBuilder /></ErrorBoundary>} />
           {/* Redirect old routes */}
-          <Route path="/trees" element={<Navigate replace to="/tree" />} />
           <Route path="/pathfinding-visualizer" element={<Navigate replace to="/pathfinding" />} />
           <Route path="/archive" element={<ErrorBoundary><ArchiveLanding /></ErrorBoundary>} />
           <Route path="/archive/:topic" element={<ErrorBoundary><Archive /></ErrorBoundary>} />

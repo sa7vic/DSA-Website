@@ -53,7 +53,7 @@ export const linearSearch = (array, target, onStep) => {
 export const jumpSearch = (array, target, onStep) => {
   const steps = [];
   const n = array.length;
-  const jumpSize = Math.floor(Math.sqrt(n));
+  let jumpSize = Math.floor(Math.sqrt(n));
   let prev = 0;
   let found = false;
   let foundIndex = -1;
@@ -87,7 +87,8 @@ export const jumpSearch = (array, target, onStep) => {
   }
 
   // Linear search phase in the identified block
-  for (let i = prev; i < Math.min(jumpSize, n); i++) {
+  const end = Math.min(jumpSize, n);
+  for (let i = prev; i < end; i++) {
     const step = {
       currentIndex: i,
       comparing: array[i],
