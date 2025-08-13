@@ -216,7 +216,7 @@ We actively welcome contributions! Whether you're a student, educator, or develo
 ---
 
 ### 🏠 Homepage
-![Homepage featuring all available visualizers](https://github.com/user-attachments/assets/73a73d85-ccc3-445b-94c7-44701059311f)
+![Homepage featuring all available visualizers](https://github.com/user-attachments/assets/ab1b3c19-3c1b-4307-9ae0-34aa2568287b)
 
 ### 🔗 Interactive Visualizations
 - **Real-time Animations** - Watch algorithms execute step-by-step
